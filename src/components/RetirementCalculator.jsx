@@ -692,11 +692,12 @@ export default function RetirementCalculator() {
       <div className="w-full max-w-6xl mx-auto">
 
         {/* Header */}
-        <div className="text-center space-y-2 mb-8">
+        <div className="text-center space-y-4 mb-12">
+          <h1 className="text-5xl font-bold tracking-tight" style={{ color: '#F4C84A' }}>Route to Retire</h1>
           <div className="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full mb-2" style={{ backgroundColor: '#FFFAEB', color: '#F4C84A' }}>
             RETIREMENT CALCULATOR
           </div>
-          <h1 className="text-3xl font-bold tracking-tight" style={{ color: '#2B2B2B' }}>Are You Saving Enough to Retire?</h1>
+          <h2 className="text-2xl font-bold tracking-tight" style={{ color: '#2B2B2B' }}>Are You Saving Enough to Retire?</h2>
           <p className="text-sm leading-relaxed max-w-lg mx-auto" style={{ color: '#A0A4AB' }}>
             See if you're on track to meet your retirement goals — and find out when you could afford to ease back on contributions and let your savings do the work.
           </p>
