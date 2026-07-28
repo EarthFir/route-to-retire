@@ -22,6 +22,12 @@ export const DEFAULT_STATE_PENSION_INCOME = 11500; // £/yr
 /** Oldest age the drawdown / depletion model runs to. */
 export const MODELLING_END_AGE = 100;
 
+/** Default age the pot is modelled to last until (the planning horizon). */
+export const DEFAULT_PLANNING_AGE = 95;
+
+/** How many years the planning age must sit above the retirement age, at minimum. */
+export const MIN_PLANNING_YEARS = 5;
+
 /**
  * Estimated State Pension age based on the user's current age.
  * Anyone born 1978 or later is assumed to reach it at 68, otherwise 67.
@@ -50,6 +56,8 @@ export function getAssumptions({
   includeStatePension,
   statePensionIncome,
   statePensionAge,
+  planningAge,
+  capitalPreservationTargetPot,
 }) {
   const rows = [
     {
@@ -65,19 +73,30 @@ export function getAssumptions({
     {
       label: "Return in retirement",
       value: fmtPct(retirementReturn),
-      note: "Lower, more cautious growth once you start drawing an income.",
+      note: "Lower, more cautious growth once you start drawing an income, while the remaining pot keeps growing.",
     },
     {
-      label: "Withdrawal / drawdown rule",
-      value: `Income ÷ ${fmtPct(retirementReturn)}`,
-      note: `Your target pot is sized so your income can be drawn each year from a ${fmtPct(
+      label: "Planning age",
+      value: `Age ${planningAge}`,
+      note: "The age your retirement pot is modelled to last until. You can adjust this.",
+    },
+    {
+      label: "Target basis",
+      value: `Draw down to age ${planningAge}`,
+      note: `Your target pot is calculated so your savings could fund your target income from your selected retirement age until age ${planningAge}, using the assumed ${fmtPct(
         retirementReturn,
-      )} return — modelled to last indefinitely rather than being spent down.`,
+      )} return in retirement.`,
     },
     {
-      label: "Modelling end age",
-      value: `Age ${MODELLING_END_AGE}`,
-      note: "How far ahead the drawdown chart checks that your pot survives.",
+      label: "Conservative comparison",
+      value:
+        capitalPreservationTargetPot != null
+          ? `${fmtGBP(capitalPreservationTargetPot)}`
+          : "Not available",
+      note:
+        capitalPreservationTargetPot != null
+          ? `The capital-preservation comparison estimates the pot required to draw your target income from investment return only, preserving the capital indefinitely. Shown for reference, not as the main target.`
+          : "A capital-preservation figure needs a retirement return above 0%.",
     },
     {
       label: "State Pension age",

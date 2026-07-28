@@ -10,6 +10,8 @@ import {
   DEFAULT_PRE_RETIREMENT_RETURN,
   DEFAULT_RETIREMENT_RETURN,
   DEFAULT_STATE_PENSION_INCOME,
+  DEFAULT_PLANNING_AGE,
+  MIN_PLANNING_YEARS,
   MODELLING_END_AGE,
   getStatePensionAge,
   getAssumptions,
@@ -58,7 +60,7 @@ function getStatus(isCoast, monthlySavings, savingsGap, yearsToRetirement) {
   return "amber";
 }
 
-function calculateAll({ currentAge, retirementAge, currentSavings, desiredIncome, annualReturn, inheritances, includeStatePension, statePensionIncome, monthlySavingsCurrent, statePensionAge, retirementReturn }) {
+function calculateAll({ currentAge, retirementAge, currentSavings, desiredIncome, annualReturn, inheritances, includeStatePension, statePensionIncome, monthlySavingsCurrent, statePensionAge, retirementReturn, planningAge }) {
   const r = annualReturn / 100;
   const retirementR = retirementReturn / 100;
   const years = retirementAge - currentAge;
@@ -66,18 +68,41 @@ function calculateAll({ currentAge, retirementAge, currentSavings, desiredIncome
   const inflatedDesiredIncome = desiredIncome * Math.pow(1 + inflationRate, years);
   const incomeNeeded = includeStatePension ? Math.max(0, inflatedDesiredIncome - statePensionIncome) : inflatedDesiredIncome;
 
-  let targetPot;
-  const gapYears = Math.max(0, statePensionAge - retirementAge);
-  if (includeStatePension && gapYears > 0) {
-    const potNeededAtSpAge = Math.max(0, inflatedDesiredIncome - statePensionIncome) / retirementR;
-    const pvOfSpPot = potNeededAtSpAge / Math.pow(1 + retirementR, gapYears);
-    const pvOfGapWithdrawals = retirementR > 0
-      ? inflatedDesiredIncome * (1 - Math.pow(1 + retirementR, -gapYears)) / retirementR
-      : inflatedDesiredIncome * gapYears;
-    targetPot = pvOfSpPot + pvOfGapWithdrawals;
-  } else {
-    targetPot = incomeNeeded / retirementR;
+  // Planning age is what the pot is modelled to last until. Enforce a sensible
+  // floor so it always sits at least a few years beyond retirement.
+  const effectivePlanningAge = Math.max(
+    Number.isFinite(planningAge) ? planningAge : DEFAULT_PLANNING_AGE,
+    retirementAge + MIN_PLANNING_YEARS,
+  );
+  const yearsInRetirement = Math.max(0, effectivePlanningAge - retirementAge);
+
+  // The withdrawal the pot must fund at a given retirement age: the full target
+  // income, less the State Pension once it has started.
+  const withdrawalAtAge = (age) =>
+    includeStatePension && age >= statePensionAge
+      ? Math.max(0, inflatedDesiredIncome - statePensionIncome)
+      : inflatedDesiredIncome;
+
+  // Target pot = present value at retirement of every yearly withdrawal from
+  // retirement until the planning age, discounted at the retirement return.
+  // This is the drawdown-to-age basis (the pot is spent down, not preserved),
+  // and it is consistent with the depletion loop below.
+  let targetPot = 0;
+  for (let i = 1; i <= yearsInRetirement; i++) {
+    const ageI = retirementAge + i;
+    const wdrl = withdrawalAtAge(ageI);
+    targetPot += retirementR > 0 ? wdrl / Math.pow(1 + retirementR, i) : wdrl;
   }
+  if (!Number.isFinite(targetPot) || targetPot < 0) targetPot = 0;
+
+  // Conservative comparison only: the pot needed to live off investment return
+  // alone, preserving the capital indefinitely. Shown for reference, never the
+  // default target. Undefined when the retirement return is 0%.
+  const capitalPreservationTargetPot =
+    retirementR > 0 && Number.isFinite(incomeNeeded / retirementR)
+      ? incomeNeeded / retirementR
+      : null;
+
   const futureValueCurrent = currentSavings * Math.pow(1 + r, years);
   const inheritanceResults = inheritances.map(({ amount, age }) =>
     calcInheritanceFV(amount, age > 0 ? age : null, retirementAge, r)
@@ -108,18 +133,19 @@ function calculateAll({ currentAge, retirementAge, currentSavings, desiredIncome
   const status = getStatus(isCoast, monthlySavings, savingsGap, years);
   const { coastAge, yearsUntilCoast } = findCoastAge({ currentAge, retirementAge, currentSavings, monthlySavingsCurrent, targetPot, r, totalInheritanceFV });
 
+  // Drawdown of the pot the user is actually on track to have (with current
+  // saving), so "runs out at age X" reflects their real trajectory rather than
+  // the target. Runs to the modelling horizon; null means it never depletes.
   let depletionAge = null;
-  let runPot = targetPot;
+  let runPot = projectedPotWithSaving;
   for (let i = 1; i <= MODELLING_END_AGE - retirementAge; i++) {
     const ageI = retirementAge + i;
-    const wdrl = (includeStatePension && ageI >= statePensionAge)
-      ? Math.max(0, inflatedDesiredIncome - statePensionIncome)
-      : inflatedDesiredIncome;
+    const wdrl = withdrawalAtAge(ageI);
     runPot = Math.max(0, runPot * (1 + retirementR) - wdrl);
     if (runPot <= 0) { depletionAge = ageI; break; }
   }
 
-  return { incomeNeeded, targetPot, futureValueCurrent, projectedPotNoSaving, projectedPotWithSaving, inheritanceResults, totalInheritanceFV, totalFutureValue, monthlySavings, savingsGap, isCoast, status, coastAge, yearsUntilCoast, depletionAge };
+  return { incomeNeeded, targetPot, capitalPreservationTargetPot, planningAge: effectivePlanningAge, futureValueCurrent, projectedPotNoSaving, projectedPotWithSaving, inheritanceResults, totalInheritanceFV, totalFutureValue, monthlySavings, savingsGap, isCoast, status, coastAge, yearsUntilCoast, depletionAge };
 }
 
 // ─── Format Helpers ───────────────────────────────────────────────────────────
@@ -370,15 +396,15 @@ function ResultRow({ icon, label, value, highlight, help }) {
 }
 
 function ResultMessage({ result, retirementAge }) {
-  const { isCoast, coastAge, yearsUntilCoast, savingsGap } = result;
+  const { isCoast, coastAge, yearsUntilCoast, savingsGap, planningAge } = result;
 
   if (isCoast) {
     return (
       <div className="rounded-3xl p-5 flex items-start gap-3" style={{ backgroundColor: '#ECFDF5', borderColor: '#4CAF50', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
         <div className="w-2 h-2 rounded-full mt-1.5" style={{ backgroundColor: '#4CAF50' }} />
         <div>
-          <p className="font-bold text-base" style={{ color: '#2B2B2B' }}>You've already hit your target.</p>
-          <p className="text-sm mt-1" style={{ color: '#666666' }}>Your savings are on track to fund your retirement without any further contributions. Any additional saving is purely a bonus.</p>
+          <p className="font-bold text-base" style={{ color: '#2B2B2B' }}>You may be on track on these assumptions.</p>
+          <p className="text-sm mt-1" style={{ color: '#666666' }}>The model estimates your current savings could support your target income from age {retirementAge} to age {planningAge}, even without further contributions. Anything more is a buffer.</p>
         </div>
       </div>
     );
@@ -389,8 +415,8 @@ function ResultMessage({ result, retirementAge }) {
       <div className="rounded-3xl p-5 flex items-start gap-3" style={{ backgroundColor: '#FFFAEB', borderColor: '#F4C84A', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
         <div className="w-2 h-2 rounded-full mt-1.5" style={{ backgroundColor: '#F4C84A' }} />
         <div>
-          <p className="font-bold text-base" style={{ color: '#2B2B2B' }}>You're almost there.</p>
-          <p className="text-sm mt-1" style={{ color: '#666666' }}>At your current saving rate, you'll be able to ease back on contributions in just {yearsUntilCoast} year{yearsUntilCoast !== 1 ? "s" : ""}, at age {coastAge}. Keep going.</p>
+          <p className="font-bold text-base" style={{ color: '#2B2B2B' }}>You may be close to easing off.</p>
+          <p className="text-sm mt-1" style={{ color: '#666666' }}>Based on these assumptions, at your current saving rate you could ease back on contributions in around {yearsUntilCoast} year{yearsUntilCoast !== 1 ? "s" : ""}, at age {coastAge}, and still have your pot last to age {planningAge}.</p>
         </div>
       </div>
     );
@@ -401,8 +427,8 @@ function ResultMessage({ result, retirementAge }) {
       <div className="rounded-3xl p-5 flex items-start gap-3" style={{ backgroundColor: '#F0F4FF', borderColor: '#F4C84A', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
         <div className="w-2 h-2 rounded-full mt-1.5" style={{ backgroundColor: '#F4C84A' }} />
         <div>
-          <p className="font-bold text-base" style={{ color: '#2B2B2B' }}>You're on track.</p>
-          <p className="text-sm mt-1" style={{ color: '#666666' }}>Continue saving and at age {coastAge} — in {yearsUntilCoast} year{yearsUntilCoast !== 1 ? "s" : ""} — your investments will be large enough to carry you to retirement on their own.</p>
+          <p className="font-bold text-base" style={{ color: '#2B2B2B' }}>You may be on track on these assumptions.</p>
+          <p className="text-sm mt-1" style={{ color: '#666666' }}>The model estimates that if you keep saving, by age {coastAge} — in around {yearsUntilCoast} year{yearsUntilCoast !== 1 ? "s" : ""} — your pot could be large enough to carry you to retirement and last to age {planningAge} on its own.</p>
         </div>
       </div>
     );
@@ -413,8 +439,8 @@ function ResultMessage({ result, retirementAge }) {
       <div className="rounded-3xl p-5 flex items-start gap-3" style={{ backgroundColor: '#FFFAEB', borderColor: '#F4C84A', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
         <div className="w-2 h-2 rounded-full mt-1.5" style={{ backgroundColor: '#F4C84A' }} />
         <div>
-          <p className="font-bold text-base" style={{ color: '#2B2B2B' }}>You're close, but not quite there.</p>
-          <p className="text-sm mt-1" style={{ color: '#666666' }}>Increasing your monthly savings by just {formatGBP(savingsGap)} would put you firmly on track to retire comfortably at {retirementAge}.</p>
+          <p className="font-bold text-base" style={{ color: '#2B2B2B' }}>You may be close on these assumptions.</p>
+          <p className="text-sm mt-1" style={{ color: '#666666' }}>The model estimates around {formatGBP(savingsGap)}/month more could bring your plan on track for the pot to last from age {retirementAge} to age {planningAge}.</p>
         </div>
       </div>
     );
@@ -424,20 +450,23 @@ function ResultMessage({ result, retirementAge }) {
     <div className="rounded-3xl p-5 flex items-start gap-3" style={{ backgroundColor: '#FEF2F2', borderColor: '#E74C3C', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
       <div className="w-2 h-2 rounded-full mt-1.5" style={{ backgroundColor: '#E74C3C' }} />
       <div>
-        <p className="font-bold text-base" style={{ color: '#2B2B2B' }}>You need to save more to hit your goal.</p>
-        <p className="text-sm mt-1" style={{ color: '#666666' }}>You're currently {formatGBP(savingsGap)}/month short of what's needed. Consider increasing contributions, pushing back your retirement age, or adjusting your income target.</p>
+        <p className="font-bold text-base" style={{ color: '#2B2B2B' }}>You may be short of your target on these assumptions.</p>
+        <p className="text-sm mt-1" style={{ color: '#666666' }}>The model estimates you're currently {formatGBP(savingsGap)}/month short of the amount needed for your pot to last to age {planningAge}. You could explore saving more, retiring later, or adjusting your income target.</p>
       </div>
     </div>
   );
 }
 
-function MonthlySavingsBox({ result, retirementAge, monthlySavingsCurrent }) {
-  const { isCoast, monthlySavings, savingsGap } = result;
+function MonthlySavingsBox({ result, retirementAge, monthlySavingsCurrent, desiredIncome }) {
+  const { isCoast, monthlySavings, savingsGap, planningAge } = result;
 
   return (
     <div className="rounded-3xl p-5" style={{ backgroundColor: isCoast ? '#ECFDF5' : '#F4C84A', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', borderColor: isCoast ? '#4CAF50' : '#F4C84A', borderWidth: '1px' }}>
-      <p className="text-xs font-semibold uppercase tracking-wider mb-4" style={{ color: isCoast ? '#4CAF50' : '#1F1F1F' }}>
-        Monthly savings needed to retire at {retirementAge}
+      <p className="text-xs font-semibold uppercase tracking-wider mb-1" style={{ color: isCoast ? '#4CAF50' : '#1F1F1F' }}>
+        Monthly saving needed for pot to last to age {planningAge}
+      </p>
+      <p className="text-xs mb-4" style={{ color: isCoast ? '#4CAF50' : '#1F1F1F', opacity: 0.85 }}>
+        Retire at {retirementAge} · Target income {formatGBP(desiredIncome)}/yr today · Pot modelled to age {planningAge}
       </p>
       <div className="space-y-2">
         <div className="flex items-center justify-between">
@@ -524,7 +553,7 @@ function InheritanceResultBox({ inheritances, inheritanceResults, totalInheritan
 
 // ─── Chart ────────────────────────────────────────────────────────────────────
 
-function buildChartData({ currentAge, retirementAge, currentSavings, monthlySavingsCurrent, annualReturn, inheritances, desiredIncome, includeStatePension, statePensionIncome, statePensionAge, retirementReturn }) {
+function buildChartData({ currentAge, retirementAge, currentSavings, monthlySavingsCurrent, annualReturn, inheritances, desiredIncome, includeStatePension, statePensionIncome, statePensionAge, retirementReturn, planningAge }) {
   const r = annualReturn / 100;
   const retirementR = retirementReturn / 100;
   const inflationRate = INFLATION_RATE;
@@ -549,8 +578,12 @@ function buildChartData({ currentAge, retirementAge, currentSavings, monthlySavi
     data.push({ age, total, inheritanceThisYear, statePensionKickIn: false, phase: "accumulation" });
   }
 
-  // Drawdown phase
-  const drawdownYears = Math.min(20, 90 - retirementAge);
+  // Drawdown phase — run to the planning age (capped at the modelling horizon).
+  const planningEnd = Math.min(
+    MODELLING_END_AGE,
+    Math.max(retirementAge + MIN_PLANNING_YEARS, planningAge || DEFAULT_PLANNING_AGE),
+  );
+  const drawdownYears = Math.max(0, planningEnd - retirementAge);
   let pot = data[data.length - 1].total;
   for (let i = 1; i <= drawdownYears; i++) {
     const age = retirementAge + i;
@@ -614,6 +647,7 @@ function GrowthChart({ inputs, inheritances, result, statePension, statePensionA
     statePensionIncome: statePension.income,
     statePensionAge,
     retirementReturn: inputs.retirementReturn,
+    planningAge: result.planningAge,
   });
   const hasInheritance = inheritances.some(({ amount, age }) => amount > 0 && age > 0);
 
@@ -625,6 +659,7 @@ function GrowthChart({ inputs, inheritances, result, statePension, statePensionA
           <span className="flex items-center gap-1"><span className="w-3 h-0.5 inline-block rounded" style={{ backgroundColor: '#F4C84A' }} /> Projected pot</span>
           <span className="flex items-center gap-1"><span className="w-3 h-0.5 inline-block rounded" style={{ backgroundColor: '#E74C3C' }} /> Target</span>
           {result.coastAge && <span className="flex items-center gap-1"><span className="w-3 h-0.5 inline-block rounded" style={{ backgroundColor: '#4CAF50' }} /> Coast age</span>}
+          <span className="flex items-center gap-1"><span className="w-3 h-0.5 inline-block rounded" style={{ backgroundColor: '#A0A4AB' }} /> Plan to {result.planningAge}</span>
           {hasInheritance && <span className="flex items-center gap-1"><span className="inline-block w-2.5 h-2.5 rounded-full" style={{ backgroundColor: '#F4C84A' }} /> Inheritance</span>}
           {statePension.include && statePensionAge > inputs.retirementAge && <span className="flex items-center gap-1"><span className="inline-block w-2.5 h-2.5 rounded-full" style={{ backgroundColor: '#4CAF50' }} /> State pension</span>}
         </div>
@@ -650,6 +685,8 @@ function GrowthChart({ inputs, inheritances, result, statePension, statePensionA
           )}
           <ReferenceLine x={inputs.retirementAge} stroke="#F4C84A" strokeDasharray="4 3" strokeWidth={1.5}
             label={{ value: `${inputs.annualReturn}%→${inputs.retirementReturn}%`, position: "insideTopRight", fontSize: 9, fill: "#F4C84A" }} />
+          <ReferenceLine x={result.planningAge} stroke="#A0A4AB" strokeDasharray="4 3" strokeWidth={1.5}
+            label={{ value: `Plan to ${result.planningAge}`, position: "top", fontSize: 10, fill: "#A0A4AB" }} />
           {statePension.include && statePensionAge > inputs.retirementAge && (
             <ReferenceLine x={statePensionAge} stroke="#4CAF50" strokeDasharray="4 3" strokeWidth={1.5}
               label={{ value: "State Pension", position: "top", fontSize: 10, fill: "#4CAF50" }} />
@@ -741,11 +778,13 @@ function ScenarioCards({ baseParams, result, retirementAge, currentAge, desiredI
   const run = (overrides) => calculateAll({ ...baseParams, ...overrides });
 
   const onTrack = result.savingsGap <= 0;
+  const planningAge = result.planningAge;
 
-  // Later-retirement ages, capped at the slider maximum (85).
+  // Later-retirement ages, capped at the slider maximum (85) and kept a sensible
+  // margin below the planning age so each scenario still models a real drawdown.
   const laterAges = [1, 3, 5]
     .map((delta) => retirementAge + delta)
-    .filter((age) => age <= 85);
+    .filter((age) => age <= 85 && age + MIN_PLANNING_YEARS <= planningAge);
 
   // Earlier-retirement ages, not below the slider minimum (45) or current age.
   const earlierAges = [1, 3, 5]
@@ -773,7 +812,7 @@ function ScenarioCards({ baseParams, result, retirementAge, currentAge, desiredI
         <ScenarioCard
           tone="positive"
           title="You may be on track"
-          lead={`Based on these assumptions, your current saving of ${fmtMoneyMo(monthlySavingsCurrent)} is enough to reach your target by age ${retirementAge}.`}
+          lead={`Based on these assumptions, your current saving of ${fmtMoneyMo(monthlySavingsCurrent)} could support your target income from age ${retirementAge} to age ${planningAge}.`}
           footnote={result.coastAge ? `The model estimates you could ease off contributions from around age ${result.coastAge} and still get there.` : undefined}
         />
 
@@ -809,7 +848,7 @@ function ScenarioCards({ baseParams, result, retirementAge, currentAge, desiredI
 
       <ScenarioCard
         title="Save more monthly"
-        lead={`Based on these assumptions, saving around ${fmtMoneyMo(result.savingsGap)} more per month keeps you on track for age ${retirementAge}.`}
+        lead={`Based on these assumptions, saving around ${fmtMoneyMo(result.savingsGap)} more per month could keep your plan on track for the pot to last to age ${planningAge}.`}
         rows={[
           { label: "You're saving now", value: fmtMoneyMo(monthlySavingsCurrent) },
           { label: "Suggested to stay on track", value: fmtMoneyMo(result.monthlySavings) },
@@ -819,7 +858,7 @@ function ScenarioCards({ baseParams, result, retirementAge, currentAge, desiredI
       {laterAges.length > 0 && (
         <ScenarioCard
           title="Retire later"
-          lead="The model estimates how the required monthly saving eases if you give your pot longer to grow:"
+          lead={`Retiring later could reduce the estimated monthly saving needed for the pot to last to age ${planningAge}:`}
           rows={laterAges.map((age) => ({
             label: `Retire at ${age}`,
             value: `${fmtMoneyMo(Math.max(0, run({ retirementAge: age }).monthlySavings))} needed`,
@@ -854,6 +893,7 @@ const DEFAULT_INPUTS = {
   annualReturn: DEFAULT_PRE_RETIREMENT_RETURN,
   monthlySavingsCurrent: 500,
   retirementReturn: DEFAULT_RETIREMENT_RETURN,
+  planningAge: DEFAULT_PLANNING_AGE,
 };
 
 const DEFAULT_INHERITANCES = [
@@ -928,6 +968,12 @@ export default function RetirementCalculator() {
 
               <SliderField label="Expected Return in Retirement" name="retirementReturn" value={inputs.retirementReturn} onChange={handleChange} min={1} max={10} step={0.5} formatDisplay={fmtPct} />
               <p className="text-xs text-gray-400 -mt-2">Portfolio typically de-risks into bonds near retirement. 3–4% reflects a balanced/cautious allocation.</p>
+
+              <SliderField label="Plan for pot to last until" name="planningAge" value={inputs.planningAge} onChange={handleChange} min={80} max={100} step={1} formatDisplay={fmtAge} />
+              <p className="text-xs text-gray-400 -mt-2">The age you want your retirement pot to be modelled to last until. Your target pot is sized to draw your income down to this age, not to last forever.</p>
+              {inputs.planningAge < inputs.retirementAge + MIN_PLANNING_YEARS && inputs.retirementAge > inputs.currentAge && (
+                <p className="text-xs -mt-1" style={{ color: '#B8860B' }}>Modelled to age {inputs.retirementAge + MIN_PLANNING_YEARS} — the plan needs at least {MIN_PLANNING_YEARS} years beyond your retirement age.</p>
+              )}
 
               <IncomeSection
                 desiredIncome={inputs.desiredIncome}
@@ -1026,7 +1072,7 @@ export default function RetirementCalculator() {
             {result ? (
               <>
                 <ResultMessage result={result} retirementAge={inputs.retirementAge} />
-                <MonthlySavingsBox result={result} retirementAge={inputs.retirementAge} monthlySavingsCurrent={inputs.monthlySavingsCurrent} />
+                <MonthlySavingsBox result={result} retirementAge={inputs.retirementAge} monthlySavingsCurrent={inputs.monthlySavingsCurrent} desiredIncome={inputs.desiredIncome} />
                 <GrowthChart inputs={inputs} inheritances={inheritances} result={result} statePension={statePension} statePensionAge={statePensionAge} />
                 <div className="rounded-3xl p-6 space-y-4" style={{ backgroundColor: '#F5F6F8', borderColor: '#E6E8EC', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
                   <h2 className="text-sm font-semibold uppercase tracking-wider" style={{ color: '#A0A4AB' }}>Your Numbers</h2>
@@ -1037,9 +1083,17 @@ export default function RetirementCalculator() {
                       value={formatGBP(result.targetPot)}
                       highlight
                       help={statePension.include
-                        ? `Based on your inputs and assumptions, the estimated pot you'd need at age ${inputs.retirementAge}, after allowing for ${formatGBP(statePension.income)}/yr of State Pension. Shown in future money.`
-                        : `Based on your inputs and assumptions, the estimated pot you'd need at age ${inputs.retirementAge}. Shown in future money.`}
+                        ? `Based on your inputs and assumptions, the estimated pot needed at age ${inputs.retirementAge} to draw your income down to age ${result.planningAge}, after allowing for ${formatGBP(statePension.income)}/yr of State Pension. Shown in future money.`
+                        : `Based on your inputs and assumptions, the estimated pot needed at age ${inputs.retirementAge} to draw your income down to age ${result.planningAge}. Shown in future money.`}
                     />
+                    {result.capitalPreservationTargetPot != null && (
+                      <ResultRow
+                        icon="○"
+                        label="Conservative comparison (preserve capital)"
+                        value={formatGBP(result.capitalPreservationTargetPot)}
+                        help={`Preserving the pot and drawing only the assumed ${inputs.retirementReturn}% return would require around this much — it never runs down. Shown for reference, not as your target.`}
+                      />
+                    )}
                     <ResultRow
                       icon="●"
                       label="Projected pot at retirement with current monthly saving"
@@ -1075,11 +1129,14 @@ export default function RetirementCalculator() {
                         help="Your target income minus the State Pension, in future money."
                       />
                     )}
-                    {result.depletionAge
-                      ? <ResultRow icon="●" label="Pot runs out at age" value={String(result.depletionAge)}
-                          help={`If you draw your full income from age ${inputs.retirementAge}, the model estimates the pot lasts until this age.`} />
-                      : <ResultRow icon="●" label="Pot lasts beyond" value={`age ${MODELLING_END_AGE}`}
-                          help="On these assumptions your pot isn't projected to run out within the modelled horizon." />
+                    {result.depletionAge == null
+                      ? <ResultRow icon="●" label="Estimated pot lasts until" value="Beyond planning age"
+                          help={`Based on your current saving, the model estimates your pot would still last beyond your planning age of ${result.planningAge} (it isn't projected to run out within the modelled horizon).`} />
+                      : result.depletionAge >= result.planningAge
+                      ? <ResultRow icon="●" label="Estimated pot lasts until" value="Beyond planning age"
+                          help={`Based on your current saving, the model estimates your pot would last to around age ${result.depletionAge} — beyond your planning age of ${result.planningAge}.`} />
+                      : <ResultRow icon="●" label="Estimated to run out around age" value={String(result.depletionAge)}
+                          help={`Based on your current saving of ${fmtMoneyMo(inputs.monthlySavingsCurrent)}, the model estimates the pot runs out before your planning age of ${result.planningAge}.`} />
                     }
                   </div>
                   <InheritanceResultBox
@@ -1112,6 +1169,8 @@ export default function RetirementCalculator() {
                     includeStatePension: statePension.include,
                     statePensionIncome: statePension.income,
                     statePensionAge,
+                    planningAge: result.planningAge,
+                    capitalPreservationTargetPot: result.capitalPreservationTargetPot,
                   })}
                 />
               </>
