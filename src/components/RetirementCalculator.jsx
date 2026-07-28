@@ -16,6 +16,8 @@ import {
   getStatePensionAge,
   getAssumptions,
 } from "../lib/assumptions.js";
+import { Link } from "../lib/Link.jsx";
+import SiteFooter from "../pages/SiteFooter.jsx";
 
 // ─── Pure Calculation Utilities ───────────────────────────────────────────────
 
@@ -453,6 +455,48 @@ function ResultMessage({ result, retirementAge }) {
         <p className="font-bold text-base" style={{ color: '#2B2B2B' }}>You may be short of your target on these assumptions.</p>
         <p className="text-sm mt-1" style={{ color: '#666666' }}>The model estimates you're currently {formatGBP(savingsGap)}/month short of the amount needed for your pot to last to age {planningAge}. You could explore saving more, retiring later, or adjusting your income target.</p>
       </div>
+    </div>
+  );
+}
+
+function CoastCard({ result, currentAge, retirementAge }) {
+  const { coastAge, yearsUntilCoast } = result;
+  const found = coastAge !== null;
+  // coastAge can land on the current age, which reads as "already there" rather
+  // than a future point to look forward to.
+  const alreadyThere = found && coastAge <= currentAge;
+
+  let body;
+  if (!found) {
+    body = "Based on these assumptions, the model does not yet identify an age where your existing savings could do the rest before retirement.";
+  } else if (alreadyThere) {
+    body = `Based on these assumptions, you may already be able to ease off contributions and still remain broadly on track for retirement at ${retirementAge}.`;
+  } else {
+    body = `Based on these assumptions, you may be able to ease off contributions from around age ${coastAge} and still remain broadly on track for retirement at ${retirementAge}.`;
+  }
+
+  const accent = found ? '#4CAF50' : '#A0A4AB';
+  const bg = found ? '#ECFDF5' : '#F5F6F8';
+
+  return (
+    <div className="rounded-3xl p-5 space-y-2" style={{ backgroundColor: bg, borderColor: accent, borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full" style={{ backgroundColor: accent }} />
+          <p className="text-sm font-semibold uppercase tracking-wider" style={{ color: '#A0A4AB' }}>When could I ease off?</p>
+        </div>
+        {found && !alreadyThere && (
+          <span className="text-lg font-bold whitespace-nowrap" style={{ color: '#2B2B2B' }}>
+            Age {coastAge}
+            {yearsUntilCoast > 0 && (
+              <span className="text-xs font-normal ml-1" style={{ color: '#A0A4AB' }}>
+                (~{yearsUntilCoast} yr{yearsUntilCoast !== 1 ? "s" : ""})
+              </span>
+            )}
+          </span>
+        )}
+      </div>
+      <p className="text-sm leading-relaxed" style={{ color: '#666666' }}>{body}</p>
     </div>
   );
 }
@@ -1074,6 +1118,7 @@ export default function RetirementCalculator() {
                 <ResultMessage result={result} retirementAge={inputs.retirementAge} />
                 <MonthlySavingsBox result={result} retirementAge={inputs.retirementAge} monthlySavingsCurrent={inputs.monthlySavingsCurrent} desiredIncome={inputs.desiredIncome} />
                 <GrowthChart inputs={inputs} inheritances={inheritances} result={result} statePension={statePension} statePensionAge={statePensionAge} />
+                <CoastCard result={result} currentAge={inputs.currentAge} retirementAge={inputs.retirementAge} />
                 <div className="rounded-3xl p-6 space-y-4" style={{ backgroundColor: '#F5F6F8', borderColor: '#E6E8EC', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
                   <h2 className="text-sm font-semibold uppercase tracking-wider" style={{ color: '#A0A4AB' }}>Your Numbers</h2>
                   <div className="space-y-2">
@@ -1173,6 +1218,11 @@ export default function RetirementCalculator() {
                     capitalPreservationTargetPot: result.capitalPreservationTargetPot,
                   })}
                 />
+
+                <p className="text-xs text-center px-0.5" style={{ color: '#A0A4AB' }}>
+                  Want the detail?{" "}
+                  <Link to="/methodology" style={{ color: '#B8860B' }}>Read how this calculator works</Link>.
+                </p>
               </>
             ) : (
               <div className="bg-white rounded-3xl p-12 flex flex-col items-center justify-center text-center space-y-3 min-h-64" style={{ borderColor: '#E6E8EC', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
@@ -1188,10 +1238,7 @@ export default function RetirementCalculator() {
           <FeedbackForm />
         </div>
 
-        <p className="text-center text-xs pb-4 max-w-lg mx-auto" style={{ color: '#A0A4AB' }}>
-          Illustrative only and not financial advice. Figures depend heavily on the inputs and the
-          modelling assumptions shown in the Assumptions panel.
-        </p>
+        <SiteFooter />
       </div>
     </div>
   );
