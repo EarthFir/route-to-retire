@@ -198,7 +198,7 @@ function SliderField({ label, name, value, onChange, min, max, step = 1, formatD
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between gap-2">
-        {label ? <label className="text-sm font-medium text-gray-600">{label}</label> : <span />}
+        {label ? <label className="text-sm font-medium text-[#4a5a5f]">{label}</label> : <span />}
         {alwaysEditable ? (
           <input
             type="text"
@@ -213,7 +213,7 @@ function SliderField({ label, name, value, onChange, min, max, step = 1, formatD
               if (e.key === "Enter") handleAlwaysEditableBlur();
             }}
             className="w-36 text-right text-sm font-semibold bg-white px-2.5 py-0.5 rounded-lg outline-none tabular-nums"
-            style={{ color: '#B8860B', borderColor: '#F4C84A', borderWidth: '2px' }}
+            style={{ color: '#1B6F81', borderColor: '#1B6F81', borderWidth: '2px' }}
           />
         ) : isEditing ? (
           <input
@@ -223,15 +223,15 @@ function SliderField({ label, name, value, onChange, min, max, step = 1, formatD
             onBlur={commit}
             onKeyDown={handleKey}
             autoFocus
-            className="w-28 text-right text-sm font-semibold text-yellow-700 bg-white border-2 border-yellow-400 px-2.5 py-0.5 rounded-lg outline-none tabular-nums [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-            style={{ borderColor: '#F4C84A', color: '#B8860B' }}
+            className="w-28 text-right text-sm font-semibold bg-white border-2 px-2.5 py-0.5 rounded-lg outline-none tabular-nums [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            style={{ borderColor: '#1B6F81', color: '#1B6F81' }}
           />
         ) : (
           <button
             onClick={startEdit}
             title="Click to type an exact value"
             className="group flex items-center gap-1 text-sm font-semibold px-2.5 py-0.5 rounded-lg tabular-nums transition-colors cursor-text"
-            style={{ color: '#B8860B', backgroundColor: '#FEF3C7' }}
+            style={{ color: '#1B6F81', backgroundColor: '#E7F1EF' }}
           >
             {formatDisplay ? formatDisplay(value) : value}
           </button>
@@ -246,7 +246,7 @@ function SliderField({ label, name, value, onChange, min, max, step = 1, formatD
         step={step}
         onChange={onChange}
         className="w-full h-2 rounded-full appearance-none cursor-pointer"
-        style={{ background: `linear-gradient(to right, #F4C84A ${pct}%, #e5e7eb ${pct}%)` }}
+        style={{ background: `linear-gradient(to right, #1B6F81 ${pct}%, #DAD7C8 ${pct}%)` }}
       />
     </div>
   );
@@ -257,9 +257,9 @@ function SliderField({ label, name, value, onChange, min, max, step = 1, formatD
 function NumberInput({ label, name, value, onChange, prefix, suffix, min, max, step = 1, placeholder }) {
   return (
     <div className="flex flex-col gap-1">
-      {label && <label className="text-sm font-medium" style={{ color: '#2B2B2B' }}>{label}</label>}
-      <div className="flex items-center border rounded-2xl bg-white transition focus-within:ring-2 focus-within:border-transparent" style={{ borderColor: '#E6E8EC', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-        {prefix && <span className="pl-3 pr-1 font-medium select-none" style={{ color: '#A0A4AB' }}>{prefix}</span>}
+      {label && <label className="text-sm font-medium" style={{ color: '#09324A' }}>{label}</label>}
+      <div className="flex items-center border rounded-2xl bg-white transition focus-within:ring-2 focus-within:border-transparent" style={{ borderColor: '#DAD7C8', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+        {prefix && <span className="pl-3 pr-1 font-medium select-none" style={{ color: '#8a9599' }}>{prefix}</span>}
         <input
           type="number"
           name={name}
@@ -269,10 +269,10 @@ function NumberInput({ label, name, value, onChange, prefix, suffix, min, max, s
           step={step}
           onChange={onChange}
           placeholder={placeholder}
-          className="flex-1 py-2.5 px-3 font-medium bg-transparent outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none placeholder:text-gray-300"
-          style={{ color: '#2B2B2B' }}
+          className="flex-1 py-2.5 px-3 font-medium bg-transparent outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none placeholder:text-[#c9c6b8]"
+          style={{ color: '#09324A' }}
         />
-        {suffix && <span className="pr-3 pl-1 font-medium select-none" style={{ color: '#A0A4AB' }}>{suffix}</span>}
+        {suffix && <span className="pr-3 pl-1 font-medium select-none" style={{ color: '#8a9599' }}>{suffix}</span>}
       </div>
     </div>
   );
@@ -283,10 +283,10 @@ function NumberInput({ label, name, value, onChange, prefix, suffix, min, max, s
 function Toggle({ checked, onChange, label }) {
   return (
     <button type="button" role="switch" aria-checked={checked} onClick={onChange} className="flex items-center gap-3 cursor-pointer group">
-      <div className="relative w-10 h-6 rounded-full transition-colors duration-200" style={{ backgroundColor: checked ? '#F4C84A' : '#D0D5DD' }}>
+      <div className="relative w-10 h-6 rounded-full transition-colors duration-200" style={{ backgroundColor: checked ? '#FFFB08' : '#DAD7C8' }}>
         <div className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-200 ${checked ? "translate-x-4" : "translate-x-0"}`} />
       </div>
-      <span className="text-sm font-medium group-hover:text-gray-900" style={{ color: '#2B2B2B' }}>{label}</span>
+      <span className="text-sm font-medium group-hover:text-[#09324A]" style={{ color: '#09324A' }}>{label}</span>
     </button>
   );
 }
@@ -311,7 +311,7 @@ function IncomeSection({ desiredIncome, onChange, currentAge, retirementAge }) {
         formatDisplay={fmtMoneyYr}
       />
       {yearsToRetirement > 0 && (
-        <p className="text-xs text-gray-400">
+        <p className="text-xs text-[#8a9599]">
           This equals {formatGBP(inflated)} in {retirementYear} at 2.5% inflation
         </p>
       )}
@@ -326,19 +326,19 @@ function FeedbackForm() {
 
   if (state.succeeded) {
     return (
-      <div className="bg-white rounded-3xl p-6 text-center" style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.05)', borderColor: '#E6E8EC', borderWidth: '1px' }}>
-        <p className="font-medium mb-2" style={{ color: '#2B2B2B' }}>Thanks for your feedback!</p>
-        <p className="text-sm mt-1" style={{ color: '#A0A4AB' }}>We really appreciate your thoughts.</p>
+      <div className="bg-white rounded-3xl p-6 text-center" style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.05)', borderColor: '#DAD7C8', borderWidth: '1px' }}>
+        <p className="font-medium mb-2" style={{ color: '#09324A' }}>Thanks for your feedback!</p>
+        <p className="text-sm mt-1" style={{ color: '#8a9599' }}>We really appreciate your thoughts.</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-3xl p-6" style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.05)', borderColor: '#E6E8EC', borderWidth: '1px' }}>
-      <h2 className="text-sm font-semibold uppercase tracking-wider mb-4" style={{ color: '#A0A4AB' }}>Feedback</h2>
+    <div className="bg-white rounded-3xl p-6" style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.05)', borderColor: '#DAD7C8', borderWidth: '1px' }}>
+      <h2 className="text-sm font-semibold uppercase tracking-wider font-display mb-4" style={{ color: '#8a9599' }}>Feedback</h2>
       <form onSubmit={handleSubmit} className="space-y-3">
         <div>
-          <label htmlFor="feedback-email" className="block text-sm font-medium mb-1" style={{ color: '#2B2B2B' }}>
+          <label htmlFor="feedback-email" className="block text-sm font-medium mb-1" style={{ color: '#09324A' }}>
             Email (optional)
           </label>
           <input
@@ -346,14 +346,14 @@ function FeedbackForm() {
             type="email"
             name="email"
             placeholder="your.email@example.com"
-            className="w-full py-2.5 px-3 font-medium bg-white rounded-2xl outline-none focus:ring-2 focus:border-transparent transition placeholder:text-gray-300"
-            style={{ color: '#2B2B2B', borderColor: '#E6E8EC', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', focusRingColor: '#F4C84A' }}
+            className="w-full py-2.5 px-3 font-medium bg-white rounded-2xl outline-none focus:ring-2 focus:border-transparent transition placeholder:text-[#c9c6b8]"
+            style={{ color: '#09324A', borderColor: '#DAD7C8', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', focusRingColor: '#1B6F81' }}
           />
           <ValidationError field="email" errors={state.errors} className="text-xs mt-1" style={{ color: '#E74C3C' }} />
         </div>
 
         <div>
-          <label htmlFor="feedback-message" className="block text-sm font-medium mb-1" style={{ color: '#2B2B2B' }}>
+          <label htmlFor="feedback-message" className="block text-sm font-medium mb-1" style={{ color: '#09324A' }}>
             What's on your mind?
           </label>
           <textarea
@@ -361,8 +361,8 @@ function FeedbackForm() {
             name="message"
             placeholder="Share your thoughts, suggestions, or bugs..."
             rows={3}
-            className="w-full py-2.5 px-3 font-medium bg-white rounded-2xl outline-none focus:ring-2 focus:border-transparent transition placeholder:text-gray-300 resize-none"
-            style={{ color: '#2B2B2B', borderColor: '#E6E8EC', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}
+            className="w-full py-2.5 px-3 font-medium bg-white rounded-2xl outline-none focus:ring-2 focus:border-transparent transition placeholder:text-[#c9c6b8] resize-none"
+            style={{ color: '#09324A', borderColor: '#DAD7C8', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}
           />
           <ValidationError field="message" errors={state.errors} className="text-xs mt-1" style={{ color: '#E74C3C' }} />
         </div>
@@ -371,7 +371,7 @@ function FeedbackForm() {
           type="submit"
           disabled={state.submitting}
           className="w-full py-2.5 px-4 font-semibold rounded-2xl hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition"
-          style={{ backgroundColor: '#F4C84A', color: '#1F1F1F' }}
+          style={{ backgroundColor: '#FFFB08', color: '#09324A', fontFamily: "'Manrope', sans-serif" }}
         >
           {state.submitting ? "Sending..." : "Send Feedback"}
         </button>
@@ -384,15 +384,15 @@ function FeedbackForm() {
 
 function ResultRow({ icon, label, value, highlight, help }) {
   return (
-    <div className="py-3 px-4 rounded-2xl" style={{ backgroundColor: highlight ? '#FFFAEB' : '#F5F6F8' }}>
+    <div className="py-3 px-4 rounded-2xl" style={{ backgroundColor: highlight ? '#FFFCE0' : '#F3F2EA' }}>
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-3">
           <span className="text-lg leading-tight">{icon}</span>
-          <span className="text-sm font-medium" style={{ color: highlight ? '#F4C84A' : '#A0A4AB' }}>{label}</span>
+          <span className="text-sm font-medium" style={{ color: highlight ? '#1B6F81' : '#8a9599' }}>{label}</span>
         </div>
-        <span className="text-base font-semibold whitespace-nowrap" style={{ color: '#2B2B2B' }}>{value}</span>
+        <span className="text-base font-semibold whitespace-nowrap" style={{ color: '#09324A' }}>{value}</span>
       </div>
-      {help && <p className="text-xs mt-1.5 ml-8 leading-relaxed" style={{ color: '#A0A4AB' }}>{help}</p>}
+      {help && <p className="text-xs mt-1.5 ml-8 leading-relaxed" style={{ color: '#8a9599' }}>{help}</p>}
     </div>
   );
 }
@@ -402,11 +402,11 @@ function ResultMessage({ result, retirementAge }) {
 
   if (isCoast) {
     return (
-      <div className="rounded-3xl p-5 flex items-start gap-3" style={{ backgroundColor: '#ECFDF5', borderColor: '#4CAF50', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-        <div className="w-2 h-2 rounded-full mt-1.5" style={{ backgroundColor: '#4CAF50' }} />
+      <div className="rounded-3xl p-5 flex items-start gap-3" style={{ backgroundColor: '#E7F1EF', borderColor: '#1B6F81', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+        <div className="w-2 h-2 rounded-full mt-1.5" style={{ backgroundColor: '#1B6F81' }} />
         <div>
-          <p className="font-bold text-base" style={{ color: '#2B2B2B' }}>You may be on track on these assumptions.</p>
-          <p className="text-sm mt-1" style={{ color: '#666666' }}>The model estimates your current savings could support your target income from age {retirementAge} to age {planningAge}, even without further contributions. Anything more is a buffer.</p>
+          <p className="font-bold text-base" style={{ color: '#09324A' }}>You may be on track on these assumptions.</p>
+          <p className="text-sm mt-1" style={{ color: '#4a5a5f' }}>The model estimates your current savings could support your target income from age {retirementAge} to age {planningAge}, even without further contributions. Anything more is a buffer.</p>
         </div>
       </div>
     );
@@ -414,11 +414,11 @@ function ResultMessage({ result, retirementAge }) {
 
   if (coastAge !== null && yearsUntilCoast <= 5) {
     return (
-      <div className="rounded-3xl p-5 flex items-start gap-3" style={{ backgroundColor: '#FFFAEB', borderColor: '#F4C84A', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-        <div className="w-2 h-2 rounded-full mt-1.5" style={{ backgroundColor: '#F4C84A' }} />
+      <div className="rounded-3xl p-5 flex items-start gap-3" style={{ backgroundColor: '#FFFCE0', borderColor: '#FFFB08', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+        <div className="w-2 h-2 rounded-full mt-1.5" style={{ backgroundColor: '#FFFB08' }} />
         <div>
-          <p className="font-bold text-base" style={{ color: '#2B2B2B' }}>You may be close to easing off.</p>
-          <p className="text-sm mt-1" style={{ color: '#666666' }}>Based on these assumptions, at your current saving rate you could ease back on contributions in around {yearsUntilCoast} year{yearsUntilCoast !== 1 ? "s" : ""}, at age {coastAge}, and still have your pot last to age {planningAge}.</p>
+          <p className="font-bold text-base" style={{ color: '#09324A' }}>You may be close to easing off.</p>
+          <p className="text-sm mt-1" style={{ color: '#4a5a5f' }}>Based on these assumptions, at your current saving rate you could ease back on contributions in around {yearsUntilCoast} year{yearsUntilCoast !== 1 ? "s" : ""}, at age {coastAge}, and still have your pot last to age {planningAge}.</p>
         </div>
       </div>
     );
@@ -426,11 +426,11 @@ function ResultMessage({ result, retirementAge }) {
 
   if (coastAge !== null) {
     return (
-      <div className="rounded-3xl p-5 flex items-start gap-3" style={{ backgroundColor: '#F0F4FF', borderColor: '#F4C84A', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-        <div className="w-2 h-2 rounded-full mt-1.5" style={{ backgroundColor: '#F4C84A' }} />
+      <div className="rounded-3xl p-5 flex items-start gap-3" style={{ backgroundColor: '#E7F1EF', borderColor: '#1B6F81', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+        <div className="w-2 h-2 rounded-full mt-1.5" style={{ backgroundColor: '#1B6F81' }} />
         <div>
-          <p className="font-bold text-base" style={{ color: '#2B2B2B' }}>You may be on track on these assumptions.</p>
-          <p className="text-sm mt-1" style={{ color: '#666666' }}>The model estimates that if you keep saving, by age {coastAge} — in around {yearsUntilCoast} year{yearsUntilCoast !== 1 ? "s" : ""} — your pot could be large enough to carry you to retirement and last to age {planningAge} on its own.</p>
+          <p className="font-bold text-base" style={{ color: '#09324A' }}>You may be on track on these assumptions.</p>
+          <p className="text-sm mt-1" style={{ color: '#4a5a5f' }}>The model estimates that if you keep saving, by age {coastAge} — in around {yearsUntilCoast} year{yearsUntilCoast !== 1 ? "s" : ""} — your pot could be large enough to carry you to retirement and last to age {planningAge} on its own.</p>
         </div>
       </div>
     );
@@ -438,11 +438,11 @@ function ResultMessage({ result, retirementAge }) {
 
   if (savingsGap <= 250) {
     return (
-      <div className="rounded-3xl p-5 flex items-start gap-3" style={{ backgroundColor: '#FFFAEB', borderColor: '#F4C84A', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-        <div className="w-2 h-2 rounded-full mt-1.5" style={{ backgroundColor: '#F4C84A' }} />
+      <div className="rounded-3xl p-5 flex items-start gap-3" style={{ backgroundColor: '#FFFCE0', borderColor: '#FFFB08', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+        <div className="w-2 h-2 rounded-full mt-1.5" style={{ backgroundColor: '#FFFB08' }} />
         <div>
-          <p className="font-bold text-base" style={{ color: '#2B2B2B' }}>You may be close on these assumptions.</p>
-          <p className="text-sm mt-1" style={{ color: '#666666' }}>The model estimates around {formatGBP(savingsGap)}/month more could bring your plan on track for the pot to last from age {retirementAge} to age {planningAge}.</p>
+          <p className="font-bold text-base" style={{ color: '#09324A' }}>You may be close on these assumptions.</p>
+          <p className="text-sm mt-1" style={{ color: '#4a5a5f' }}>The model estimates around {formatGBP(savingsGap)}/month more could bring your plan on track for the pot to last from age {retirementAge} to age {planningAge}.</p>
         </div>
       </div>
     );
@@ -452,8 +452,8 @@ function ResultMessage({ result, retirementAge }) {
     <div className="rounded-3xl p-5 flex items-start gap-3" style={{ backgroundColor: '#FEF2F2', borderColor: '#E74C3C', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
       <div className="w-2 h-2 rounded-full mt-1.5" style={{ backgroundColor: '#E74C3C' }} />
       <div>
-        <p className="font-bold text-base" style={{ color: '#2B2B2B' }}>You may be short of your target on these assumptions.</p>
-        <p className="text-sm mt-1" style={{ color: '#666666' }}>The model estimates you're currently {formatGBP(savingsGap)}/month short of the amount needed for your pot to last to age {planningAge}. You could explore saving more, retiring later, or adjusting your income target.</p>
+        <p className="font-bold text-base" style={{ color: '#09324A' }}>You may be short of your target on these assumptions.</p>
+        <p className="text-sm mt-1" style={{ color: '#4a5a5f' }}>The model estimates you're currently {formatGBP(savingsGap)}/month short of the amount needed for your pot to last to age {planningAge}. You could explore saving more, retiring later, or adjusting your income target.</p>
       </div>
     </div>
   );
@@ -475,72 +475,28 @@ function CoastCard({ result, currentAge, retirementAge }) {
     body = `Based on these assumptions, you may be able to ease off contributions from around age ${coastAge} and still remain broadly on track for retirement at ${retirementAge}.`;
   }
 
-  const accent = found ? '#4CAF50' : '#A0A4AB';
-  const bg = found ? '#ECFDF5' : '#F5F6F8';
+  const accent = found ? '#1B6F81' : '#8a9599';
+  const bg = found ? '#E7F1EF' : '#F3F2EA';
 
   return (
     <div className="rounded-3xl p-5 space-y-2" style={{ backgroundColor: bg, borderColor: accent, borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full" style={{ backgroundColor: accent }} />
-          <p className="text-sm font-semibold uppercase tracking-wider" style={{ color: '#A0A4AB' }}>When could I ease off?</p>
+          <p className="text-sm font-semibold uppercase tracking-wider font-display" style={{ color: '#8a9599' }}>When could I ease off?</p>
         </div>
         {found && !alreadyThere && (
-          <span className="text-lg font-bold whitespace-nowrap" style={{ color: '#2B2B2B' }}>
+          <span className="text-lg font-bold whitespace-nowrap font-serif" style={{ color: '#09324A' }}>
             Age {coastAge}
             {yearsUntilCoast > 0 && (
-              <span className="text-xs font-normal ml-1" style={{ color: '#A0A4AB' }}>
+              <span className="text-xs font-normal ml-1" style={{ color: '#8a9599' }}>
                 (~{yearsUntilCoast} yr{yearsUntilCoast !== 1 ? "s" : ""})
               </span>
             )}
           </span>
         )}
       </div>
-      <p className="text-sm leading-relaxed" style={{ color: '#666666' }}>{body}</p>
-    </div>
-  );
-}
-
-function MonthlySavingsBox({ result, retirementAge, monthlySavingsCurrent, desiredIncome }) {
-  const { isCoast, monthlySavings, savingsGap, planningAge } = result;
-
-  return (
-    <div className="rounded-3xl p-5" style={{ backgroundColor: isCoast ? '#ECFDF5' : '#F4C84A', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', borderColor: isCoast ? '#4CAF50' : '#F4C84A', borderWidth: '1px' }}>
-      <p className="text-xs font-semibold uppercase tracking-wider mb-1" style={{ color: isCoast ? '#4CAF50' : '#1F1F1F' }}>
-        Monthly saving needed for pot to last to age {planningAge}
-      </p>
-      <p className="text-xs mb-4" style={{ color: isCoast ? '#4CAF50' : '#1F1F1F', opacity: 0.85 }}>
-        Retire at {retirementAge} · Target income {formatGBP(desiredIncome)}/yr today · Pot modelled to age {planningAge}
-      </p>
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <span className="text-sm" style={{ color: isCoast ? '#2B2B2B' : '#1F1F1F' }}>Required</span>
-          <span className="text-2xl font-bold" style={{ color: isCoast ? '#2B2B2B' : '#1F1F1F' }}>
-            {isCoast ? "£0" : formatGBP(monthlySavings)}
-            <span className="text-sm font-normal ml-0.5" style={{ color: isCoast ? '#4CAF50' : '#1F1F1F' }}>/mo</span>
-          </span>
-        </div>
-        <div className="flex items-center justify-between">
-          <span className="text-sm" style={{ color: isCoast ? '#2B2B2B' : '#1F1F1F' }}>Currently saving</span>
-          <span className="text-2xl font-bold" style={{ color: isCoast ? '#2B2B2B' : '#1F1F1F' }}>
-            {formatGBP(monthlySavingsCurrent)}
-            <span className="text-sm font-normal ml-0.5" style={{ color: isCoast ? '#4CAF50' : '#1F1F1F' }}>/mo</span>
-          </span>
-        </div>
-        <div className="border-t pt-3 mt-1" style={{ borderColor: isCoast ? '#4CAF50' : '#D4AF3A' }}>
-          {savingsGap > 0 ? (
-            <p className="text-sm font-semibold text-center" style={{ color: '#E74C3C' }}>
-              You're {formatGBP(savingsGap)}/mo short
-            </p>
-          ) : savingsGap < 0 ? (
-            <p className="text-sm font-semibold text-center" style={{ color: '#4CAF50' }}>
-              Exceeding target by {formatGBP(Math.abs(savingsGap))}/mo
-            </p>
-          ) : (
-            <p className="text-sm font-semibold text-center" style={{ color: isCoast ? '#4CAF50' : '#1F1F1F' }}>Exactly on target</p>
-          )}
-        </div>
-      </div>
+      <p className="text-sm leading-relaxed" style={{ color: '#4a5a5f' }}>{body}</p>
     </div>
   );
 }
@@ -550,45 +506,45 @@ function InheritanceResultBox({ inheritances, inheritanceResults, totalInheritan
   if (active.length === 0) return null;
 
   return (
-    <div className="rounded-3xl p-4 space-y-3" style={{ backgroundColor: '#F0F4FF', borderColor: '#F4C84A', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+    <div className="rounded-3xl p-4 space-y-3" style={{ backgroundColor: '#E7F1EF', borderColor: '#1B6F81', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
       <div className="flex items-center gap-2">
-        <span className="w-2 h-2 rounded-full" style={{ backgroundColor: '#F4C84A' }} />
-        <p className="text-sm font-semibold" style={{ color: '#2B2B2B' }}>Inheritances</p>
+        <span className="w-2 h-2 rounded-full" style={{ backgroundColor: '#1B6F81' }} />
+        <p className="text-sm font-semibold" style={{ color: '#09324A' }}>Inheritances</p>
       </div>
       <div className="space-y-2">
         {inheritances.map((entry, i) => {
           if (!entry.amount || !entry.age) return null;
           const { futureValue, afterRetirement } = inheritanceResults[i];
           return (
-            <div key={i} className="bg-white rounded-2xl p-3 space-y-2" style={{ borderColor: '#E6E8EC', borderWidth: '1px' }}>
-              <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#A0A4AB' }}>Inheritance {i + 1}</p>
+            <div key={i} className="bg-white rounded-2xl p-3 space-y-2" style={{ borderColor: '#DAD7C8', borderWidth: '1px' }}>
+              <p className="text-xs font-semibold uppercase tracking-wider font-display" style={{ color: '#8a9599' }}>Inheritance {i + 1}</p>
               <div className="grid grid-cols-3 gap-2 text-center">
                 <div>
-                  <p className="text-xs font-medium mb-0.5" style={{ color: '#A0A4AB' }}>Amount</p>
-                  <p className="text-sm font-bold" style={{ color: '#2B2B2B' }}>{formatGBP(entry.amount)}</p>
+                  <p className="text-xs font-medium mb-0.5" style={{ color: '#8a9599' }}>Amount</p>
+                  <p className="text-sm font-bold" style={{ color: '#09324A' }}>{formatGBP(entry.amount)}</p>
                 </div>
                 <div>
-                  <p className="text-xs font-medium mb-0.5" style={{ color: '#A0A4AB' }}>Received at</p>
-                  <p className="text-sm font-bold" style={{ color: '#2B2B2B' }}>Age {entry.age}</p>
+                  <p className="text-xs font-medium mb-0.5" style={{ color: '#8a9599' }}>Received at</p>
+                  <p className="text-sm font-bold" style={{ color: '#09324A' }}>Age {entry.age}</p>
                 </div>
                 <div>
-                  <p className="text-xs font-medium mb-0.5" style={{ color: '#A0A4AB' }}>
+                  <p className="text-xs font-medium mb-0.5" style={{ color: '#8a9599' }}>
                     {afterRetirement ? "At retirement" : `At age ${retirementAge}`}
                   </p>
-                  <p className="text-sm font-bold" style={{ color: '#2B2B2B' }}>{formatGBP(futureValue)}</p>
+                  <p className="text-sm font-bold" style={{ color: '#09324A' }}>{formatGBP(futureValue)}</p>
                 </div>
               </div>
               {afterRetirement && (
-                <p className="text-xs text-center" style={{ color: '#A0A4AB' }}>Received after retirement — counted at face value</p>
+                <p className="text-xs text-center" style={{ color: '#8a9599' }}>Received after retirement — counted at face value</p>
               )}
             </div>
           );
         })}
       </div>
       {active.length > 1 && (
-        <div className="flex items-center justify-between rounded-2xl px-4 py-2.5" style={{ backgroundColor: '#FEF3C7' }}>
-          <p className="text-xs font-semibold" style={{ color: '#2B2B2B' }}>Total at retirement</p>
-          <p className="text-sm font-bold" style={{ color: '#2B2B2B' }}>{formatGBP(totalInheritanceFV)}</p>
+        <div className="flex items-center justify-between rounded-2xl px-4 py-2.5" style={{ backgroundColor: '#E7F1EF' }}>
+          <p className="text-xs font-semibold" style={{ color: '#09324A' }}>Total at retirement</p>
+          <p className="text-sm font-bold" style={{ color: '#09324A' }}>{formatGBP(totalInheritanceFV)}</p>
         </div>
       )}
     </div>
@@ -651,11 +607,11 @@ function formatYAxis(value) {
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-white border rounded-2xl shadow-lg px-3 py-2 text-sm" style={{ borderColor: '#E6E8EC', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
-      <p className="font-semibold mb-1" style={{ color: '#2B2B2B' }}>Age {label}</p>
-      <p className="font-bold" style={{ color: '#F4C84A' }}>{formatGBP(payload[0].value)}</p>
-      {payload[0].payload.inheritanceThisYear && <p className="text-xs mt-1" style={{ color: '#F4C84A' }}>Inheritance received</p>}
-      {payload[0].payload.statePensionKickIn && <p className="text-xs mt-1" style={{ color: '#4CAF50' }}>State pension starts</p>}
+    <div className="bg-white border rounded-2xl shadow-lg px-3 py-2 text-sm" style={{ borderColor: '#DAD7C8', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+      <p className="font-semibold mb-1" style={{ color: '#09324A' }}>Age {label}</p>
+      <p className="font-bold" style={{ color: '#09324A' }}>{formatGBP(payload[0].value)}</p>
+      {payload[0].payload.inheritanceThisYear && <p className="text-xs mt-1" style={{ color: '#09324A' }}>Inheritance received</p>}
+      {payload[0].payload.statePensionKickIn && <p className="text-xs mt-1" style={{ color: '#1B6F81' }}>State pension starts</p>}
     </div>
   );
 };
@@ -663,13 +619,13 @@ const CustomTooltip = ({ active, payload, label }) => {
 const InheritanceDot = (props) => {
   const { cx, cy, payload } = props;
   if (!payload.inheritanceThisYear) return null;
-  return <circle cx={cx} cy={cy} r={5} fill="#F4C84A" stroke="#fff" strokeWidth={2} />;
+  return <circle cx={cx} cy={cy} r={5} fill="#FFFB08" stroke="#fff" strokeWidth={2} />;
 };
 
 const StatePensionDot = (props) => {
   const { cx, cy, payload } = props;
   if (!payload.statePensionKickIn) return null;
-  return <circle cx={cx} cy={cy} r={5} fill="#4CAF50" stroke="#fff" strokeWidth={2} />;
+  return <circle cx={cx} cy={cy} r={5} fill="#AED0C9" stroke="#09324A" strokeWidth={2} />;
 };
 
 const ChartDot = (props) => {
@@ -678,7 +634,34 @@ const ChartDot = (props) => {
   return null;
 };
 
-function GrowthChart({ inputs, inheritances, result, statePension, statePensionAge }) {
+// ─── "In use" hero: the dark navy card from the design system, carrying the
+// key stats and the growth chart — the app's single most recognisable surface.
+
+function StatPill({ status }) {
+  const copy = status === 'green' ? 'On track' : status === 'amber' ? 'Close to target' : 'Action needed';
+  return (
+    <div className="ml-auto font-display text-xs font-semibold px-3.5 py-1.5 rounded-full" style={{ color: '#F3F2EA', backgroundColor: 'rgba(255,255,255,.08)', border: '1px solid rgba(255,255,255,.18)' }}>
+      {copy}
+    </div>
+  );
+}
+
+function StatTile({ label, value, sub, accent }) {
+  return (
+    <div
+      className="rounded-2xl p-5 min-w-0"
+      style={accent
+        ? { background: 'linear-gradient(155deg, rgba(255,251,8,.14), rgba(255,255,255,.03))', border: '1px solid rgba(255,251,8,.28)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,.18)' }
+        : { background: 'linear-gradient(155deg, rgba(255,255,255,.10), rgba(255,255,255,.02))', border: '1px solid rgba(255,255,255,.14)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,.18)' }}
+    >
+      <div className="font-display text-xs" style={{ color: '#AED0C9' }}>{label}</div>
+      <div className="font-serif font-bold text-lg sm:text-xl mt-2 whitespace-nowrap tabular-nums" style={{ color: accent ? '#FFFB08' : '#F3F2EA', lineHeight: 1.15 }}>{value}</div>
+      {sub && <div className="text-xs mt-2 break-words" style={{ color: '#AED0C9' }}>{sub}</div>}
+    </div>
+  );
+}
+
+function GrowthChart({ inputs, inheritances, result, statePension, statePensionAge, monthlySavingsCurrent }) {
   const data = buildChartData({
     currentAge: inputs.currentAge,
     retirementAge: inputs.retirementAge,
@@ -694,51 +677,80 @@ function GrowthChart({ inputs, inheritances, result, statePension, statePensionA
     planningAge: result.planningAge,
   });
   const hasInheritance = inheritances.some(({ amount, age }) => amount > 0 && age > 0);
+  const { isCoast, monthlySavings, savingsGap } = result;
 
   return (
-    <div className="rounded-3xl p-5 space-y-3" style={{ backgroundColor: '#F5F6F8', borderColor: '#E6E8EC', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-      <div className="flex items-center justify-between flex-wrap gap-2">
-        <h2 className="text-sm font-semibold uppercase tracking-wider" style={{ color: '#A0A4AB' }}>Savings Trajectory</h2>
-        <div className="flex items-center gap-3 text-xs flex-wrap" style={{ color: '#A0A4AB' }}>
-          <span className="flex items-center gap-1"><span className="w-3 h-0.5 inline-block rounded" style={{ backgroundColor: '#F4C84A' }} /> Projected pot</span>
-          <span className="flex items-center gap-1"><span className="w-3 h-0.5 inline-block rounded" style={{ backgroundColor: '#E74C3C' }} /> Target</span>
-          {result.coastAge && <span className="flex items-center gap-1"><span className="w-3 h-0.5 inline-block rounded" style={{ backgroundColor: '#4CAF50' }} /> Coast age</span>}
-          <span className="flex items-center gap-1"><span className="w-3 h-0.5 inline-block rounded" style={{ backgroundColor: '#A0A4AB' }} /> Plan to {result.planningAge}</span>
-          {hasInheritance && <span className="flex items-center gap-1"><span className="inline-block w-2.5 h-2.5 rounded-full" style={{ backgroundColor: '#F4C84A' }} /> Inheritance</span>}
-          {statePension.include && statePensionAge > inputs.retirementAge && <span className="flex items-center gap-1"><span className="inline-block w-2.5 h-2.5 rounded-full" style={{ backgroundColor: '#4CAF50' }} /> State pension</span>}
-        </div>
+    <div
+      className="relative rounded-[28px] p-6 sm:p-9 overflow-hidden"
+      style={{
+        background: 'linear-gradient(160deg,#0c4060 0%,#09324A 46%,#061f2e 100%)',
+        border: '1px solid rgba(255,255,255,.10)',
+        boxShadow: '0 42px 90px -46px rgba(6,31,46,.9), inset 0 1px 0 rgba(255,255,255,.16)',
+      }}
+    >
+      <div className="absolute pointer-events-none" style={{ top: -130, right: -70, width: 360, height: 360, borderRadius: '50%', background: 'radial-gradient(circle, rgba(174,208,201,.22), rgba(174,208,201,0) 70%)' }} />
+      <div className="absolute pointer-events-none" style={{ bottom: -160, left: -60, width: 320, height: 320, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,251,8,.10), rgba(255,251,8,0) 70%)' }} />
+
+      <div className="relative font-display text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: '#AED0C9' }}>Results</div>
+      <div className="relative flex items-center gap-3 mb-7">
+        <div className="w-10 h-10 rounded-full flex items-center justify-center font-serif font-bold" style={{ backgroundColor: '#FFFB08', color: '#09324A' }}>RR</div>
+        <div className="font-display font-bold text-lg" style={{ color: '#F3F2EA' }}>Retirement projection</div>
+        <StatPill status={result.status} />
       </div>
-      <ResponsiveContainer width="100%" height={200}>
-        <AreaChart data={data} margin={{ top: 10, right: 8, left: 8, bottom: 0 }}>
-          <defs>
-            <linearGradient id="potGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#F4C84A" stopOpacity={0.25} />
-              <stop offset="95%" stopColor="#F4C84A" stopOpacity={0.03} />
-            </linearGradient>
-          </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
-          <XAxis dataKey="age" tick={{ fontSize: 11, fill: "#A0A4AB" }} tickLine={false} axisLine={false}
-            label={{ value: "Age", position: "insideBottomRight", offset: -4, fontSize: 11, fill: "#A0A4AB" }} />
-          <YAxis tickFormatter={formatYAxis} tick={{ fontSize: 11, fill: "#A0A4AB" }} tickLine={false} axisLine={false} width={48} />
-          <Tooltip content={<CustomTooltip />} />
-          <ReferenceLine y={result.targetPot} stroke="#E74C3C" strokeDasharray="5 3" strokeWidth={1.5}
-            label={{ value: "Target", position: "right", fontSize: 10, fill: "#E74C3C" }} />
-          {result.coastAge && (
-            <ReferenceLine x={result.coastAge} stroke="#4CAF50" strokeDasharray="4 3" strokeWidth={1.5}
-              label={{ value: "Coast", position: "top", fontSize: 10, fill: "#4CAF50" }} />
-          )}
-          <ReferenceLine x={inputs.retirementAge} stroke="#F4C84A" strokeDasharray="4 3" strokeWidth={1.5}
-            label={{ value: `${inputs.annualReturn}%→${inputs.retirementReturn}%`, position: "insideTopRight", fontSize: 9, fill: "#F4C84A" }} />
-          <ReferenceLine x={result.planningAge} stroke="#A0A4AB" strokeDasharray="4 3" strokeWidth={1.5}
-            label={{ value: `Plan to ${result.planningAge}`, position: "top", fontSize: 10, fill: "#A0A4AB" }} />
-          {statePension.include && statePensionAge > inputs.retirementAge && (
-            <ReferenceLine x={statePensionAge} stroke="#4CAF50" strokeDasharray="4 3" strokeWidth={1.5}
-              label={{ value: "State Pension", position: "top", fontSize: 10, fill: "#4CAF50" }} />
-          )}
-          <Area type="monotone" dataKey="total" stroke="#F4C84A" strokeWidth={2.5} fill="url(#potGradient)"
-            dot={<ChartDot />} activeDot={{ r: 4, fill: "#F4C84A", stroke: "#fff", strokeWidth: 2 }} />
-        </AreaChart>
-      </ResponsiveContainer>
+
+      <div className="relative grid grid-cols-1 sm:grid-cols-3 gap-3.5 mb-7">
+        <StatTile accent label={`Target pot at ${inputs.retirementAge}`} value={formatGBP(result.targetPot)} />
+        <StatTile
+          label="Monthly saving needed"
+          value={isCoast ? '£0/mo' : `${formatGBP(monthlySavings)}/mo`}
+          sub={savingsGap > 0 ? `${fmtMoneyMo(savingsGap)} more than now` : `Saving ${fmtMoneyMo(monthlySavingsCurrent)} now`}
+        />
+        <StatTile label={`Projected pot at ${inputs.retirementAge}`} value={formatGBP(result.projectedPotWithSaving)} />
+      </div>
+
+      <div className="relative rounded-2xl p-5" style={{ background: 'linear-gradient(155deg, rgba(255,255,255,.09), rgba(255,255,255,.015))', border: '1px solid rgba(255,255,255,.14)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,.18)' }}>
+        <div className="flex items-center justify-between flex-wrap gap-2 mb-2">
+          <span className="font-display font-semibold text-sm" style={{ color: '#F3F2EA' }}>Projected growth</span>
+          <div className="flex items-center gap-3 text-[11px] flex-wrap" style={{ color: '#AED0C9' }}>
+            <span className="flex items-center gap-1"><span className="w-3 h-0.5 inline-block rounded" style={{ backgroundColor: '#FFFB08' }} /> Projected pot</span>
+            <span className="flex items-center gap-1"><span className="w-3 h-0.5 inline-block rounded" style={{ backgroundColor: '#FF9A85' }} /> Target</span>
+            {result.coastAge && <span className="flex items-center gap-1"><span className="w-3 h-0.5 inline-block rounded" style={{ backgroundColor: '#F3F2EA' }} /> Coast age</span>}
+            {hasInheritance && <span className="flex items-center gap-1"><span className="inline-block w-2.5 h-2.5 rounded-full" style={{ backgroundColor: '#FFFB08' }} /> Inheritance</span>}
+            {statePension.include && statePensionAge > inputs.retirementAge && <span className="flex items-center gap-1"><span className="inline-block w-2.5 h-2.5 rounded-full" style={{ backgroundColor: '#AED0C9' }} /> State pension</span>}
+          </div>
+        </div>
+        <ResponsiveContainer width="100%" height={200}>
+          <AreaChart data={data} margin={{ top: 10, right: 8, left: 8, bottom: 0 }}>
+            <defs>
+              <linearGradient id="potGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#FFFB08" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="#AED0C9" stopOpacity={0.02} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="4 6" stroke="rgba(255,255,255,.10)" vertical={false} />
+            <XAxis dataKey="age" tick={{ fontSize: 11, fill: "#7fa0a0" }} tickLine={false} axisLine={false}
+              label={{ value: "Age", position: "insideBottomRight", offset: -4, fontSize: 11, fill: "#7fa0a0" }} />
+            <YAxis tickFormatter={formatYAxis} tick={{ fontSize: 11, fill: "#7fa0a0" }} tickLine={false} axisLine={false} width={48} />
+            <Tooltip content={<CustomTooltip />} />
+            <ReferenceLine y={result.targetPot} stroke="#FF9A85" strokeDasharray="5 3" strokeWidth={1.5}
+              label={{ value: "Target", position: "right", fontSize: 10, fill: "#FF9A85" }} />
+            {result.coastAge && (
+              <ReferenceLine x={result.coastAge} stroke="#F3F2EA" strokeDasharray="4 3" strokeWidth={1.5}
+                label={{ value: "Coast", position: "top", fontSize: 10, fill: "#F3F2EA" }} />
+            )}
+            <ReferenceLine x={inputs.retirementAge} stroke="#FFFB08" strokeDasharray="4 3" strokeWidth={2}
+              label={{ value: `${inputs.annualReturn}%→${inputs.retirementReturn}%`, position: "insideTopRight", fontSize: 9, fill: "#FFFB08" }} />
+            <ReferenceLine x={result.planningAge} stroke="#AED0C9" strokeDasharray="4 3" strokeWidth={1.5}
+              label={{ value: `Plan to ${result.planningAge}`, position: "top", fontSize: 10, fill: "#AED0C9" }} />
+            {statePension.include && statePensionAge > inputs.retirementAge && (
+              <ReferenceLine x={statePensionAge} stroke="#AED0C9" strokeDasharray="4 3" strokeWidth={1.5}
+                label={{ value: "State Pension", position: "top", fontSize: 10, fill: "#AED0C9" }} />
+            )}
+            <Area type="monotone" dataKey="total" stroke="#FFFB08" strokeWidth={2.5} fill="url(#potGradient)"
+              dot={<ChartDot />} activeDot={{ r: 4, fill: "#FFFB08", stroke: "#09324A", strokeWidth: 2 }} />
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 }
@@ -749,7 +761,7 @@ function AssumptionsPanel({ assumptions }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="bg-white rounded-3xl overflow-hidden" style={{ borderColor: '#E6E8EC', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+    <div className="bg-white rounded-3xl overflow-hidden" style={{ borderColor: '#DAD7C8', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
@@ -757,12 +769,12 @@ function AssumptionsPanel({ assumptions }) {
         className="w-full flex items-center justify-between gap-3 px-6 py-4 text-left"
       >
         <div>
-          <h2 className="text-sm font-semibold uppercase tracking-wider" style={{ color: '#A0A4AB' }}>Assumptions</h2>
-          <p className="text-xs mt-0.5" style={{ color: '#A0A4AB' }}>What these figures are based on</p>
+          <h2 className="text-sm font-semibold uppercase tracking-wider font-display" style={{ color: '#8a9599' }}>Assumptions</h2>
+          <p className="text-xs mt-0.5" style={{ color: '#8a9599' }}>What these figures are based on</p>
         </div>
         <span
           className="text-lg font-semibold transition-transform duration-200"
-          style={{ color: '#B8860B', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}
+          style={{ color: '#1B6F81', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}
         >
           ⌄
         </span>
@@ -770,17 +782,17 @@ function AssumptionsPanel({ assumptions }) {
 
       {open && (
         <div className="px-6 pb-6 space-y-4">
-          <p className="text-xs leading-relaxed rounded-2xl px-4 py-3" style={{ color: '#2B2B2B', backgroundColor: '#FFFAEB' }}>
+          <p className="text-xs leading-relaxed rounded-2xl px-4 py-3" style={{ color: '#09324A', backgroundColor: '#FFFCE0' }}>
             These results are illustrative and depend heavily on the assumptions below. They are not financial advice.
           </p>
           <div className="space-y-2">
             {assumptions.map(({ label, value, note }) => (
-              <div key={label} className="rounded-2xl px-4 py-3" style={{ backgroundColor: '#F5F6F8' }}>
+              <div key={label} className="rounded-2xl px-4 py-3" style={{ backgroundColor: '#F3F2EA' }}>
                 <div className="flex items-center justify-between gap-3">
-                  <span className="text-sm font-medium" style={{ color: '#A0A4AB' }}>{label}</span>
-                  <span className="text-sm font-semibold text-right" style={{ color: '#2B2B2B' }}>{value}</span>
+                  <span className="text-sm font-medium" style={{ color: '#8a9599' }}>{label}</span>
+                  <span className="text-sm font-semibold text-right" style={{ color: '#09324A' }}>{value}</span>
                 </div>
-                {note && <p className="text-xs mt-1 leading-relaxed" style={{ color: '#A0A4AB' }}>{note}</p>}
+                {note && <p className="text-xs mt-1 leading-relaxed" style={{ color: '#8a9599' }}>{note}</p>}
               </div>
             ))}
           </div>
@@ -793,26 +805,26 @@ function AssumptionsPanel({ assumptions }) {
 // ─── "What could close the gap?" scenario cards ───────────────────────────────
 
 function ScenarioCard({ title, lead, rows, footnote, tone = "neutral" }) {
-  const accent = tone === "positive" ? '#4CAF50' : '#B8860B';
-  const badgeBg = tone === "positive" ? '#ECFDF5' : '#FFFAEB';
+  const accent = tone === "positive" ? '#1B6F81' : '#09324A';
+  const badgeBg = tone === "positive" ? '#E7F1EF' : '#FFFCE0';
   return (
-    <div className="bg-white rounded-3xl p-5 space-y-3" style={{ borderColor: '#E6E8EC', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+    <div className="bg-white rounded-3xl p-5 space-y-3" style={{ borderColor: '#DAD7C8', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
       <div className="flex items-center gap-2">
         <span className="w-2 h-2 rounded-full" style={{ backgroundColor: accent }} />
-        <p className="font-bold text-base" style={{ color: '#2B2B2B' }}>{title}</p>
+        <p className="font-bold text-base" style={{ color: '#09324A' }}>{title}</p>
       </div>
-      {lead && <p className="text-sm" style={{ color: '#666666' }}>{lead}</p>}
+      {lead && <p className="text-sm" style={{ color: '#4a5a5f' }}>{lead}</p>}
       {rows && rows.length > 0 && (
         <div className="space-y-2">
           {rows.map((row, i) => (
             <div key={i} className="flex items-center justify-between gap-3 rounded-2xl px-4 py-2.5" style={{ backgroundColor: badgeBg }}>
-              <span className="text-sm" style={{ color: '#2B2B2B' }}>{row.label}</span>
-              <span className="text-sm font-semibold text-right" style={{ color: '#2B2B2B' }}>{row.value}</span>
+              <span className="text-sm" style={{ color: '#09324A' }}>{row.label}</span>
+              <span className="text-sm font-semibold text-right" style={{ color: '#09324A' }}>{row.value}</span>
             </div>
           ))}
         </div>
       )}
-      {footnote && <p className="text-xs" style={{ color: '#A0A4AB' }}>{footnote}</p>}
+      {footnote && <p className="text-xs" style={{ color: '#8a9599' }}>{footnote}</p>}
     </div>
   );
 }
@@ -839,8 +851,8 @@ function ScenarioCards({ baseParams, result, retirementAge, currentAge, desiredI
 
   const heading = (
     <div className="space-y-1">
-      <h2 className="text-lg font-bold" style={{ color: '#2B2B2B' }}>What could close the gap?</h2>
-      <p className="text-xs" style={{ color: '#A0A4AB' }}>
+      <h2 className="text-lg font-bold font-serif" style={{ color: '#09324A' }}>What could close the gap?</h2>
+      <p className="text-xs" style={{ color: '#8a9599' }}>
         {onTrack
           ? "You look on track — here are ways to pressure-test or flex your plan. Based on these assumptions, not advice."
           : "A few routes that the model estimates could get you to your target. These are illustrations, not advice."}
@@ -946,7 +958,7 @@ const DEFAULT_INHERITANCES = [
   { amount: 0, age: 0 },
 ];
 
-export default function RetirementCalculator() {
+export default function RetirementCalculator({ embedded = false } = {}) {
   const [inputs, setInputs] = useState(DEFAULT_INPUTS);
   const [inheritances, setInheritances] = useState(DEFAULT_INHERITANCES);
   const [statePension, setStatePension] = useState({ include: false, income: DEFAULT_STATE_PENSION_INCOME });
@@ -975,20 +987,22 @@ export default function RetirementCalculator() {
   }, [inputs, inheritances, statePension, statePensionAge]);
 
   return (
-    <div className="min-h-screen px-4 py-10" style={{ backgroundColor: '#F5F6F8' }}>
-      <div className="w-full max-w-6xl mx-auto">
+    <div className={embedded ? "w-full" : "min-h-screen px-4 py-10"} style={embedded ? undefined : { backgroundColor: '#F3F2EA' }}>
+      <div className={embedded ? "w-full" : "w-full max-w-6xl mx-auto"}>
 
         {/* Header */}
-        <div className="text-center space-y-4 mb-12">
-          <h1 className="text-5xl font-bold tracking-tight" style={{ color: '#F4C84A' }}>Route to Retire</h1>
-          <div className="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full mb-2" style={{ backgroundColor: '#FFFAEB', color: '#F4C84A' }}>
-            RETIREMENT CALCULATOR
+        {!embedded && (
+          <div className="text-center space-y-4 mb-12">
+            <h1 className="text-6xl sm:text-7xl font-extrabold" style={{ color: '#09324A', fontFamily: "'Source Serif 4', serif", letterSpacing: '-0.02em', lineHeight: 1.02 }}>Route to Retire</h1>
+            <div className="inline-flex items-center gap-2 text-xs font-bold px-3 py-1 rounded-full mb-2 uppercase tracking-widest" style={{ backgroundColor: '#E7F1EF', color: '#1B6F81', fontFamily: "'Manrope', sans-serif" }}>
+              RETIREMENT CALCULATOR
+            </div>
+            <h2 className="text-3xl font-bold tracking-tight" style={{ color: '#09324A', fontFamily: "'Source Serif 4', serif" }}>Are You Saving Enough to Retire?</h2>
+            <p className="text-sm leading-relaxed max-w-lg mx-auto" style={{ color: '#8a9599' }}>
+              See if you're on track to meet your retirement goals — and find out when you could afford to ease back on contributions and let your savings do the work.
+            </p>
           </div>
-          <h2 className="text-2xl font-bold tracking-tight" style={{ color: '#2B2B2B' }}>Are You Saving Enough to Retire?</h2>
-          <p className="text-sm leading-relaxed max-w-lg mx-auto" style={{ color: '#A0A4AB' }}>
-            See if you're on track to meet your retirement goals — and find out when you could afford to ease back on contributions and let your savings do the work.
-          </p>
-        </div>
+        )}
 
         {/* Side-by-side layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
@@ -997,8 +1011,8 @@ export default function RetirementCalculator() {
           <div className="space-y-4">
 
             {/* Your Details */}
-            <div className="bg-white rounded-3xl p-6 space-y-5" style={{ borderColor: '#E6E8EC', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-              <h2 className="text-sm font-semibold uppercase tracking-wider" style={{ color: '#A0A4AB' }}>Your Details</h2>
+            <div className="bg-white rounded-3xl p-6 space-y-5" style={{ borderColor: '#DAD7C8', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+              <h2 className="text-sm font-semibold uppercase tracking-wider font-display" style={{ color: '#8a9599' }}>Your Details</h2>
 
               <div className="grid grid-cols-2 gap-6">
                 <SliderField label="Current Age"    name="currentAge"    value={inputs.currentAge}    onChange={handleChange} min={18} max={75}  step={1}   formatDisplay={fmtAge} />
@@ -1008,15 +1022,15 @@ export default function RetirementCalculator() {
               <SliderField label="Current Savings"       name="currentSavings"        value={inputs.currentSavings}        onChange={handleChange} min={0} max={1000000} step={1000} formatDisplay={formatGBP} alwaysEditable />
               <SliderField label="Current Monthly Saving" name="monthlySavingsCurrent" value={inputs.monthlySavingsCurrent} onChange={handleChange} min={0} max={3000}    step={50}   formatDisplay={fmtMoneyMo} alwaysEditable />
               <SliderField label="Expected Annual Return" name="annualReturn"          value={inputs.annualReturn}          onChange={handleChange} min={1} max={15}      step={0.5}  formatDisplay={fmtPct} />
-              <p className="text-xs text-gray-400 -mt-1">Default 7% reflects long-run equity market average. Adjust based on your portfolio.</p>
+              <p className="text-xs text-[#8a9599] -mt-1">Default 7% reflects long-run equity market average. Adjust based on your portfolio.</p>
 
               <SliderField label="Expected Return in Retirement" name="retirementReturn" value={inputs.retirementReturn} onChange={handleChange} min={1} max={10} step={0.5} formatDisplay={fmtPct} />
-              <p className="text-xs text-gray-400 -mt-2">Portfolio typically de-risks into bonds near retirement. 3–4% reflects a balanced/cautious allocation.</p>
+              <p className="text-xs text-[#8a9599] -mt-2">Portfolio typically de-risks into bonds near retirement. 3–4% reflects a balanced/cautious allocation.</p>
 
               <SliderField label="Plan for pot to last until" name="planningAge" value={inputs.planningAge} onChange={handleChange} min={80} max={100} step={1} formatDisplay={fmtAge} />
-              <p className="text-xs text-gray-400 -mt-2">The age you want your retirement pot to be modelled to last until. Your target pot is sized to draw your income down to this age, not to last forever.</p>
+              <p className="text-xs text-[#8a9599] -mt-2">The age you want your retirement pot to be modelled to last until. Your target pot is sized to draw your income down to this age, not to last forever.</p>
               {inputs.planningAge < inputs.retirementAge + MIN_PLANNING_YEARS && inputs.retirementAge > inputs.currentAge && (
-                <p className="text-xs -mt-1" style={{ color: '#B8860B' }}>Modelled to age {inputs.retirementAge + MIN_PLANNING_YEARS} — the plan needs at least {MIN_PLANNING_YEARS} years beyond your retirement age.</p>
+                <p className="text-xs -mt-1" style={{ color: '#1B6F81' }}>Modelled to age {inputs.retirementAge + MIN_PLANNING_YEARS} — the plan needs at least {MIN_PLANNING_YEARS} years beyond your retirement age.</p>
               )}
 
               <IncomeSection
@@ -1028,12 +1042,12 @@ export default function RetirementCalculator() {
             </div>
 
             {/* State Pension */}
-            <div className="bg-white rounded-3xl p-6 space-y-4" style={{ borderColor: '#E6E8EC', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+            <div className="bg-white rounded-3xl p-6 space-y-4" style={{ borderColor: '#DAD7C8', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
               <div className="flex items-center justify-between gap-2">
-                <h2 className="text-sm font-semibold uppercase tracking-wider" style={{ color: '#A0A4AB' }}>State Pension</h2>
+                <h2 className="text-sm font-semibold uppercase tracking-wider font-display" style={{ color: '#8a9599' }}>State Pension</h2>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs px-2 py-0.5 rounded-full" style={{ color: '#A0A4AB', backgroundColor: '#F5F6F8' }}>Optional</span>
-                  <span className="text-xs px-2 py-0.5 rounded-full" style={{ color: '#A0A4AB', backgroundColor: '#F5F6F8', borderColor: '#E6E8EC', borderWidth: '1px' }}>
+                  <span className="text-xs px-2 py-0.5 rounded-full" style={{ color: '#8a9599', backgroundColor: '#F3F2EA' }}>Optional</span>
+                  <span className="text-xs px-2 py-0.5 rounded-full" style={{ color: '#8a9599', backgroundColor: '#F3F2EA', borderColor: '#DAD7C8', borderWidth: '1px' }}>
                     Eligible from {statePensionAge}
                   </span>
                 </div>
@@ -1055,11 +1069,11 @@ export default function RetirementCalculator() {
                     min={0}
                     step={100}
                   />
-                  <p className="text-xs" style={{ color: '#A0A4AB' }}>Assumes current UK State Pension (~£11,500/yr). Subject to change.</p>
+                  <p className="text-xs" style={{ color: '#8a9599' }}>Assumes current UK State Pension (~£11,500/yr). Subject to change.</p>
                   {inputs.retirementAge < statePensionAge && (
-                    <div className="rounded-2xl p-3 flex items-start gap-2" style={{ backgroundColor: '#FFFAEB', borderColor: '#F4C84A', borderWidth: '1px' }}>
+                    <div className="rounded-2xl p-3 flex items-start gap-2" style={{ backgroundColor: '#FFFCE0', borderColor: '#FFFB08', borderWidth: '1px' }}>
                       <span className="text-sm">!</span>
-                      <p className="text-xs" style={{ color: '#2B2B2B' }}>
+                      <p className="text-xs" style={{ color: '#09324A' }}>
                         Your state pension won't start until age {statePensionAge},{" "}
                         {statePensionAge - inputs.retirementAge} year{statePensionAge - inputs.retirementAge !== 1 ? "s" : ""} into retirement.
                         Your target pot accounts for this gap.
@@ -1071,15 +1085,15 @@ export default function RetirementCalculator() {
             </div>
 
             {/* Inheritances */}
-            <div className="bg-white rounded-3xl p-6 space-y-4" style={{ borderColor: '#E6E8EC', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+            <div className="bg-white rounded-3xl p-6 space-y-4" style={{ borderColor: '#DAD7C8', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
               <div className="flex items-center justify-between">
-                <h2 className="text-sm font-semibold uppercase tracking-wider" style={{ color: '#A0A4AB' }}>Expected Inheritances</h2>
-                <span className="text-xs px-2 py-0.5 rounded-full" style={{ color: '#A0A4AB', backgroundColor: '#F5F6F8' }}>Optional</span>
+                <h2 className="text-sm font-semibold uppercase tracking-wider font-display" style={{ color: '#8a9599' }}>Expected Inheritances</h2>
+                <span className="text-xs px-2 py-0.5 rounded-full" style={{ color: '#8a9599', backgroundColor: '#F3F2EA' }}>Optional</span>
               </div>
-              <p className="text-xs -mt-1" style={{ color: '#A0A4AB' }}>Inheritances received before retirement will be invested and grow until you retire.</p>
+              <p className="text-xs -mt-1" style={{ color: '#8a9599' }}>Inheritances received before retirement will be invested and grow until you retire.</p>
               {inheritances.map((entry, i) => (
                 <div key={i} className="space-y-3">
-                  <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#A0A4AB' }}>Inheritance {i + 1}</p>
+                  <p className="text-xs font-semibold uppercase tracking-wider font-display" style={{ color: '#8a9599' }}>Inheritance {i + 1}</p>
                   <div className="grid grid-cols-3 gap-4">
                     <div className="col-span-2">
                       <SliderField
@@ -1104,7 +1118,7 @@ export default function RetirementCalculator() {
                       max={120}
                     />
                   </div>
-                  {i < inheritances.length - 1 && <div className="border-t border-gray-100 pt-1" />}
+                  {i < inheritances.length - 1 && <div className="border-t border-[#F3F2EA] pt-1" />}
                 </div>
               ))}
             </div>
@@ -1112,15 +1126,13 @@ export default function RetirementCalculator() {
 
           {/* ── RIGHT: Results ── */}
           <div className="space-y-4 lg:sticky lg:top-6">
-            <h2 className="text-sm font-semibold uppercase tracking-wider px-0.5" style={{ color: '#A0A4AB' }}>Results</h2>
             {result ? (
               <>
+                <GrowthChart inputs={inputs} inheritances={inheritances} result={result} statePension={statePension} statePensionAge={statePensionAge} monthlySavingsCurrent={inputs.monthlySavingsCurrent} />
                 <ResultMessage result={result} retirementAge={inputs.retirementAge} />
-                <MonthlySavingsBox result={result} retirementAge={inputs.retirementAge} monthlySavingsCurrent={inputs.monthlySavingsCurrent} desiredIncome={inputs.desiredIncome} />
-                <GrowthChart inputs={inputs} inheritances={inheritances} result={result} statePension={statePension} statePensionAge={statePensionAge} />
                 <CoastCard result={result} currentAge={inputs.currentAge} retirementAge={inputs.retirementAge} />
-                <div className="rounded-3xl p-6 space-y-4" style={{ backgroundColor: '#F5F6F8', borderColor: '#E6E8EC', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-                  <h2 className="text-sm font-semibold uppercase tracking-wider" style={{ color: '#A0A4AB' }}>Your Numbers</h2>
+                <div className="rounded-3xl p-6 space-y-4" style={{ backgroundColor: '#F3F2EA', borderColor: '#DAD7C8', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+                  <h2 className="text-sm font-semibold uppercase tracking-wider font-display" style={{ color: '#8a9599' }}>Your Numbers</h2>
                   <div className="space-y-2">
                     <ResultRow
                       icon="●"
@@ -1219,26 +1231,29 @@ export default function RetirementCalculator() {
                   })}
                 />
 
-                <p className="text-xs text-center px-0.5" style={{ color: '#A0A4AB' }}>
+                <p className="text-xs text-center px-0.5" style={{ color: '#8a9599' }}>
                   Want the detail?{" "}
-                  <Link to="/methodology" style={{ color: '#B8860B' }}>Read how this calculator works</Link>.
+                  <Link to="/methodology" style={{ color: '#1B6F81' }}>Read how this calculator works</Link>.
                 </p>
               </>
             ) : (
-              <div className="bg-white rounded-3xl p-12 flex flex-col items-center justify-center text-center space-y-3 min-h-64" style={{ borderColor: '#E6E8EC', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-                <p className="text-sm font-medium" style={{ color: '#A0A4AB' }}>Your results will appear here</p>
-                <p className="text-xs" style={{ color: '#A0A4AB' }}>Make sure your retirement age is greater than your current age</p>
+              <div className="bg-white rounded-3xl p-12 flex flex-col items-center justify-center text-center space-y-3 min-h-64" style={{ borderColor: '#DAD7C8', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+                <p className="text-sm font-medium" style={{ color: '#8a9599' }}>Your results will appear here</p>
+                <p className="text-xs" style={{ color: '#8a9599' }}>Make sure your retirement age is greater than your current age</p>
               </div>
             )}
           </div>
         </div>
 
         {/* Feedback Form */}
-        <div className="mt-12 mb-8 max-w-2xl mx-auto">
-          <FeedbackForm />
-        </div>
-
-        <SiteFooter />
+        {!embedded && (
+          <>
+            <div className="mt-12 mb-8 max-w-2xl mx-auto">
+              <FeedbackForm />
+            </div>
+            <SiteFooter />
+          </>
+        )}
       </div>
     </div>
   );

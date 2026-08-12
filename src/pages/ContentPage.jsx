@@ -9,31 +9,31 @@ import SiteFooter from "./SiteFooter.jsx";
 export function Section({ title, children }) {
   return (
     <section className="space-y-2">
-      <h2 className="text-base font-bold" style={{ color: '#2B2B2B' }}>{title}</h2>
-      <div className="space-y-2 text-sm leading-relaxed" style={{ color: '#666666' }}>{children}</div>
+      <h2 className="text-base font-bold font-serif" style={{ color: '#09324A' }}>{title}</h2>
+      <div className="space-y-2 text-sm leading-relaxed" style={{ color: '#4a5a5f' }}>{children}</div>
     </section>
   );
 }
 
 export default function ContentPage({ title, intro, children }) {
   return (
-    <div className="min-h-screen px-4 py-10" style={{ backgroundColor: '#F5F6F8' }}>
+    <div className="min-h-screen px-4 py-10" style={{ backgroundColor: '#F3F2EA' }}>
       <div className="w-full max-w-2xl mx-auto">
 
         {/* Header */}
         <div className="text-center space-y-3 mb-8">
-          <Link to="/" className="text-3xl font-bold tracking-tight inline-block" style={{ color: '#F4C84A' }}>
+          <Link to="/" className="text-3xl font-extrabold tracking-tight inline-block font-serif" style={{ color: '#09324A' }}>
             Route to Retire
           </Link>
-          <h1 className="text-2xl font-bold tracking-tight" style={{ color: '#2B2B2B' }}>{title}</h1>
-          {intro && <p className="text-sm leading-relaxed max-w-lg mx-auto" style={{ color: '#A0A4AB' }}>{intro}</p>}
+          <h1 className="text-2xl font-bold tracking-tight font-serif" style={{ color: '#09324A' }}>{title}</h1>
+          {intro && <p className="text-sm leading-relaxed max-w-lg mx-auto" style={{ color: '#8a9599' }}>{intro}</p>}
           <div>
-            <Link to="/" className="text-xs font-medium" style={{ color: '#B8860B' }}>← Back to the calculator</Link>
+            <Link to="/" className="text-xs font-medium" style={{ color: '#1B6F81' }}>← Back to the calculator</Link>
           </div>
         </div>
 
         {/* Body */}
-        <div className="bg-white rounded-3xl p-6 sm:p-8 space-y-6" style={{ borderColor: '#E6E8EC', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+        <div className="bg-white rounded-3xl p-6 sm:p-8 space-y-6" style={{ borderColor: '#DAD7C8', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
           {children}
         </div>
 

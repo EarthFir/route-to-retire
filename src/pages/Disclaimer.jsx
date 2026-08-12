@@ -49,8 +49,8 @@ export default function Disclaimer() {
         </p>
       </Section>
 
-      <p className="text-xs pt-2" style={{ color: '#A0A4AB' }}>
-        See also the <Link to="/methodology" style={{ color: '#B8860B' }}>methodology</Link> for
+      <p className="text-xs pt-2" style={{ color: '#8a9599' }}>
+        See also the <Link to="/methodology" style={{ color: '#1B6F81' }}>methodology</Link> for
         how the estimates are produced.
       </p>
     </ContentPage>
