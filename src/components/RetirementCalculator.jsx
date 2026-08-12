@@ -246,7 +246,7 @@ function SliderField({ label, name, value, onChange, min, max, step = 1, formatD
         step={step}
         onChange={onChange}
         className="w-full h-2 rounded-full appearance-none cursor-pointer"
-        style={{ background: `linear-gradient(to right, #1B6F81 ${pct}%, #DAD7C8 ${pct}%)` }}
+        style={{ background: `linear-gradient(to right, #09324A ${pct}%, #DAD7C8 ${pct}%)` }}
       />
     </div>
   );
@@ -283,7 +283,7 @@ function NumberInput({ label, name, value, onChange, prefix, suffix, min, max, s
 function Toggle({ checked, onChange, label }) {
   return (
     <button type="button" role="switch" aria-checked={checked} onClick={onChange} className="flex items-center gap-3 cursor-pointer group">
-      <div className="relative w-10 h-6 rounded-full transition-colors duration-200" style={{ backgroundColor: checked ? '#FFFB08' : '#DAD7C8' }}>
+      <div className="relative w-10 h-6 rounded-full transition-colors duration-200" style={{ backgroundColor: checked ? '#09324A' : '#DAD7C8' }}>
         <div className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-200 ${checked ? "translate-x-4" : "translate-x-0"}`} />
       </div>
       <span className="text-sm font-medium group-hover:text-[#09324A]" style={{ color: '#09324A' }}>{label}</span>
@@ -315,6 +315,145 @@ function IncomeSection({ desiredIncome, onChange, currentAge, retirementAge }) {
           This equals {formatGBP(inflated)} in {retirementYear} at 2.5% inflation
         </p>
       )}
+    </div>
+  );
+}
+
+// ─── Input Field Groups (shared between the mobile stacked cards and the ───────
+// desktop tabbed input card, so the fields themselves are defined once) ────────
+
+function YourDetailsFields({ inputs, handleChange }) {
+  return (
+    <div className="space-y-5">
+      <div className="grid grid-cols-2 gap-6">
+        <SliderField label="Current Age"    name="currentAge"    value={inputs.currentAge}    onChange={handleChange} min={18} max={75}  step={1}   formatDisplay={fmtAge} />
+        <SliderField label="Retirement Age" name="retirementAge" value={inputs.retirementAge} onChange={handleChange} min={45} max={85}  step={1}   formatDisplay={fmtAge} />
+      </div>
+      <SliderField label="Current Savings"       name="currentSavings"        value={inputs.currentSavings}        onChange={handleChange} min={0} max={1000000} step={1000} formatDisplay={formatGBP} alwaysEditable />
+      <SliderField label="Current Monthly Saving" name="monthlySavingsCurrent" value={inputs.monthlySavingsCurrent} onChange={handleChange} min={0} max={3000}    step={50}   formatDisplay={fmtMoneyMo} alwaysEditable />
+    </div>
+  );
+}
+
+function AssumptionsFields({ inputs, handleChange }) {
+  return (
+    <div className="space-y-5">
+      <div>
+        <SliderField label="Expected Annual Return" name="annualReturn" value={inputs.annualReturn} onChange={handleChange} min={1} max={15} step={0.5} formatDisplay={fmtPct} />
+        <p className="text-xs text-[#8a9599] mt-2">Default 7% reflects long-run equity market average. Adjust based on your portfolio.</p>
+      </div>
+      <div>
+        <SliderField label="Expected Return in Retirement" name="retirementReturn" value={inputs.retirementReturn} onChange={handleChange} min={1} max={10} step={0.5} formatDisplay={fmtPct} />
+        <p className="text-xs text-[#8a9599] mt-2">Portfolio typically de-risks into bonds near retirement. 3–4% reflects a balanced/cautious allocation.</p>
+      </div>
+      <div>
+        <SliderField label="Plan for pot to last until" name="planningAge" value={inputs.planningAge} onChange={handleChange} min={80} max={100} step={1} formatDisplay={fmtAge} />
+        <p className="text-xs text-[#8a9599] mt-2">The age you want your retirement pot to be modelled to last until. Your target pot is sized to draw your income down to this age, not to last forever.</p>
+        {inputs.planningAge < inputs.retirementAge + MIN_PLANNING_YEARS && inputs.retirementAge > inputs.currentAge && (
+          <p className="text-xs mt-1" style={{ color: '#1B6F81' }}>Modelled to age {inputs.retirementAge + MIN_PLANNING_YEARS} — the plan needs at least {MIN_PLANNING_YEARS} years beyond your retirement age.</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function StatePensionFields({ inputs, statePension, setStatePension, statePensionAge }) {
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-xs font-semibold uppercase tracking-wider font-display" style={{ color: '#8a9599' }}>State Pension</span>
+        <div className="flex items-center gap-2">
+          <span className="text-xs px-2 py-0.5 rounded-full" style={{ color: '#8a9599', backgroundColor: '#F3F2EA' }}>Optional</span>
+          <span className="text-xs px-2 py-0.5 rounded-full" style={{ color: '#8a9599', backgroundColor: '#F3F2EA', borderColor: '#DAD7C8', borderWidth: '1px' }}>
+            Eligible from {statePensionAge}
+          </span>
+        </div>
+      </div>
+      <Toggle
+        checked={statePension.include}
+        onChange={() => setStatePension((p) => ({ ...p, include: !p.include }))}
+        label="Include State Pension"
+      />
+      {statePension.include && (
+        <>
+          <NumberInput
+            label="Annual State Pension"
+            name="statePensionIncome"
+            value={statePension.income}
+            onChange={(e) => setStatePension((p) => ({ ...p, income: Number(e.target.value) }))}
+            prefix="£"
+            suffix="/yr"
+            min={0}
+            step={100}
+          />
+          <p className="text-xs" style={{ color: '#8a9599' }}>Assumes current UK State Pension (~£11,500/yr). Subject to change.</p>
+          {inputs.retirementAge < statePensionAge && (
+            <div className="rounded-2xl p-3 flex items-start gap-2" style={{ backgroundColor: '#FFFCE0', borderColor: '#FFFB08', borderWidth: '1px' }}>
+              <span className="text-sm">!</span>
+              <p className="text-xs" style={{ color: '#09324A' }}>
+                Your state pension won't start until age {statePensionAge},{" "}
+                {statePensionAge - inputs.retirementAge} year{statePensionAge - inputs.retirementAge !== 1 ? "s" : ""} into retirement.
+                Your target pot accounts for this gap.
+              </p>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+
+function RetirementIncomeFields({ inputs, setInputs, statePension, setStatePension, statePensionAge }) {
+  return (
+    <div className="space-y-5">
+      <IncomeSection
+        desiredIncome={inputs.desiredIncome}
+        onChange={(val) => setInputs((prev) => ({ ...prev, desiredIncome: val }))}
+        currentAge={inputs.currentAge}
+        retirementAge={inputs.retirementAge}
+      />
+
+      <div className="pt-4" style={{ borderTop: '1px solid #F3F2EA' }}>
+        <StatePensionFields inputs={inputs} statePension={statePension} setStatePension={setStatePension} statePensionAge={statePensionAge} />
+      </div>
+    </div>
+  );
+}
+
+function InheritancesFields({ inheritances, handleInheritanceChange }) {
+  return (
+    <div className="space-y-4">
+      <p className="text-xs" style={{ color: '#8a9599' }}>Inheritances received before retirement will be invested and grow until you retire.</p>
+      {inheritances.map((entry, i) => (
+        <div key={i} className="space-y-3">
+          <p className="text-xs font-semibold uppercase tracking-wider font-display" style={{ color: '#8a9599' }}>Inheritance {i + 1}</p>
+          <div className="grid grid-cols-3 gap-4">
+            <div className="col-span-2">
+              <SliderField
+                label="Amount"
+                name={`inheritanceAmount_${i}`}
+                value={entry.amount}
+                onChange={(e) => handleInheritanceChange(i, "amount", e.target.value)}
+                min={0}
+                max={500000}
+                step={1000}
+                formatDisplay={formatGBP}
+              />
+            </div>
+            <NumberInput
+              label="Age"
+              name={`inheritanceAge_${i}`}
+              value={entry.age === 0 ? "" : entry.age}
+              onChange={(e) => handleInheritanceChange(i, "age", e.target.value)}
+              placeholder="e.g. 55"
+              suffix="yrs"
+              min={1}
+              max={120}
+            />
+          </div>
+          {i < inheritances.length - 1 && <div className="border-t border-[#F3F2EA] pt-1" />}
+        </div>
+      ))}
     </div>
   );
 }
@@ -397,113 +536,136 @@ function ResultRow({ icon, label, value, highlight, help }) {
   );
 }
 
-function ResultMessage({ result, retirementAge }) {
+// Narrative status message, guidance-only. Rendered inside the navy results
+// panel, so tone maps to translucent accent colors rather than light-mode fills.
+function getGuidance(result, retirementAge) {
   const { isCoast, coastAge, yearsUntilCoast, savingsGap, planningAge } = result;
 
   if (isCoast) {
-    return (
-      <div className="rounded-3xl p-5 flex items-start gap-3" style={{ backgroundColor: '#E7F1EF', borderColor: '#1B6F81', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-        <div className="w-2 h-2 rounded-full mt-1.5" style={{ backgroundColor: '#1B6F81' }} />
-        <div>
-          <p className="font-bold text-base" style={{ color: '#09324A' }}>You may be on track on these assumptions.</p>
-          <p className="text-sm mt-1" style={{ color: '#4a5a5f' }}>The model estimates your current savings could support your target income from age {retirementAge} to age {planningAge}, even without further contributions. Anything more is a buffer.</p>
-        </div>
-      </div>
-    );
+    return {
+      tone: "mint",
+      title: "You may be on track on these assumptions.",
+      body: `The model estimates your current savings could support your target income from age ${retirementAge} to age ${planningAge}, even without further contributions. Anything more is a buffer.`,
+    };
   }
-
   if (coastAge !== null && yearsUntilCoast <= 5) {
-    return (
-      <div className="rounded-3xl p-5 flex items-start gap-3" style={{ backgroundColor: '#FFFCE0', borderColor: '#FFFB08', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-        <div className="w-2 h-2 rounded-full mt-1.5" style={{ backgroundColor: '#FFFB08' }} />
-        <div>
-          <p className="font-bold text-base" style={{ color: '#09324A' }}>You may be close to easing off.</p>
-          <p className="text-sm mt-1" style={{ color: '#4a5a5f' }}>Based on these assumptions, at your current saving rate you could ease back on contributions in around {yearsUntilCoast} year{yearsUntilCoast !== 1 ? "s" : ""}, at age {coastAge}, and still have your pot last to age {planningAge}.</p>
-        </div>
-      </div>
-    );
+    return {
+      tone: "yellow",
+      title: "You may be close to easing off.",
+      body: `Based on these assumptions, at your current saving rate you could ease back on contributions in around ${yearsUntilCoast} year${yearsUntilCoast !== 1 ? "s" : ""}, at age ${coastAge}, and still have your pot last to age ${planningAge}.`,
+    };
   }
-
   if (coastAge !== null) {
-    return (
-      <div className="rounded-3xl p-5 flex items-start gap-3" style={{ backgroundColor: '#E7F1EF', borderColor: '#1B6F81', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-        <div className="w-2 h-2 rounded-full mt-1.5" style={{ backgroundColor: '#1B6F81' }} />
-        <div>
-          <p className="font-bold text-base" style={{ color: '#09324A' }}>You may be on track on these assumptions.</p>
-          <p className="text-sm mt-1" style={{ color: '#4a5a5f' }}>The model estimates that if you keep saving, by age {coastAge} — in around {yearsUntilCoast} year{yearsUntilCoast !== 1 ? "s" : ""} — your pot could be large enough to carry you to retirement and last to age {planningAge} on its own.</p>
-        </div>
-      </div>
-    );
+    return {
+      tone: "mint",
+      title: "You may be on track on these assumptions.",
+      body: `The model estimates that if you keep saving, by age ${coastAge} — in around ${yearsUntilCoast} year${yearsUntilCoast !== 1 ? "s" : ""} — your pot could be large enough to carry you to retirement and last to age ${planningAge} on its own.`,
+    };
   }
-
   if (savingsGap <= 250) {
-    return (
-      <div className="rounded-3xl p-5 flex items-start gap-3" style={{ backgroundColor: '#FFFCE0', borderColor: '#FFFB08', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-        <div className="w-2 h-2 rounded-full mt-1.5" style={{ backgroundColor: '#FFFB08' }} />
-        <div>
-          <p className="font-bold text-base" style={{ color: '#09324A' }}>You may be close on these assumptions.</p>
-          <p className="text-sm mt-1" style={{ color: '#4a5a5f' }}>The model estimates around {formatGBP(savingsGap)}/month more could bring your plan on track for the pot to last from age {retirementAge} to age {planningAge}.</p>
-        </div>
-      </div>
-    );
+    return {
+      tone: "yellow",
+      title: "You may be close on these assumptions.",
+      body: `The model estimates around ${formatGBP(savingsGap)}/month more could bring your plan on track for the pot to last from age ${retirementAge} to age ${planningAge}.`,
+    };
   }
+  return {
+    tone: "coral",
+    title: "You may be short of your target on these assumptions.",
+    body: `The model estimates you're currently ${formatGBP(savingsGap)}/month short of the amount needed for your pot to last to age ${planningAge}. You could explore saving more, retiring later, or adjusting your income target.`,
+  };
+}
 
+const GUIDANCE_TONES = {
+  mint: { accent: "#AED0C9", bg: "rgba(174,208,201,.10)", border: "rgba(174,208,201,.25)" },
+  yellow: { accent: "#FFFB08", bg: "rgba(255,251,8,.10)", border: "rgba(255,251,8,.28)" },
+  coral: { accent: "#FF9A85", bg: "rgba(255,154,133,.10)", border: "rgba(255,154,133,.28)" },
+};
+
+function GuidanceBanner({ tone, title, body }) {
+  const { accent, bg, border } = GUIDANCE_TONES[tone];
   return (
-    <div className="rounded-3xl p-5 flex items-start gap-3" style={{ backgroundColor: '#FEF2F2', borderColor: '#E74C3C', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-      <div className="w-2 h-2 rounded-full mt-1.5" style={{ backgroundColor: '#E74C3C' }} />
+    <div className="rounded-2xl p-4 flex items-start gap-3" style={{ backgroundColor: bg, border: `1px solid ${border}` }}>
+      <div className="w-2 h-2 rounded-full mt-1.5 shrink-0" style={{ backgroundColor: accent }} />
       <div>
-        <p className="font-bold text-base" style={{ color: '#09324A' }}>You may be short of your target on these assumptions.</p>
-        <p className="text-sm mt-1" style={{ color: '#4a5a5f' }}>The model estimates you're currently {formatGBP(savingsGap)}/month short of the amount needed for your pot to last to age {planningAge}. You could explore saving more, retiring later, or adjusting your income target.</p>
+        <p className="font-bold text-sm sm:text-base" style={{ color: "#F3F2EA" }}>{title}</p>
+        <p className="text-sm mt-1 leading-relaxed" style={{ color: "rgba(243,242,234,.78)" }}>{body}</p>
       </div>
     </div>
   );
 }
 
-function CoastCard({ result, currentAge, retirementAge }) {
-  const { coastAge, yearsUntilCoast } = result;
-  const found = coastAge !== null;
-  // coastAge can land on the current age, which reads as "already there" rather
-  // than a future point to look forward to.
-  const alreadyThere = found && coastAge <= currentAge;
-
-  let body;
-  if (!found) {
-    body = "Based on these assumptions, the model does not yet identify an age where your existing savings could do the rest before retirement.";
-  } else if (alreadyThere) {
-    body = `Based on these assumptions, you may already be able to ease off contributions and still remain broadly on track for retirement at ${retirementAge}.`;
-  } else {
-    body = `Based on these assumptions, you may be able to ease off contributions from around age ${coastAge} and still remain broadly on track for retirement at ${retirementAge}.`;
-  }
-
-  const accent = found ? '#1B6F81' : '#8a9599';
-  const bg = found ? '#E7F1EF' : '#F3F2EA';
-
+function NumberStat({ value, label }) {
   return (
-    <div className="rounded-3xl p-5 space-y-2" style={{ backgroundColor: bg, borderColor: accent, borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full" style={{ backgroundColor: accent }} />
-          <p className="text-sm font-semibold uppercase tracking-wider font-display" style={{ color: '#8a9599' }}>When could I ease off?</p>
-        </div>
-        {found && !alreadyThere && (
-          <span className="text-lg font-bold whitespace-nowrap font-serif" style={{ color: '#09324A' }}>
-            Age {coastAge}
-            {yearsUntilCoast > 0 && (
-              <span className="text-xs font-normal ml-1" style={{ color: '#8a9599' }}>
-                (~{yearsUntilCoast} yr{yearsUntilCoast !== 1 ? "s" : ""})
-              </span>
-            )}
-          </span>
-        )}
-      </div>
-      <p className="text-sm leading-relaxed" style={{ color: '#4a5a5f' }}>{body}</p>
+    <div className="pt-3" style={{ borderTop: "1px solid rgba(174,208,201,.18)" }}>
+      <div className="font-serif font-bold text-xl sm:text-2xl" style={{ color: "#F3F2EA" }}>{value}</div>
+      <div className="text-xs mt-1.5 leading-snug" style={{ color: "rgba(243,242,234,.58)" }}>{label}</div>
     </div>
   );
 }
 
-function InheritanceResultBox({ inheritances, inheritanceResults, totalInheritanceFV, retirementAge }) {
+// coastAge can land on the current age, which reads as "already there" rather
+// than a future point to look forward to.
+function coastStat({ coastAge, yearsUntilCoast }, currentAge) {
+  if (coastAge === null) {
+    return { value: "Not yet found", label: "When you could ease off contributions" };
+  }
+  if (coastAge <= currentAge) {
+    return { value: "Now", label: "You may already be able to ease off contributions" };
+  }
+  return {
+    value: `Age ${coastAge}`,
+    label: `When you could ease off contributions${yearsUntilCoast > 0 ? ` (~${yearsUntilCoast} yr${yearsUntilCoast !== 1 ? "s" : ""})` : ""}`,
+  };
+}
+
+function depletionStat({ depletionAge, planningAge }) {
+  if (depletionAge == null || depletionAge >= planningAge) {
+    return { value: `Beyond age ${planningAge}`, label: "Estimated pot lasts until" };
+  }
+  return { value: `Age ${depletionAge}`, label: "Estimated pot lasts until" };
+}
+
+function InheritanceResultBox({ inheritances, inheritanceResults, totalInheritanceFV, retirementAge, dark }) {
   const active = inheritances.filter(({ amount, age }) => amount > 0 && age > 0);
   if (active.length === 0) return null;
+
+  if (dark) {
+    return (
+      <div
+        className="rounded-2xl p-3 space-y-2"
+        style={{ background: 'linear-gradient(155deg, rgba(255,255,255,.09), rgba(255,255,255,.015))', border: '1px solid rgba(255,255,255,.14)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,.18)' }}
+      >
+        <div className="flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: '#AED0C9' }} />
+          <p className="text-xs font-semibold" style={{ color: '#F3F2EA' }}>Inheritances</p>
+        </div>
+        <div className="grid grid-cols-2 gap-1.5">
+          {inheritances.map((entry, i) => {
+            if (!entry.amount || !entry.age) return null;
+            const { futureValue, afterRetirement } = inheritanceResults[i];
+            return (
+              <div key={i} className="rounded-xl p-2" style={{ backgroundColor: 'rgba(255,255,255,.06)' }}>
+                <p className="text-[10px] font-semibold uppercase tracking-wider font-display" style={{ color: '#AED0C9' }}>Inheritance {i + 1}</p>
+                <p className="text-xs mt-1" style={{ color: 'rgba(243,242,234,.7)' }}>
+                  {formatGBP(entry.amount)} at age {entry.age}
+                </p>
+                <p className="text-sm font-bold mt-0.5 tabular-nums" style={{ color: '#F3F2EA' }}>
+                  {formatGBP(futureValue)} {afterRetirement ? "(face value)" : `at ${retirementAge}`}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+        {active.length > 1 && (
+          <div className="flex items-center justify-between rounded-xl px-3 py-2" style={{ backgroundColor: 'rgba(255,255,255,.06)' }}>
+            <p className="text-xs font-semibold" style={{ color: 'rgba(243,242,234,.85)' }}>Total at retirement</p>
+            <p className="text-sm font-bold tabular-nums" style={{ color: '#F3F2EA' }}>{formatGBP(totalInheritanceFV)}</p>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-3xl p-4 space-y-3" style={{ backgroundColor: '#E7F1EF', borderColor: '#1B6F81', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
@@ -547,6 +709,130 @@ function InheritanceResultBox({ inheritances, inheritanceResults, totalInheritan
           <p className="text-sm font-bold" style={{ color: '#09324A' }}>{formatGBP(totalInheritanceFV)}</p>
         </div>
       )}
+    </div>
+  );
+}
+
+// Compact "blue card" stat tile used by the dark "Your Numbers" tab — same
+// visual family as StatTile, but denser so a full breakdown fits without
+// scrolling inside the fixed-height results card.
+function MiniStatCard({ label, value, accent }) {
+  return (
+    <div
+      className="rounded-2xl p-3 min-w-0"
+      style={accent
+        ? { background: 'linear-gradient(155deg, rgba(255,251,8,.14), rgba(255,255,255,.03))', border: '1px solid rgba(255,251,8,.28)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,.18)' }
+        : { background: 'linear-gradient(155deg, rgba(255,255,255,.09), rgba(255,255,255,.015))', border: '1px solid rgba(255,255,255,.14)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,.18)' }}
+    >
+      <div className="font-display text-[10px] leading-tight" style={{ color: '#AED0C9' }}>{label}</div>
+      <div className="font-serif font-bold text-[21px] leading-tight mt-1 tabular-nums" style={{ color: accent ? '#FFFB08' : '#F3F2EA' }}>{value}</div>
+    </div>
+  );
+}
+
+// The detailed pot-by-pot breakdown, shared between the mobile "Your Numbers"
+// card (light rows, full descriptions) and the "Your Numbers" tab of the
+// desktop results card (dark=true: compact blue cards, no scrollbar).
+function YourNumbersBody({ inputs, result, statePension, inheritances, dark }) {
+  const items = [
+    {
+      icon: "●",
+      label: "Target retirement pot",
+      value: formatGBP(result.targetPot),
+      highlight: true,
+      help: statePension.include
+        ? `Based on your inputs and assumptions, the estimated pot needed at age ${inputs.retirementAge} to draw your income down to age ${result.planningAge}, after allowing for ${formatGBP(statePension.income)}/yr of State Pension. Shown in future money.`
+        : `Based on your inputs and assumptions, the estimated pot needed at age ${inputs.retirementAge} to draw your income down to age ${result.planningAge}. Shown in future money.`,
+    },
+    ...(result.capitalPreservationTargetPot != null ? [{
+      icon: "○",
+      label: "Conservative comparison (preserve capital)",
+      value: formatGBP(result.capitalPreservationTargetPot),
+      help: `Preserving the pot and drawing only the assumed ${inputs.retirementReturn}% return would require around this much — it never runs down. Shown for reference, not as your target.`,
+    }] : []),
+    {
+      icon: "●",
+      label: "Projected pot at retirement with current monthly saving",
+      value: formatGBP(result.projectedPotWithSaving),
+      help: `If you keep saving ${fmtMoneyMo(inputs.monthlySavingsCurrent)}, this is the estimated value of your pot at age ${inputs.retirementAge}.`,
+    },
+    {
+      icon: "●",
+      label: "Projected pot at retirement if you stopped saving today",
+      value: formatGBP(result.projectedPotNoSaving),
+      help: `Your current savings${result.totalInheritanceFV > 0 ? " and expected inheritances" : ""} left to grow, with no further monthly contributions.`,
+    },
+    ...(result.savingsGap > 0 ? [{
+      icon: "●",
+      label: "Estimated monthly shortfall",
+      value: `${formatGBP(result.savingsGap)}/mo`,
+      help: "Extra monthly saving the model estimates you need to reach your target pot.",
+    }] : result.savingsGap < 0 ? [{
+      icon: "●",
+      label: "Estimated monthly surplus",
+      value: `${formatGBP(Math.abs(result.savingsGap))}/mo`,
+      help: "You're saving more than the model estimates you need for this target.",
+    }] : []),
+    ...(statePension.include && result.incomeNeeded !== inputs.desiredIncome ? [{
+      icon: "●",
+      label: "Annual income less state pension",
+      value: `${formatGBP(result.incomeNeeded)}/yr`,
+      help: "Your target income minus the State Pension, in future money.",
+    }] : []),
+    result.depletionAge == null ? {
+      icon: "●",
+      label: "Estimated pot lasts until",
+      value: "Beyond planning age",
+      help: `Based on your current saving, the model estimates your pot would still last beyond your planning age of ${result.planningAge} (it isn't projected to run out within the modelled horizon).`,
+    } : result.depletionAge >= result.planningAge ? {
+      icon: "●",
+      label: "Estimated pot lasts until",
+      value: "Beyond planning age",
+      help: `Based on your current saving, the model estimates your pot would last to around age ${result.depletionAge} — beyond your planning age of ${result.planningAge}.`,
+    } : {
+      icon: "●",
+      label: "Estimated to run out around age",
+      value: String(result.depletionAge),
+      help: `Based on your current saving of ${fmtMoneyMo(inputs.monthlySavingsCurrent)}, the model estimates the pot runs out before your planning age of ${result.planningAge}.`,
+    },
+    ...(inheritances.some(({ amount, age }) => amount > 0 && age > 0) ? [{
+      icon: "●",
+      label: "Inheritance value at retirement",
+      value: formatGBP(result.totalInheritanceFV),
+      help: "The combined future value of your expected inheritances at your retirement age.",
+    }] : []),
+  ];
+
+  if (dark) {
+    return (
+      <div className="space-y-2.5">
+        <div className="grid grid-cols-2 gap-2">
+          {items.map((item) => (
+            <MiniStatCard key={item.label} label={item.label} value={item.value} accent={item.highlight} />
+          ))}
+        </div>
+        <InheritanceResultBox
+          dark
+          inheritances={inheritances}
+          inheritanceResults={result.inheritanceResults}
+          totalInheritanceFV={result.totalInheritanceFV}
+          retirementAge={inputs.retirementAge}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      <div className="space-y-2">
+        {items.map((item) => <ResultRow key={item.label} {...item} />)}
+      </div>
+      <InheritanceResultBox
+        inheritances={inheritances}
+        inheritanceResults={result.inheritanceResults}
+        totalInheritanceFV={result.totalInheritanceFV}
+        retirementAge={inputs.retirementAge}
+      />
     </div>
   );
 }
@@ -661,7 +947,10 @@ function StatTile({ label, value, sub, accent }) {
   );
 }
 
-function GrowthChart({ inputs, inheritances, result, statePension, statePensionAge, monthlySavingsCurrent }) {
+// The headline stat cards, guidance banner, stat numbers and growth chart —
+// the "Overview" content, shared between the mobile pinned panel and the
+// "Overview" tab of the desktop results card.
+function ResultsOverviewBody({ inputs, inheritances, result, statePension, statePensionAge, monthlySavingsCurrent, currentAge }) {
   const data = buildChartData({
     currentAge: inputs.currentAge,
     retirementAge: inputs.retirementAge,
@@ -679,36 +968,44 @@ function GrowthChart({ inputs, inheritances, result, statePension, statePensionA
   const hasInheritance = inheritances.some(({ amount, age }) => amount > 0 && age > 0);
   const { isCoast, monthlySavings, savingsGap } = result;
 
+  const statNumbers = [
+    coastStat(result, currentAge),
+    depletionStat(result),
+  ];
+
   return (
-    <div
-      className="relative rounded-[28px] p-6 sm:p-9 overflow-hidden"
-      style={{
-        background: 'linear-gradient(160deg,#0c4060 0%,#09324A 46%,#061f2e 100%)',
-        border: '1px solid rgba(255,255,255,.10)',
-        boxShadow: '0 42px 90px -46px rgba(6,31,46,.9), inset 0 1px 0 rgba(255,255,255,.16)',
-      }}
-    >
-      <div className="absolute pointer-events-none" style={{ top: -130, right: -70, width: 360, height: 360, borderRadius: '50%', background: 'radial-gradient(circle, rgba(174,208,201,.22), rgba(174,208,201,0) 70%)' }} />
-      <div className="absolute pointer-events-none" style={{ bottom: -160, left: -60, width: 320, height: 320, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,251,8,.10), rgba(255,251,8,0) 70%)' }} />
-
-      <div className="relative font-display text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: '#AED0C9' }}>Results</div>
-      <div className="relative flex items-center gap-3 mb-7">
-        <div className="w-10 h-10 rounded-full flex items-center justify-center font-serif font-bold" style={{ backgroundColor: '#FFFB08', color: '#09324A' }}>RR</div>
-        <div className="font-display font-bold text-lg" style={{ color: '#F3F2EA' }}>Retirement projection</div>
-        <StatPill status={result.status} />
-      </div>
-
-      <div className="relative grid grid-cols-1 sm:grid-cols-3 gap-3.5 mb-7">
-        <StatTile accent label={`Target pot at ${inputs.retirementAge}`} value={formatGBP(result.targetPot)} />
+    <>
+      <div className="relative grid grid-cols-1 sm:grid-cols-[2fr_1fr] gap-3 mb-5">
+        <div
+          className="rounded-2xl p-4 space-y-3"
+          style={{ background: 'linear-gradient(155deg, rgba(255,251,8,.14), rgba(255,255,255,.03))', border: '1px solid rgba(255,251,8,.28)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,.18)' }}
+        >
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <div className="font-display text-xs" style={{ color: '#AED0C9' }}>{`Target pot at ${inputs.retirementAge}`}</div>
+            <div className="font-serif font-bold text-[19.8px] sm:text-[22px] text-right whitespace-nowrap tabular-nums" style={{ color: '#FFFB08', lineHeight: 1.15 }}>{formatGBP(result.targetPot)}</div>
+          </div>
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <div className="font-display text-xs" style={{ color: '#AED0C9' }}>{`Projected pot at ${inputs.retirementAge}`}</div>
+            <div className="font-serif font-bold text-[19.8px] sm:text-[22px] text-right whitespace-nowrap tabular-nums" style={{ color: '#F3F2EA', lineHeight: 1.15 }}>{formatGBP(result.projectedPotWithSaving)}</div>
+          </div>
+        </div>
         <StatTile
           label="Monthly saving needed"
           value={isCoast ? '£0/mo' : `${formatGBP(monthlySavings)}/mo`}
           sub={savingsGap > 0 ? `${fmtMoneyMo(savingsGap)} more than now` : `Saving ${fmtMoneyMo(monthlySavingsCurrent)} now`}
         />
-        <StatTile label={`Projected pot at ${inputs.retirementAge}`} value={formatGBP(result.projectedPotWithSaving)} />
       </div>
 
-      <div className="relative rounded-2xl p-5" style={{ background: 'linear-gradient(155deg, rgba(255,255,255,.09), rgba(255,255,255,.015))', border: '1px solid rgba(255,255,255,.14)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,.18)' }}>
+      <div className="relative space-y-3 mb-5">
+        <GuidanceBanner {...getGuidance(result, inputs.retirementAge)} />
+        <div className="grid grid-cols-2 gap-x-5 gap-y-3">
+          {statNumbers.map(({ value, label }) => (
+            <NumberStat key={label} value={value} label={label} />
+          ))}
+        </div>
+      </div>
+
+      <div className="relative rounded-2xl p-4" style={{ background: 'linear-gradient(155deg, rgba(255,255,255,.09), rgba(255,255,255,.015))', border: '1px solid rgba(255,255,255,.14)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,.18)' }}>
         <div className="flex items-center justify-between flex-wrap gap-2 mb-2">
           <span className="font-display font-semibold text-sm" style={{ color: '#F3F2EA' }}>Projected growth</span>
           <div className="flex items-center gap-3 text-[11px] flex-wrap" style={{ color: '#AED0C9' }}>
@@ -719,7 +1016,7 @@ function GrowthChart({ inputs, inheritances, result, statePension, statePensionA
             {statePension.include && statePensionAge > inputs.retirementAge && <span className="flex items-center gap-1"><span className="inline-block w-2.5 h-2.5 rounded-full" style={{ backgroundColor: '#AED0C9' }} /> State pension</span>}
           </div>
         </div>
-        <ResponsiveContainer width="100%" height={200}>
+        <ResponsiveContainer width="100%" height={180}>
           <AreaChart data={data} margin={{ top: 10, right: 8, left: 8, bottom: 0 }}>
             <defs>
               <linearGradient id="potGradient" x1="0" y1="0" x2="0" y2="1">
@@ -750,6 +1047,119 @@ function GrowthChart({ inputs, inheritances, result, statePension, statePensionA
               dot={<ChartDot />} activeDot={{ r: 4, fill: "#FFFB08", stroke: "#09324A", strokeWidth: 2 }} />
           </AreaChart>
         </ResponsiveContainer>
+      </div>
+    </>
+  );
+}
+
+function ResultsPanel({ inputs, inheritances, result, statePension, statePensionAge, monthlySavingsCurrent, currentAge, mobilePinned }) {
+  const panelClass = mobilePinned
+    ? "fixed rounded-t-[28px] lg:rounded-[28px] p-6 sm:p-8 overflow-y-auto overflow-x-hidden lg:overflow-hidden bottom-0 inset-x-0 z-30 max-h-[48vh] lg:max-h-none lg:sticky lg:top-6"
+    : "relative rounded-[28px] p-6 sm:p-9 overflow-hidden";
+
+  return (
+    <div
+      className={panelClass}
+      style={{
+        background: 'linear-gradient(160deg,#0c4060 0%,#09324A 46%,#061f2e 100%)',
+        border: '1px solid rgba(255,255,255,.10)',
+        boxShadow: '0 42px 90px -46px rgba(6,31,46,.9), inset 0 1px 0 rgba(255,255,255,.16)',
+      }}
+    >
+      <div className="absolute pointer-events-none" style={{ top: -130, right: -70, width: 360, height: 360, borderRadius: '50%', background: 'radial-gradient(circle, rgba(174,208,201,.22), rgba(174,208,201,0) 70%)' }} />
+      <div className="absolute pointer-events-none" style={{ bottom: -160, left: -60, width: 320, height: 320, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,251,8,.10), rgba(255,251,8,0) 70%)' }} />
+
+      <div className="relative flex items-center gap-3 mb-7">
+        <div className="font-serif font-bold text-lg" style={{ color: '#F3F2EA' }}>Your Projection</div>
+        <StatPill status={result.status} />
+      </div>
+
+      <ResultsOverviewBody
+        inputs={inputs}
+        inheritances={inheritances}
+        result={result}
+        statePension={statePension}
+        statePensionAge={statePensionAge}
+        monthlySavingsCurrent={monthlySavingsCurrent}
+        currentAge={currentAge}
+      />
+    </div>
+  );
+}
+
+// ─── Tabs (prominent segmented control, used by both the desktop input card ───
+// and the desktop results card so everything fits within a fixed height) ──────
+
+function TabBar({ tabs, active, onChange, dark }) {
+  return (
+    <div
+      className="grid gap-1 p-1 rounded-2xl mb-5 shrink-0"
+      style={{ gridTemplateColumns: `repeat(${tabs.length}, minmax(0,1fr))`, backgroundColor: dark ? 'rgba(255,255,255,.07)' : '#F3F2EA' }}
+    >
+      {tabs.map((t) => {
+        const isActive = t.key === active;
+        return (
+          <button
+            key={t.key}
+            type="button"
+            onClick={() => onChange(t.key)}
+            className="text-xs sm:text-[13px] font-bold px-2 py-2.5 rounded-xl transition-all duration-150 whitespace-nowrap cursor-pointer"
+            style={isActive
+              ? { backgroundColor: dark ? '#FFFB08' : '#09324A', color: dark ? '#09324A' : '#FFFB08', boxShadow: '0 2px 8px rgba(0,0,0,.15)' }
+              : { backgroundColor: 'transparent', color: dark ? 'rgba(243,242,234,.62)' : '#8a9599' }}
+          >
+            {t.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+const INPUT_TABS = [
+  { key: "details", label: "Your Details" },
+  { key: "options", label: "Options" },
+];
+
+const RESULT_TABS = [
+  { key: "overview", label: "Overview" },
+  { key: "numbers", label: "Your Numbers" },
+  { key: "scenarios", label: "Scenarios" },
+];
+
+// Desktop-only (lg+): all four input sections in one 850px-tall card, switched
+// via tabs instead of stacking as separate cards, so nothing scrolls out of
+// view behind the results panel.
+function InputsTabbedCard({ inputs, handleChange, setInputs, statePension, setStatePension, statePensionAge, inheritances, handleInheritanceChange }) {
+  const [tab, setTab] = useState("details");
+  return (
+    <div
+      className="hidden lg:flex lg:flex-col bg-white rounded-3xl p-6 lg:h-[850px]"
+      style={{ borderColor: '#DAD7C8', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}
+    >
+      <div className="font-serif font-bold text-lg mb-5 shrink-0" style={{ color: '#09324A' }}>Your Route</div>
+      <TabBar tabs={INPUT_TABS} active={tab} onChange={setTab} />
+      <div className="flex-1 min-h-0 overflow-y-auto pr-1 -mr-1">
+        {tab === "details" && (
+          <div className="space-y-6">
+            <YourDetailsFields inputs={inputs} handleChange={handleChange} />
+            <IncomeSection
+              desiredIncome={inputs.desiredIncome}
+              onChange={(val) => setInputs((prev) => ({ ...prev, desiredIncome: val }))}
+              currentAge={inputs.currentAge}
+              retirementAge={inputs.retirementAge}
+            />
+            <AssumptionsFields inputs={inputs} handleChange={handleChange} />
+          </div>
+        )}
+        {tab === "options" && (
+          <div className="space-y-6">
+            <StatePensionFields inputs={inputs} statePension={statePension} setStatePension={setStatePension} statePensionAge={statePensionAge} />
+            <div className="pt-4" style={{ borderTop: '1px solid #F3F2EA' }}>
+              <InheritancesFields inheritances={inheritances} handleInheritanceChange={handleInheritanceChange} />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -802,9 +1212,53 @@ function AssumptionsPanel({ assumptions }) {
   );
 }
 
+// Matches AssumptionsPanel's collapsed-row styling so the two read as a pair,
+// but this one links straight through to the methodology page rather than
+// expanding in place.
+function MethodologyLinkCard() {
+  return (
+    <div className="bg-white rounded-3xl overflow-hidden" style={{ borderColor: '#DAD7C8', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+      <Link to="/methodology" className="w-full flex items-center justify-between gap-3 px-6 py-4 text-left">
+        <div>
+          <h2 className="text-sm font-semibold uppercase tracking-wider font-display" style={{ color: '#8a9599' }}>Methodology</h2>
+          <p className="text-xs mt-0.5" style={{ color: '#8a9599' }}>Read how this calculator works</p>
+        </div>
+        <span className="text-lg font-semibold" style={{ color: '#1B6F81' }}>→</span>
+      </Link>
+    </div>
+  );
+}
+
 // ─── "What could close the gap?" scenario cards ───────────────────────────────
 
-function ScenarioCard({ title, lead, rows, footnote, tone = "neutral" }) {
+function ScenarioCard({ title, lead, rows, footnote, tone = "neutral", dark }) {
+  if (dark) {
+    const accent = tone === "positive" ? '#AED0C9' : '#FFFB08';
+    return (
+      <div
+        className="rounded-2xl p-3.5 space-y-1.5"
+        style={{ background: 'linear-gradient(155deg, rgba(255,255,255,.09), rgba(255,255,255,.015))', border: '1px solid rgba(255,255,255,.14)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,.18)' }}
+      >
+        <div className="flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: accent }} />
+          <p className="font-bold text-sm" style={{ color: '#F3F2EA' }}>{title}</p>
+        </div>
+        {lead && <p className="text-xs leading-snug" style={{ color: 'rgba(243,242,234,.68)' }}>{lead}</p>}
+        {rows && rows.length > 0 && (
+          <div className="space-y-1">
+            {rows.map((row, i) => (
+              <div key={i} className="flex items-center justify-between gap-3 rounded-xl px-3 py-1.5" style={{ backgroundColor: 'rgba(255,255,255,.06)' }}>
+                <span className="text-xs" style={{ color: 'rgba(243,242,234,.85)' }}>{row.label}</span>
+                <span className="text-xs font-semibold text-right tabular-nums" style={{ color: '#F3F2EA' }}>{row.value}</span>
+              </div>
+            ))}
+          </div>
+        )}
+        {footnote && <p className="text-[11px] leading-snug" style={{ color: 'rgba(243,242,234,.5)' }}>{footnote}</p>}
+      </div>
+    );
+  }
+
   const accent = tone === "positive" ? '#1B6F81' : '#09324A';
   const badgeBg = tone === "positive" ? '#E7F1EF' : '#FFFCE0';
   return (
@@ -829,7 +1283,7 @@ function ScenarioCard({ title, lead, rows, footnote, tone = "neutral" }) {
   );
 }
 
-function ScenarioCards({ baseParams, result, retirementAge, currentAge, desiredIncome, monthlySavingsCurrent }) {
+function ScenarioCards({ baseParams, result, retirementAge, currentAge, desiredIncome, monthlySavingsCurrent, dark }) {
   // Re-run the full model with a single overridden input.
   const run = (overrides) => calculateAll({ ...baseParams, ...overrides });
 
@@ -851,8 +1305,8 @@ function ScenarioCards({ baseParams, result, retirementAge, currentAge, desiredI
 
   const heading = (
     <div className="space-y-1">
-      <h2 className="text-lg font-bold font-serif" style={{ color: '#09324A' }}>What could close the gap?</h2>
-      <p className="text-xs" style={{ color: '#8a9599' }}>
+      <h2 className={dark ? "text-base font-bold font-serif" : "text-lg font-bold font-serif"} style={{ color: dark ? '#F3F2EA' : '#09324A' }}>What could close the gap?</h2>
+      <p className="text-xs" style={{ color: dark ? 'rgba(243,242,234,.6)' : '#8a9599' }}>
         {onTrack
           ? "You look on track — here are ways to pressure-test or flex your plan. Based on these assumptions, not advice."
           : "A few routes that the model estimates could get you to your target. These are illustrations, not advice."}
@@ -860,12 +1314,15 @@ function ScenarioCards({ baseParams, result, retirementAge, currentAge, desiredI
     </div>
   );
 
+  const gap = dark ? "space-y-2.5" : "space-y-4";
+
   if (onTrack) {
     return (
-      <div className="space-y-4">
+      <div className={gap}>
         {heading}
 
         <ScenarioCard
+          dark={dark}
           tone="positive"
           title="You may be on track"
           lead={`Based on these assumptions, your current saving of ${fmtMoneyMo(monthlySavingsCurrent)} could support your target income from age ${retirementAge} to age ${planningAge}.`}
@@ -874,6 +1331,7 @@ function ScenarioCards({ baseParams, result, retirementAge, currentAge, desiredI
 
         {earlierAges.length > 0 && (
           <ScenarioCard
+            dark={dark}
             tone="positive"
             title="You could explore retiring earlier"
             lead="One possible route could be bringing your retirement forward. The model estimates the monthly saving each earlier age would need:"
@@ -890,6 +1348,7 @@ function ScenarioCards({ baseParams, result, retirementAge, currentAge, desiredI
         )}
 
         <ScenarioCard
+          dark={dark}
           tone="positive"
           title="You could stress-test your assumptions"
           lead="Plans are only as good as their inputs. Try nudging the expected return down or inflation expectations up in the inputs to see how resilient your target stays."
@@ -899,10 +1358,11 @@ function ScenarioCards({ baseParams, result, retirementAge, currentAge, desiredI
   }
 
   return (
-    <div className="space-y-4">
+    <div className={gap}>
       {heading}
 
       <ScenarioCard
+        dark={dark}
         title="Save more monthly"
         lead={`Based on these assumptions, saving around ${fmtMoneyMo(result.savingsGap)} more per month could keep your plan on track for the pot to last to age ${planningAge}.`}
         rows={[
@@ -913,6 +1373,7 @@ function ScenarioCards({ baseParams, result, retirementAge, currentAge, desiredI
 
       {laterAges.length > 0 && (
         <ScenarioCard
+          dark={dark}
           title="Retire later"
           lead={`Retiring later could reduce the estimated monthly saving needed for the pot to last to age ${planningAge}:`}
           rows={laterAges.map((age) => ({
@@ -923,6 +1384,7 @@ function ScenarioCards({ baseParams, result, retirementAge, currentAge, desiredI
       )}
 
       <ScenarioCard
+        dark={dark}
         title="Reduce target income"
         lead="A lower target income means a smaller pot to build. One possible route could be:"
         rows={incomeCuts.map((cut) => {
@@ -935,6 +1397,72 @@ function ScenarioCards({ baseParams, result, retirementAge, currentAge, desiredI
         })}
         footnote={`Currently targeting ${fmtMoneyYr(desiredIncome)} in today's money.`}
       />
+    </div>
+  );
+}
+
+// Desktop-only (lg+): the navy results panel, "Your Numbers" breakdown,
+// scenario cards and assumptions all in one 850px-tall card, switched via
+// tabs so nothing scrolls out of view or ends up hidden behind another card.
+function ResultsTabbedCard({ inputs, inheritances, result, statePension, statePensionAge }) {
+  const [tab, setTab] = useState("overview");
+  const monthlySavingsCurrent = inputs.monthlySavingsCurrent;
+  const currentAge = inputs.currentAge;
+
+  return (
+    <div
+      className="hidden lg:flex lg:flex-col relative rounded-[28px] p-6 sm:p-8 lg:h-[850px] overflow-hidden"
+      style={{
+        background: 'linear-gradient(160deg,#0c4060 0%,#09324A 46%,#061f2e 100%)',
+        border: '1px solid rgba(255,255,255,.10)',
+        boxShadow: '0 42px 90px -46px rgba(6,31,46,.9), inset 0 1px 0 rgba(255,255,255,.16)',
+      }}
+    >
+      <div className="absolute pointer-events-none" style={{ top: -130, right: -70, width: 360, height: 360, borderRadius: '50%', background: 'radial-gradient(circle, rgba(174,208,201,.22), rgba(174,208,201,0) 70%)' }} />
+      <div className="absolute pointer-events-none" style={{ bottom: -160, left: -60, width: 320, height: 320, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,251,8,.10), rgba(255,251,8,0) 70%)' }} />
+
+      <div className="relative flex items-center gap-3 mb-5 shrink-0">
+        <div className="font-serif font-bold text-lg" style={{ color: '#F3F2EA' }}>Your Projection</div>
+        <StatPill status={result.status} />
+      </div>
+
+      <div className="relative">
+        <TabBar tabs={RESULT_TABS} active={tab} onChange={setTab} dark />
+      </div>
+
+      <div className="relative flex-1 min-h-0 overflow-y-auto pr-1 -mr-1">
+        {tab === "overview" && (
+          <ResultsOverviewBody
+            inputs={inputs}
+            inheritances={inheritances}
+            result={result}
+            statePension={statePension}
+            statePensionAge={statePensionAge}
+            monthlySavingsCurrent={monthlySavingsCurrent}
+            currentAge={currentAge}
+          />
+        )}
+        {tab === "numbers" && (
+          <YourNumbersBody dark inputs={inputs} result={result} statePension={statePension} inheritances={inheritances} />
+        )}
+        {tab === "scenarios" && (
+          <ScenarioCards
+            dark
+            baseParams={{
+              ...inputs,
+              inheritances,
+              includeStatePension: statePension.include,
+              statePensionIncome: statePension.income,
+              statePensionAge,
+            }}
+            result={result}
+            retirementAge={inputs.retirementAge}
+            currentAge={inputs.currentAge}
+            desiredIncome={inputs.desiredIncome}
+            monthlySavingsCurrent={monthlySavingsCurrent}
+          />
+        )}
+      </div>
     </div>
   );
 }
@@ -987,7 +1515,7 @@ export default function RetirementCalculator({ embedded = false } = {}) {
   }, [inputs, inheritances, statePension, statePensionAge]);
 
   return (
-    <div className={embedded ? "w-full" : "min-h-screen px-4 py-10"} style={embedded ? undefined : { backgroundColor: '#F3F2EA' }}>
+    <div className={embedded ? "w-full" : "min-h-screen px-4 pt-10 pb-[50vh] lg:pb-10"} style={embedded ? undefined : { backgroundColor: '#F3F2EA' }}>
       <div className={embedded ? "w-full" : "w-full max-w-6xl mx-auto"}>
 
         {/* Header */}
@@ -997,7 +1525,7 @@ export default function RetirementCalculator({ embedded = false } = {}) {
             <div className="inline-flex items-center gap-2 text-xs font-bold px-3 py-1 rounded-full mb-2 uppercase tracking-widest" style={{ backgroundColor: '#E7F1EF', color: '#1B6F81', fontFamily: "'Manrope', sans-serif" }}>
               RETIREMENT CALCULATOR
             </div>
-            <h2 className="text-3xl font-bold tracking-tight" style={{ color: '#09324A', fontFamily: "'Source Serif 4', serif" }}>Are You Saving Enough to Retire?</h2>
+            <h2 className="text-3xl font-bold tracking-tight" style={{ color: '#09324A', fontFamily: "'Source Serif 4', serif" }}>How is your route to retirement looking?</h2>
             <p className="text-sm leading-relaxed max-w-lg mx-auto" style={{ color: '#8a9599' }}>
               See if you're on track to meet your retirement goals — and find out when you could afford to ease back on contributions and let your savings do the work.
             </p>
@@ -1010,240 +1538,156 @@ export default function RetirementCalculator({ embedded = false } = {}) {
           {/* ── LEFT: Inputs ── */}
           <div className="space-y-4">
 
-            {/* Your Details */}
-            <div className="bg-white rounded-3xl p-6 space-y-5" style={{ borderColor: '#DAD7C8', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-              <h2 className="text-sm font-semibold uppercase tracking-wider font-display" style={{ color: '#8a9599' }}>Your Details</h2>
-
-              <div className="grid grid-cols-2 gap-6">
-                <SliderField label="Current Age"    name="currentAge"    value={inputs.currentAge}    onChange={handleChange} min={18} max={75}  step={1}   formatDisplay={fmtAge} />
-                <SliderField label="Retirement Age" name="retirementAge" value={inputs.retirementAge} onChange={handleChange} min={45} max={85}  step={1}   formatDisplay={fmtAge} />
+            {/* Mobile / tablet: stacked cards (unchanged below lg) */}
+            <div className="lg:hidden space-y-4">
+              {/* Your Details */}
+              <div className="bg-white rounded-3xl p-6 space-y-5" style={{ borderColor: '#DAD7C8', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+                <div className="flex items-center justify-between gap-2">
+                  <h2 className="text-sm font-semibold uppercase tracking-wider font-display" style={{ color: '#8a9599' }}>Your Details</h2>
+                  <span className="text-xs px-2 py-0.5 rounded-full" style={{ color: '#09324A', backgroundColor: '#FFFB08' }}>Required</span>
+                </div>
+                <YourDetailsFields inputs={inputs} handleChange={handleChange} />
               </div>
 
-              <SliderField label="Current Savings"       name="currentSavings"        value={inputs.currentSavings}        onChange={handleChange} min={0} max={1000000} step={1000} formatDisplay={formatGBP} alwaysEditable />
-              <SliderField label="Current Monthly Saving" name="monthlySavingsCurrent" value={inputs.monthlySavingsCurrent} onChange={handleChange} min={0} max={3000}    step={50}   formatDisplay={fmtMoneyMo} alwaysEditable />
-              <SliderField label="Expected Annual Return" name="annualReturn"          value={inputs.annualReturn}          onChange={handleChange} min={1} max={15}      step={0.5}  formatDisplay={fmtPct} />
-              <p className="text-xs text-[#8a9599] -mt-1">Default 7% reflects long-run equity market average. Adjust based on your portfolio.</p>
+              {/* Assumptions */}
+              <div className="bg-white rounded-3xl p-6 space-y-5" style={{ borderColor: '#DAD7C8', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+                <div className="flex items-center justify-between gap-2">
+                  <h2 className="text-sm font-semibold uppercase tracking-wider font-display" style={{ color: '#8a9599' }}>Assumptions</h2>
+                  <span className="text-xs px-2 py-0.5 rounded-full" style={{ color: '#1B6F81', backgroundColor: '#E7F1EF' }}>Defaults provided</span>
+                </div>
+                <AssumptionsFields inputs={inputs} handleChange={handleChange} />
+              </div>
 
-              <SliderField label="Expected Return in Retirement" name="retirementReturn" value={inputs.retirementReturn} onChange={handleChange} min={1} max={10} step={0.5} formatDisplay={fmtPct} />
-              <p className="text-xs text-[#8a9599] -mt-2">Portfolio typically de-risks into bonds near retirement. 3–4% reflects a balanced/cautious allocation.</p>
+              {/* Retirement Income */}
+              <div className="bg-white rounded-3xl p-6 space-y-5" style={{ borderColor: '#DAD7C8', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+                <div className="flex items-center justify-between gap-2">
+                  <h2 className="text-sm font-semibold uppercase tracking-wider font-display" style={{ color: '#8a9599' }}>Retirement Income</h2>
+                  <span className="text-xs px-2 py-0.5 rounded-full" style={{ color: '#09324A', backgroundColor: '#FFFB08' }}>Required</span>
+                </div>
+                <RetirementIncomeFields
+                  inputs={inputs}
+                  setInputs={setInputs}
+                  statePension={statePension}
+                  setStatePension={setStatePension}
+                  statePensionAge={statePensionAge}
+                />
+              </div>
 
-              <SliderField label="Plan for pot to last until" name="planningAge" value={inputs.planningAge} onChange={handleChange} min={80} max={100} step={1} formatDisplay={fmtAge} />
-              <p className="text-xs text-[#8a9599] -mt-2">The age you want your retirement pot to be modelled to last until. Your target pot is sized to draw your income down to this age, not to last forever.</p>
-              {inputs.planningAge < inputs.retirementAge + MIN_PLANNING_YEARS && inputs.retirementAge > inputs.currentAge && (
-                <p className="text-xs -mt-1" style={{ color: '#1B6F81' }}>Modelled to age {inputs.retirementAge + MIN_PLANNING_YEARS} — the plan needs at least {MIN_PLANNING_YEARS} years beyond your retirement age.</p>
-              )}
-
-              <IncomeSection
-                desiredIncome={inputs.desiredIncome}
-                onChange={(val) => setInputs((prev) => ({ ...prev, desiredIncome: val }))}
-                currentAge={inputs.currentAge}
-                retirementAge={inputs.retirementAge}
-              />
-            </div>
-
-            {/* State Pension */}
-            <div className="bg-white rounded-3xl p-6 space-y-4" style={{ borderColor: '#DAD7C8', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-              <div className="flex items-center justify-between gap-2">
-                <h2 className="text-sm font-semibold uppercase tracking-wider font-display" style={{ color: '#8a9599' }}>State Pension</h2>
-                <div className="flex items-center gap-2">
+              {/* Inheritances */}
+              <div className="bg-white rounded-3xl p-6 space-y-4" style={{ borderColor: '#DAD7C8', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+                <div className="flex items-center justify-between">
+                  <h2 className="text-sm font-semibold uppercase tracking-wider font-display" style={{ color: '#8a9599' }}>Expected Inheritances</h2>
                   <span className="text-xs px-2 py-0.5 rounded-full" style={{ color: '#8a9599', backgroundColor: '#F3F2EA' }}>Optional</span>
-                  <span className="text-xs px-2 py-0.5 rounded-full" style={{ color: '#8a9599', backgroundColor: '#F3F2EA', borderColor: '#DAD7C8', borderWidth: '1px' }}>
-                    Eligible from {statePensionAge}
-                  </span>
                 </div>
+                <InheritancesFields inheritances={inheritances} handleInheritanceChange={handleInheritanceChange} />
               </div>
-              <Toggle
-                checked={statePension.include}
-                onChange={() => setStatePension((p) => ({ ...p, include: !p.include }))}
-                label="Include State Pension"
-              />
-              {statePension.include && (
-                <>
-                  <NumberInput
-                    label="Annual State Pension"
-                    name="statePensionIncome"
-                    value={statePension.income}
-                    onChange={(e) => setStatePension((p) => ({ ...p, income: Number(e.target.value) }))}
-                    prefix="£"
-                    suffix="/yr"
-                    min={0}
-                    step={100}
-                  />
-                  <p className="text-xs" style={{ color: '#8a9599' }}>Assumes current UK State Pension (~£11,500/yr). Subject to change.</p>
-                  {inputs.retirementAge < statePensionAge && (
-                    <div className="rounded-2xl p-3 flex items-start gap-2" style={{ backgroundColor: '#FFFCE0', borderColor: '#FFFB08', borderWidth: '1px' }}>
-                      <span className="text-sm">!</span>
-                      <p className="text-xs" style={{ color: '#09324A' }}>
-                        Your state pension won't start until age {statePensionAge},{" "}
-                        {statePensionAge - inputs.retirementAge} year{statePensionAge - inputs.retirementAge !== 1 ? "s" : ""} into retirement.
-                        Your target pot accounts for this gap.
-                      </p>
-                    </div>
-                  )}
-                </>
-              )}
             </div>
 
-            {/* Inheritances */}
-            <div className="bg-white rounded-3xl p-6 space-y-4" style={{ borderColor: '#DAD7C8', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-              <div className="flex items-center justify-between">
-                <h2 className="text-sm font-semibold uppercase tracking-wider font-display" style={{ color: '#8a9599' }}>Expected Inheritances</h2>
-                <span className="text-xs px-2 py-0.5 rounded-full" style={{ color: '#8a9599', backgroundColor: '#F3F2EA' }}>Optional</span>
-              </div>
-              <p className="text-xs -mt-1" style={{ color: '#8a9599' }}>Inheritances received before retirement will be invested and grow until you retire.</p>
-              {inheritances.map((entry, i) => (
-                <div key={i} className="space-y-3">
-                  <p className="text-xs font-semibold uppercase tracking-wider font-display" style={{ color: '#8a9599' }}>Inheritance {i + 1}</p>
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="col-span-2">
-                      <SliderField
-                        label="Amount"
-                        name={`inheritanceAmount_${i}`}
-                        value={entry.amount}
-                        onChange={(e) => handleInheritanceChange(i, "amount", e.target.value)}
-                        min={0}
-                        max={500000}
-                        step={1000}
-                        formatDisplay={formatGBP}
-                      />
-                    </div>
-                    <NumberInput
-                      label="Age"
-                      name={`inheritanceAge_${i}`}
-                      value={entry.age === 0 ? "" : entry.age}
-                      onChange={(e) => handleInheritanceChange(i, "age", e.target.value)}
-                      placeholder="e.g. 55"
-                      suffix="yrs"
-                      min={1}
-                      max={120}
-                    />
-                  </div>
-                  {i < inheritances.length - 1 && <div className="border-t border-[#F3F2EA] pt-1" />}
-                </div>
-              ))}
-            </div>
+            {/* Desktop (lg+): one 850px card, sections switched via tabs */}
+            <InputsTabbedCard
+              inputs={inputs}
+              handleChange={handleChange}
+              setInputs={setInputs}
+              statePension={statePension}
+              setStatePension={setStatePension}
+              statePensionAge={statePensionAge}
+              inheritances={inheritances}
+              handleInheritanceChange={handleInheritanceChange}
+            />
           </div>
 
           {/* ── RIGHT: Results ── */}
-          <div className="space-y-4 lg:sticky lg:top-6">
+          <div className="space-y-4">
             {result ? (
               <>
-                <GrowthChart inputs={inputs} inheritances={inheritances} result={result} statePension={statePension} statePensionAge={statePensionAge} monthlySavingsCurrent={inputs.monthlySavingsCurrent} />
-                <ResultMessage result={result} retirementAge={inputs.retirementAge} />
-                <CoastCard result={result} currentAge={inputs.currentAge} retirementAge={inputs.retirementAge} />
-                <div className="rounded-3xl p-6 space-y-4" style={{ backgroundColor: '#F3F2EA', borderColor: '#DAD7C8', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-                  <h2 className="text-sm font-semibold uppercase tracking-wider font-display" style={{ color: '#8a9599' }}>Your Numbers</h2>
-                  <div className="space-y-2">
-                    <ResultRow
-                      icon="●"
-                      label="Target retirement pot"
-                      value={formatGBP(result.targetPot)}
-                      highlight
-                      help={statePension.include
-                        ? `Based on your inputs and assumptions, the estimated pot needed at age ${inputs.retirementAge} to draw your income down to age ${result.planningAge}, after allowing for ${formatGBP(statePension.income)}/yr of State Pension. Shown in future money.`
-                        : `Based on your inputs and assumptions, the estimated pot needed at age ${inputs.retirementAge} to draw your income down to age ${result.planningAge}. Shown in future money.`}
-                    />
-                    {result.capitalPreservationTargetPot != null && (
-                      <ResultRow
-                        icon="○"
-                        label="Conservative comparison (preserve capital)"
-                        value={formatGBP(result.capitalPreservationTargetPot)}
-                        help={`Preserving the pot and drawing only the assumed ${inputs.retirementReturn}% return would require around this much — it never runs down. Shown for reference, not as your target.`}
-                      />
-                    )}
-                    <ResultRow
-                      icon="●"
-                      label="Projected pot at retirement with current monthly saving"
-                      value={formatGBP(result.projectedPotWithSaving)}
-                      help={`If you keep saving ${fmtMoneyMo(inputs.monthlySavingsCurrent)}, this is the estimated value of your pot at age ${inputs.retirementAge}.`}
-                    />
-                    <ResultRow
-                      icon="●"
-                      label="Projected pot at retirement if you stopped saving today"
-                      value={formatGBP(result.projectedPotNoSaving)}
-                      help={`Your current savings${result.totalInheritanceFV > 0 ? " and expected inheritances" : ""} left to grow, with no further monthly contributions.`}
-                    />
-                    {result.savingsGap > 0 ? (
-                      <ResultRow
-                        icon="●"
-                        label="Estimated monthly shortfall"
-                        value={`${formatGBP(result.savingsGap)}/mo`}
-                        help="Extra monthly saving the model estimates you need to reach your target pot."
-                      />
-                    ) : result.savingsGap < 0 ? (
-                      <ResultRow
-                        icon="●"
-                        label="Estimated monthly surplus"
-                        value={`${formatGBP(Math.abs(result.savingsGap))}/mo`}
-                        help="You're saving more than the model estimates you need for this target."
-                      />
-                    ) : null}
-                    {statePension.include && result.incomeNeeded !== inputs.desiredIncome && (
-                      <ResultRow
-                        icon="●"
-                        label="Income needed from your pot"
-                        value={`${formatGBP(result.incomeNeeded)}/yr`}
-                        help="Your target income minus the State Pension, in future money."
-                      />
-                    )}
-                    {result.depletionAge == null
-                      ? <ResultRow icon="●" label="Estimated pot lasts until" value="Beyond planning age"
-                          help={`Based on your current saving, the model estimates your pot would still last beyond your planning age of ${result.planningAge} (it isn't projected to run out within the modelled horizon).`} />
-                      : result.depletionAge >= result.planningAge
-                      ? <ResultRow icon="●" label="Estimated pot lasts until" value="Beyond planning age"
-                          help={`Based on your current saving, the model estimates your pot would last to around age ${result.depletionAge} — beyond your planning age of ${result.planningAge}.`} />
-                      : <ResultRow icon="●" label="Estimated to run out around age" value={String(result.depletionAge)}
-                          help={`Based on your current saving of ${fmtMoneyMo(inputs.monthlySavingsCurrent)}, the model estimates the pot runs out before your planning age of ${result.planningAge}.`} />
-                    }
-                  </div>
-                  <InheritanceResultBox
+                {/* Mobile / tablet: pinned overview panel + stacked cards (unchanged below lg) */}
+                <div className="lg:hidden space-y-4">
+                  <ResultsPanel
+                    inputs={inputs}
                     inheritances={inheritances}
-                    inheritanceResults={result.inheritanceResults}
-                    totalInheritanceFV={result.totalInheritanceFV}
-                    retirementAge={inputs.retirementAge}
+                    result={result}
+                    statePension={statePension}
+                    statePensionAge={statePensionAge}
+                    monthlySavingsCurrent={inputs.monthlySavingsCurrent}
+                    currentAge={inputs.currentAge}
+                    mobilePinned={!embedded}
                   />
+                  <div className="rounded-3xl p-6 space-y-4" style={{ backgroundColor: '#F3F2EA', borderColor: '#DAD7C8', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+                    <h2 className="text-sm font-semibold uppercase tracking-wider font-display" style={{ color: '#8a9599' }}>Your Numbers</h2>
+                    <YourNumbersBody inputs={inputs} result={result} statePension={statePension} inheritances={inheritances} />
+                  </div>
+
+                  <ScenarioCards
+                    baseParams={{
+                      ...inputs,
+                      inheritances,
+                      includeStatePension: statePension.include,
+                      statePensionIncome: statePension.income,
+                      statePensionAge,
+                    }}
+                    result={result}
+                    retirementAge={inputs.retirementAge}
+                    currentAge={inputs.currentAge}
+                    desiredIncome={inputs.desiredIncome}
+                    monthlySavingsCurrent={inputs.monthlySavingsCurrent}
+                  />
+
+                  <AssumptionsPanel
+                    assumptions={getAssumptions({
+                      annualReturn: inputs.annualReturn,
+                      retirementReturn: inputs.retirementReturn,
+                      includeStatePension: statePension.include,
+                      statePensionIncome: statePension.income,
+                      statePensionAge,
+                      planningAge: result.planningAge,
+                      capitalPreservationTargetPot: result.capitalPreservationTargetPot,
+                    })}
+                  />
+
+                  <MethodologyLinkCard />
                 </div>
 
-                <ScenarioCards
-                  baseParams={{
-                    ...inputs,
-                    inheritances,
-                    includeStatePension: statePension.include,
-                    statePensionIncome: statePension.income,
-                    statePensionAge,
-                  }}
+                {/* Desktop (lg+): one 850px card, sections switched via tabs */}
+                <ResultsTabbedCard
+                  inputs={inputs}
+                  inheritances={inheritances}
                   result={result}
-                  retirementAge={inputs.retirementAge}
-                  currentAge={inputs.currentAge}
-                  desiredIncome={inputs.desiredIncome}
-                  monthlySavingsCurrent={inputs.monthlySavingsCurrent}
+                  statePension={statePension}
+                  statePensionAge={statePensionAge}
                 />
-
-                <AssumptionsPanel
-                  assumptions={getAssumptions({
-                    annualReturn: inputs.annualReturn,
-                    retirementReturn: inputs.retirementReturn,
-                    includeStatePension: statePension.include,
-                    statePensionIncome: statePension.income,
-                    statePensionAge,
-                    planningAge: result.planningAge,
-                    capitalPreservationTargetPot: result.capitalPreservationTargetPot,
-                  })}
-                />
-
-                <p className="text-xs text-center px-0.5" style={{ color: '#8a9599' }}>
-                  Want the detail?{" "}
-                  <Link to="/methodology" style={{ color: '#1B6F81' }}>Read how this calculator works</Link>.
-                </p>
               </>
             ) : (
-              <div className="bg-white rounded-3xl p-12 flex flex-col items-center justify-center text-center space-y-3 min-h-64" style={{ borderColor: '#DAD7C8', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+              <div
+                className={`bg-white rounded-t-[28px] lg:rounded-3xl p-12 flex flex-col items-center justify-center text-center space-y-3 min-h-64 lg:h-[850px] ${
+                  embedded ? "" : "fixed bottom-0 inset-x-0 z-30 lg:static lg:z-auto"
+                }`}
+                style={{ borderColor: '#DAD7C8', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}
+              >
                 <p className="text-sm font-medium" style={{ color: '#8a9599' }}>Your results will appear here</p>
                 <p className="text-xs" style={{ color: '#8a9599' }}>Make sure your retirement age is greater than your current age</p>
               </div>
             )}
           </div>
         </div>
+
+        {/* Desktop (lg+): assumptions live as a dropdown card spanning both
+            main cards, rather than a tab, so they read as reference material. */}
+        {result && (
+          <div className="hidden lg:block mt-6 space-y-4">
+            <AssumptionsPanel
+              assumptions={getAssumptions({
+                annualReturn: inputs.annualReturn,
+                retirementReturn: inputs.retirementReturn,
+                includeStatePension: statePension.include,
+                statePensionIncome: statePension.income,
+                statePensionAge,
+                planningAge: result.planningAge,
+                capitalPreservationTargetPot: result.capitalPreservationTargetPot,
+              })}
+            />
+            <MethodologyLinkCard />
+          </div>
+        )}
 
         {/* Feedback Form */}
         {!embedded && (

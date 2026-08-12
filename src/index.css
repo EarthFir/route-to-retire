@@ -51,17 +51,18 @@ input[type=range]::-webkit-slider-thumb {
   height: 24px;
   border-radius: 50%;
   background: #09324A;
-  border: 4px solid #FFFB08;
+  border: 4px solid #FBFAF5;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(9, 50, 74, .25);
+  box-shadow: 0 2px 8px rgba(9, 50, 74, .35);
 }
 input[type=range]::-moz-range-thumb {
   width: 20px;
   height: 20px;
   border-radius: 50%;
   background: #09324A;
-  border: 4px solid #FFFB08;
+  border: 4px solid #FBFAF5;
   cursor: pointer;
+  box-shadow: 0 2px 8px rgba(9, 50, 74, .35);
 }
 input[data-dark] {
   background: rgba(255, 255, 255, .16);

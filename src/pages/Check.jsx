@@ -8,7 +8,7 @@ import { Header } from "../components/landing/Chrome.jsx";
 
 export default function Check() {
   return (
-    <div className="overflow-x-hidden">
+    <div className="overflow-x-clip">
       <Header />
       <RetirementCalculator />
     </div>
