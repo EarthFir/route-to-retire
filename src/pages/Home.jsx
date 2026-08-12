@@ -1,136 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm, ValidationError } from "@formspree/react";
-import RetirementCalculator from "../components/RetirementCalculator.jsx";
-import { Link } from "../lib/Link.jsx";
+import heroFamily from "../assets/hero-family.jpg";
+import {
+  NAVY, TEAL, YELLOW, FENNEC, MINT_TINT, BAND, BODY, MUTED,
+  Container, Eyebrow, IconCircle, PrimaryCTA, SecondaryCTA, Header, LandingFooter,
+} from "../components/landing/Chrome.jsx";
 
 // ─── Route to Retire — Landing Page ───────────────────────────────────────────
-// Marketing homepage that wraps the existing calculator ("Your first step")
-// with hero, education, trust, upsell and B2B sections. All Pro / adviser /
-// provider CTAs are marketing placeholders that funnel into a single shared
-// interest-capture form (reusing the same Formspree endpoint as the in-app
-// feedback form) rather than standing up separate, half-built backends.
+// Marketing homepage. The real calculator lives at /check; this page carries a
+// self-contained "teaser" widget (illustrative maths against a fixed £500k
+// goal, not the full model) that hands off to /check to continue for real.
+// Pro / adviser / provider CTAs are marketing placeholders that funnel into a
+// single shared interest-capture form (reusing the same Formspree endpoint as
+// the in-app feedback form) rather than standing up separate half-built
+// backends.
 
-const NAVY = "#09324A";
-const TEAL = "#1B6F81";
-const YELLOW = "#FFFB08";
-const FENNEC = "#DAD7C8";
-const CREAM = "#F3F2EA";
-const MINT_TINT = "#E7F1EF";
-const BAND = "#E7E6DC";
-const BODY = "#4a5a5f";
-const MUTED = "#8a9599";
-
-// ─── Shared bits ───────────────────────────────────────────────────────────────
-
-function Container({ children, className = "" }) {
-  return <div className={`max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 ${className}`}>{children}</div>;
-}
-
-function Eyebrow({ children }) {
-  return (
-    <div className="flex items-center gap-3 mb-4">
-      <span style={{ width: 26, height: 2, backgroundColor: TEAL }} />
-      <span className="font-display font-semibold text-[12px] uppercase" style={{ letterSpacing: ".14em", color: TEAL }}>
-        {children}
-      </span>
-    </div>
-  );
-}
-
-function IconCircle({ children }) {
-  return (
-    <div className="w-9 h-9 rounded-full flex items-center justify-center font-bold shrink-0" style={{ backgroundColor: MINT_TINT, color: NAVY }}>
-      {children}
-    </div>
-  );
-}
-
-function PrimaryCTA({ href, onClick, children }) {
-  return (
-    <a
-      href={href}
-      onClick={onClick}
-      className="inline-flex items-center justify-center gap-2 font-semibold text-[15px] sm:text-base rounded-full px-7 py-3.5 transition hover:opacity-90 font-display"
-      style={{ backgroundColor: YELLOW, color: NAVY, boxShadow: "0 10px 26px -10px rgba(255,251,8,.55)" }}
-    >
-      {children}
-    </a>
-  );
-}
-
-function SecondaryCTA({ href, onClick, dark, children }) {
-  return (
-    <a
-      href={href}
-      onClick={onClick}
-      className="inline-flex items-center justify-center gap-2 font-semibold text-[15px] sm:text-base rounded-full px-6 py-3 transition hover:opacity-70 font-display"
-      style={dark ? { color: "#F3F2EA", border: "1.5px solid rgba(243,242,234,.35)" } : { color: NAVY, border: "1.5px solid rgba(9,50,74,.2)" }}
-    >
-      {children}
-    </a>
-  );
-}
-
-// ─── Header ─────────────────────────────────────────────────────────────────────
-
-function Header() {
-  const [open, setOpen] = useState(false);
-  return (
-    <header
-      className="sticky top-0 z-40"
-      style={{ backgroundColor: "rgba(243,242,234,.92)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", borderBottom: "1px solid rgba(9,50,74,.08)" }}
-    >
-      <Container className="flex items-center justify-between gap-4 py-4">
-        <Link to="/" className="font-serif font-bold text-xl" style={{ color: NAVY, letterSpacing: "-.01em" }}>
-          Route to Retire
-        </Link>
-        <nav className="hidden md:flex items-center gap-8 text-[15px] font-medium" style={{ color: NAVY }}>
-          <a href="#check">Check</a>
-          <a href="#how-it-works">How it works</a>
-          <Link to="/methodology">Resources</Link>
-          <a href="#trust">About</a>
-        </nav>
-        <div className="flex items-center gap-3">
-          <a
-            href="#check"
-            className="hidden sm:inline-flex font-semibold text-sm rounded-full px-6 py-2.5 hover:opacity-90 transition font-display"
-            style={{ backgroundColor: YELLOW, color: NAVY }}
-          >
-            Start my check
-          </a>
-          <button
-            type="button"
-            onClick={() => setOpen((o) => !o)}
-            aria-label="Toggle menu"
-            aria-expanded={open}
-            className="md:hidden w-9 h-9 flex flex-col items-center justify-center gap-1.5"
-          >
-            <span className="block w-5 h-0.5 rounded-full transition" style={{ backgroundColor: NAVY, transform: open ? "translateY(2px) rotate(45deg)" : "none" }} />
-            <span className="block w-5 h-0.5 rounded-full transition" style={{ backgroundColor: NAVY, opacity: open ? 0 : 1 }} />
-            <span className="block w-5 h-0.5 rounded-full transition" style={{ backgroundColor: NAVY, transform: open ? "translateY(-8px) rotate(-45deg)" : "none" }} />
-          </button>
-        </div>
-      </Container>
-      {open && (
-        <div className="md:hidden" style={{ borderTop: "1px solid rgba(9,50,74,.08)" }}>
-          <Container className="flex flex-col gap-1 py-4 text-[15px] font-medium" style={{ color: NAVY }}>
-            <a href="#check" onClick={() => setOpen(false)} className="py-2">Check</a>
-            <a href="#how-it-works" onClick={() => setOpen(false)} className="py-2">How it works</a>
-            <Link to="/methodology" className="py-2">Resources</Link>
-            <a href="#trust" onClick={() => setOpen(false)} className="py-2">About</a>
-            <a
-              href="#check"
-              onClick={() => setOpen(false)}
-              className="mt-2 inline-flex justify-center font-semibold text-sm rounded-full px-6 py-2.5 font-display"
-              style={{ backgroundColor: YELLOW, color: NAVY }}
-            >
-              Start my check
-            </a>
-          </Container>
-        </div>
-      )}
-    </header>
-  );
+function fmtGBP0(n) {
+  return "£" + Math.round(n).toLocaleString("en-GB");
 }
 
 // ─── Hero ───────────────────────────────────────────────────────────────────────
@@ -163,21 +49,8 @@ function Hero() {
           </div>
 
           <div className="relative">
-            <div
-              className="relative rounded-[28px] overflow-hidden h-[300px] sm:h-[380px]"
-              style={{ background: "linear-gradient(135deg, #AED0C9 0%, #E7F1EF 45%, #FFFB08 130%)" }}
-            >
-              <div className="absolute" style={{ top: -60, left: -40, width: 220, height: 220, borderRadius: "50%", background: "radial-gradient(circle, rgba(9,50,74,.10), rgba(9,50,74,0) 70%)" }} />
-              <svg viewBox="0 0 400 300" className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
-                <path
-                  d="M0,230 C60,225 90,175 140,165 C190,155 210,205 260,165 C310,125 320,70 400,45"
-                  fill="none"
-                  stroke="#09324A"
-                  strokeOpacity=".22"
-                  strokeWidth="4"
-                  strokeLinecap="round"
-                />
-              </svg>
+            <div className="relative rounded-[28px] overflow-hidden h-[300px] sm:h-[380px]">
+              <img src={heroFamily} alt="A family reviewing their retirement plan together at home" className="w-full h-full object-cover block" />
             </div>
             <div
               className="absolute left-4 right-4 sm:left-8 sm:right-[-18px] bottom-[-28px] rounded-2xl p-5 sm:p-6"
@@ -198,12 +71,147 @@ function Hero() {
             </div>
           </div>
         </div>
+
+        <div className="flex justify-center pt-14 sm:pt-16">
+          <a href="#check" className="flex items-center gap-2.5 font-display font-semibold text-[12.5px] uppercase" style={{ letterSpacing: ".14em", color: TEAL }}>
+            Continue the check below <span className="text-base">↓</span>
+          </a>
+        </div>
       </Container>
     </section>
   );
 }
 
-// ─── Check (embeds the real calculator) ──────────────────────────────────────
+// ─── Check teaser widget ──────────────────────────────────────────────────────
+// A self-contained, illustrative slider widget (fixed 42-year-old saver, fixed
+// £500k goal, 5% growth) — not the real model. Both buttons hand off to the
+// full calculator at /check to continue for real.
+
+function SliderRow({ label, display, value, min, max, step, onChange }) {
+  const pct = ((value - min) / (max - min)) * 100;
+  return (
+    <div>
+      <div className="flex items-baseline justify-between mb-2.5">
+        <span className="text-[15px]" style={{ color: "rgba(243,242,234,.82)" }}>{label}</span>
+        <span className="font-serif font-bold text-2xl" style={{ color: "#FFFB08" }}>{display}</span>
+      </div>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        data-dark
+        onChange={(e) => onChange(Number(e.target.value))}
+        className="w-full h-1.5 rounded-full appearance-none cursor-pointer"
+        style={{ background: `linear-gradient(to right, #FFFB08 ${pct}%, rgba(243,242,234,.15) ${pct}%)` }}
+      />
+    </div>
+  );
+}
+
+const TEASER_CURRENT_AGE = 42;
+const TEASER_RETURN = 0.05;
+const TEASER_GOAL = 500000;
+
+function CheckPreviewWidget() {
+  const [retireAge, setRetireAge] = useState(65);
+  const [contribution, setContribution] = useState(300);
+  const [savings, setSavings] = useState(52000);
+
+  const n = Math.max(1, retireAge - TEASER_CURRENT_AGE);
+  const growth = Math.pow(1 + TEASER_RETURN, n);
+  const pot = savings * growth + contribution * 12 * ((growth - 1) / TEASER_RETURN);
+  const goalPct = Math.min(100, Math.round((pot / TEASER_GOAL) * 100));
+  const onTrack = pot >= TEASER_GOAL * 0.97;
+  const status = onTrack
+    ? { label: "On track", color: YELLOW, bg: "rgba(255,251,8,.12)", border: "rgba(255,251,8,.35)" }
+    : { label: "Getting closer", color: "#AED0C9", bg: "rgba(174,208,201,.12)", border: "rgba(174,208,201,.3)" };
+
+  const W = 360, H = 168, padT = 10, padB = 8;
+  const maxVal = Math.max(pot, TEASER_GOAL) * 1.08;
+  const yOf = (v) => padT + (H - padT - padB) * (1 - v / maxVal);
+  const pts = [];
+  for (let y = 0; y <= n; y++) {
+    const g = Math.pow(1 + TEASER_RETURN, y);
+    const v = savings * g + contribution * 12 * ((g - 1) / TEASER_RETURN);
+    pts.push([(y / n) * W, yOf(v)]);
+  }
+  const line = pts.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join(" ");
+  const area = `${line} L${W} ${H} L0 ${H} Z`;
+  const goalY = yOf(TEASER_GOAL);
+  const last = pts[pts.length - 1];
+
+  return (
+    <div className="rounded-[28px] p-6 sm:p-9" style={{ background: "linear-gradient(160deg,#0c3c58 0%,#09324A 46%,#061f2e 100%)", boxShadow: "0 42px 90px -46px rgba(6,31,46,.9)" }}>
+      <div className="flex items-start justify-between gap-4 mb-7">
+        <h3 className="font-serif font-bold text-2xl sm:text-[28px] leading-tight max-w-[24ch]" style={{ color: "#F3F2EA" }}>
+          How much do you need in your pot — and are you on track to reach it?
+        </h3>
+        <span className="text-[11px] px-3 py-1.5 rounded-full whitespace-nowrap font-display shrink-0" style={{ color: "rgba(243,242,234,.7)", border: "1px solid rgba(174,208,201,.3)" }}>Step 1 of 4</span>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-7">
+        <div className="flex flex-col gap-6">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="rounded-2xl p-4" style={{ backgroundColor: "rgba(174,208,201,.08)", border: "1px solid rgba(174,208,201,.16)" }}>
+              <div className="font-display text-[11px] uppercase tracking-widest mb-1.5" style={{ color: "#AED0C9" }}>You may need</div>
+              <div className="font-serif font-bold text-xl sm:text-2xl whitespace-nowrap" style={{ color: "#F3F2EA" }}>{fmtGBP0(TEASER_GOAL)}</div>
+            </div>
+            <div className="rounded-2xl p-4" style={{ backgroundColor: "rgba(174,208,201,.08)", border: "1px solid rgba(174,208,201,.16)" }}>
+              <div className="font-display text-[11px] uppercase tracking-widest mb-1.5" style={{ color: "#AED0C9" }}>On track for</div>
+              <div className="font-serif font-bold text-xl sm:text-2xl whitespace-nowrap" style={{ color: "#FFFB08" }}>{fmtGBP0(pot)}</div>
+            </div>
+          </div>
+
+          <SliderRow label="Target retirement age" display={retireAge} value={retireAge} min={55} max={72} step={1} onChange={setRetireAge} />
+          <SliderRow label="Monthly contribution" display={fmtGBP0(contribution)} value={contribution} min={0} max={1500} step={25} onChange={setContribution} />
+          <SliderRow label="Current savings" display={fmtGBP0(savings)} value={savings} min={0} max={300000} step={1000} onChange={setSavings} />
+        </div>
+
+        <div className="rounded-2xl p-5 flex flex-col" style={{ backgroundColor: "rgba(174,208,201,.08)", border: "1px solid rgba(174,208,201,.16)" }}>
+          <div className="flex items-center justify-between gap-3 mb-1.5 flex-wrap">
+            <span className="font-display text-[11px] uppercase tracking-widest" style={{ color: "#AED0C9" }}>Projected growth</span>
+            <span className="inline-flex items-center gap-1.5 font-display font-semibold text-[11px] px-2.5 py-1 rounded-full whitespace-nowrap" style={{ color: status.color, backgroundColor: status.bg, border: `1px solid ${status.border}` }}>
+              <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: status.color }} />{status.label}
+            </span>
+          </div>
+          <div className="text-[13px] mb-3" style={{ color: "rgba(243,242,234,.55)" }}>{goalPct}% of your {fmtGBP0(TEASER_GOAL)} goal · assumes ~5% a year</div>
+          <div className="flex-1 min-h-[150px]">
+            <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className="w-full h-full block overflow-visible">
+              <defs>
+                <linearGradient id="cpFill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#FFFB08" stopOpacity="0.34" />
+                  <stop offset="100%" stopColor="#FFFB08" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              <line x1="0" y1={goalY} x2={W} y2={goalY} stroke="#AED0C9" strokeWidth="1.25" strokeDasharray="5 5" opacity="0.75" />
+              <text x="4" y={goalY - 7} fill="#AED0C9" fontSize="11" fontFamily="Manrope, sans-serif">Goal {fmtGBP0(TEASER_GOAL)}</text>
+              <path d={area} fill="url(#cpFill)" />
+              <path d={line} fill="none" stroke="#FFFB08" strokeWidth="3" strokeLinejoin="round" strokeLinecap="round" />
+              <circle cx={last[0]} cy={last[1]} r="5" fill="#FFFB08" stroke="#09324A" strokeWidth="3" />
+            </svg>
+          </div>
+          <div className="flex items-center justify-between mt-2 font-display text-[11px]" style={{ color: "rgba(243,242,234,.6)" }}>
+            <span>Today</span>
+            <span>Age {retireAge}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-7 text-[13px]" style={{ color: "rgba(243,242,234,.6)" }}>
+        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: "#AED0C9" }} />No exact numbers needed to start</span>
+        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: "#AED0C9" }} />Takes around one minute</span>
+        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: "#AED0C9" }} />You can refine the details later</span>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-4 mt-7">
+        <PrimaryCTA to="/check">Continue →</PrimaryCTA>
+        <SecondaryCTA to="/check" dark>Check my route</SecondaryCTA>
+      </div>
+    </div>
+  );
+}
 
 function CheckSection() {
   return (
@@ -215,10 +223,11 @@ function CheckSection() {
             <h2 className="font-serif font-bold text-3xl sm:text-4xl" style={{ color: NAVY, letterSpacing: "-.02em" }}>The One-Minute Retirement Check</h2>
           </div>
           <p className="text-[15px] leading-relaxed max-w-sm" style={{ color: BODY }}>
-            Move a few sliders and see how your projected pension pot compares with your target. Nothing is saved, there's no sign-up, and you can refine the details later.
+            Move a slider and watch your projected pot and growth curve update against your goal. Nothing is saved and
+            there's no sign-up.
           </p>
         </div>
-        <RetirementCalculator embedded />
+        <CheckPreviewWidget />
       </Container>
     </section>
   );
@@ -324,7 +333,7 @@ const PRO_FEATURES = [
   "Revisit your plan later",
 ];
 
-function ProUpsell({ setTopic }) {
+function ProUpsell() {
   return (
     <section id="pro" className="py-16 sm:py-20">
       <Container>
@@ -340,8 +349,8 @@ function ProUpsell({ setTopic }) {
                 Unlock Route to Retire Pro to save scenarios, plan as a couple, and export a clean PDF summary.
               </p>
               <div className="flex flex-wrap items-center gap-4">
-                <PrimaryCTA href="#get-in-touch" onClick={() => setTopic("pro")}>Unlock Pro →</PrimaryCTA>
-                <SecondaryCTA href="#check" dark>Continue with the free check</SecondaryCTA>
+                <PrimaryCTA to="/pro">Unlock Pro →</PrimaryCTA>
+                <SecondaryCTA to="/check" dark>Continue with the free check</SecondaryCTA>
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -429,7 +438,7 @@ function AdviserSection({ setTopic }) {
             </ul>
             <div className="flex flex-wrap items-center gap-4">
               <PrimaryCTA href="#get-in-touch" onClick={() => setTopic("adviser")}>Ask about adviser embeds →</PrimaryCTA>
-              <SecondaryCTA href="#check">See example journey</SecondaryCTA>
+              <SecondaryCTA to="/check">See example journey</SecondaryCTA>
             </div>
           </div>
 
@@ -461,9 +470,6 @@ function AdviserSection({ setTopic }) {
 }
 
 // ─── Shared "get in touch" interest capture ──────────────────────────────────
-// One real, working Formspree form (reusing the existing feedback endpoint)
-// backs every soft CTA above — Pro, adviser embeds, provider comparisons and
-// general contact all land here with the relevant topic pre-selected.
 
 const TOPICS = [
   { value: "general", label: "General question / feedback" },
@@ -563,36 +569,9 @@ function FinalCTA() {
         <p className="text-base sm:text-lg leading-relaxed max-w-xl mx-auto mb-8" style={{ color: "rgba(243,242,234,.75)" }}>
           No exact numbers needed to start. See where you stand today, then decide what to do next — in your own time.
         </p>
-        <PrimaryCTA href="#check">Start my check →</PrimaryCTA>
+        <PrimaryCTA to="/check">Start my check →</PrimaryCTA>
       </Container>
     </section>
-  );
-}
-
-// ─── Footer ──────────────────────────────────────────────────────────────────────
-
-function LandingFooter() {
-  return (
-    <footer className="pt-14 pb-10" style={{ borderTop: `1px solid ${FENNEC}` }}>
-      <Container>
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
-          <span className="font-serif font-bold text-xl" style={{ color: NAVY }}>Route to Retire</span>
-          <span className="text-sm" style={{ color: MUTED }}>Pension planning, made plain.</span>
-        </div>
-        <nav className="flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium mb-6" style={{ color: TEAL }}>
-          <Link to="/methodology">Assumptions</Link>
-          <Link to="/privacy">Privacy</Link>
-          <Link to="/disclaimer">Terms</Link>
-          <a href="#providers">Affiliate disclosure</a>
-          <a href="#advisers">For advisers</a>
-          <a href="#get-in-touch">Contact</a>
-        </nav>
-        <p className="text-xs leading-relaxed max-w-2xl" style={{ color: MUTED }}>
-          Route to Retire provides educational tools and projections based on the assumptions you enter. It is not financial
-          advice. Pension and investment decisions can affect your future income and tax position.
-        </p>
-      </Container>
-    </footer>
   );
 }
 
@@ -601,15 +580,25 @@ function LandingFooter() {
 export default function Home() {
   const [topic, setTopic] = useState("general");
 
+  // Cross-page anchors (header/footer links like "/#trust") land here after a
+  // full navigation; same-document hash clicks are handled natively by the
+  // browser. This only needs to run once, on mount.
+  useEffect(() => {
+    if (window.location.hash) {
+      const el = document.getElementById(window.location.hash.slice(1));
+      el?.scrollIntoView();
+    }
+  }, []);
+
   return (
-    <div className="overflow-x-hidden" style={{ backgroundColor: CREAM }}>
+    <div className="overflow-x-hidden">
       <Header />
       <Hero />
       <CheckSection />
       <HowItWorks />
       <WhatYouGet />
       <Trust />
-      <ProUpsell setTopic={setTopic} />
+      <ProUpsell />
       <ProviderMoment setTopic={setTopic} />
       <AdviserSection setTopic={setTopic} />
       <GetInTouch topic={topic} setTopic={setTopic} />
