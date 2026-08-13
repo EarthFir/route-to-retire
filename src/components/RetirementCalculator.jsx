@@ -826,6 +826,7 @@ function YourNumbersBody({ inputs, result, statePension, inheritances, dark }) {
           totalInheritanceFV={result.totalInheritanceFV}
           retirementAge={inputs.retirementAge}
         />
+        <NumbersDisclaimer dark />
       </div>
     );
   }
@@ -841,6 +842,41 @@ function YourNumbersBody({ inputs, result, statePension, inheritances, dark }) {
         totalInheritanceFV={result.totalInheritanceFV}
         retirementAge={inputs.retirementAge}
       />
+      <NumbersDisclaimer />
+    </div>
+  );
+}
+
+// Short-form reminder of the headline points from the Disclaimer page, shown
+// at the foot of "Your Numbers" so it travels with the figures themselves.
+function NumbersDisclaimer({ dark }) {
+  const points = [
+    "Educational tool only — not financial or tax advice.",
+    "Results are estimates, not guarantees.",
+    "Returns and inflation can vary from what's assumed here.",
+  ];
+  return (
+    <div
+      className="text-xs pt-2 mt-1"
+      style={{
+        borderTop: `1px solid ${dark ? "rgba(255,255,255,.14)" : "#E4E1D4"}`,
+        color: dark ? "rgba(243,242,234,.55)" : "#8a9599",
+      }}
+    >
+      <p className="font-semibold mb-1" style={{ color: dark ? "rgba(243,242,234,.75)" : "#5b6669" }}>
+        Disclaimer
+      </p>
+      <ul className="space-y-1 list-disc pl-4">
+        {points.map((point) => (
+          <li key={point}>{point}</li>
+        ))}
+      </ul>
+      <p className="mt-1">
+        See the{" "}
+        <Link to="/disclaimer" style={{ color: dark ? "#AED0C9" : "#1B6F81" }}>
+          full disclaimer
+        </Link>.
+      </p>
     </div>
   );
 }
