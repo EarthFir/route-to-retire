@@ -28,6 +28,25 @@ export const DEFAULT_PLANNING_AGE = 95;
 /** How many years the planning age must sit above the retirement age, at minimum. */
 export const MIN_PLANNING_YEARS = 5;
 
+/** Years before retirement over which the return glides down towards the retirement return. */
+export const RETURN_GLIDE_YEARS = 10;
+
+/**
+ * The assumed investment return for a given age while still saving. Flat at
+ * annualReturn until RETURN_GLIDE_YEARS before retirement, then eases in a
+ * straight line down to retirementReturn by the retirement age itself —
+ * reflecting the common pattern of shifting into lower-risk assets (e.g.
+ * bonds) as retirement approaches, rather than staying fully invested right
+ * up to the day you retire.
+ */
+export function getGlidedReturn(age, retirementAge, annualReturn, retirementReturn) {
+  const yearsToRetirement = retirementAge - age;
+  if (yearsToRetirement >= RETURN_GLIDE_YEARS) return annualReturn;
+  if (yearsToRetirement <= 0) return retirementReturn;
+  const progress = 1 - yearsToRetirement / RETURN_GLIDE_YEARS;
+  return annualReturn + progress * (retirementReturn - annualReturn);
+}
+
 /** Age retirement income need starts easing off (the "spending taper"). */
 export const SPENDING_TAPER_START_AGE = 72;
 
@@ -92,6 +111,15 @@ export function getAssumptions({
       label: "Return while saving",
       value: fmtPct(annualReturn),
       note: "Assumed average annual growth on your pot before you retire.",
+    },
+    {
+      label: "Return glide",
+      value: `${fmtPct(annualReturn)} → ${fmtPct(retirementReturn)} over the last ${RETURN_GLIDE_YEARS} years`,
+      note: `Rather than staying at ${fmtPct(
+        annualReturn,
+      )} right up to retirement day, your return is assumed to ease down towards ${fmtPct(
+        retirementReturn,
+      )} over the final ${RETURN_GLIDE_YEARS} years before you retire — reflecting how most managed pension funds automatically shift into lower-risk, lower-return assets like bonds as retirement approaches.`,
     },
     {
       label: "Return in retirement",

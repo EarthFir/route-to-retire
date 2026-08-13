@@ -52,10 +52,14 @@ export default function Methodology() {
 
       <Section title="How investment growth is estimated">
         <p>
-          Before retirement, your savings are assumed to grow at a single average annual
-          return that you can adjust. Once you retire, a separate, lower return is applied
-          to reflect a more cautious, de-risked portfolio. Both are steady averages —
-          real returns vary year to year and are not guaranteed.
+          Before retirement, your savings are assumed to grow at an average annual return
+          that you can adjust. Rather than staying at that rate right up to retirement day,
+          it's eased down in a straight line over the final 10 years before you retire
+          towards your (lower) retirement return — reflecting how most managed pension
+          funds automatically shift into lower-risk, lower-return assets like bonds as
+          retirement approaches. Once you retire, that lower return is applied for the
+          rest of your plan, to reflect a more cautious, de-risked portfolio. All figures
+          are steady averages — real returns vary year to year and are not guaranteed.
         </p>
       </Section>
 

@@ -17,6 +17,8 @@ import {
   getStatePensionAge,
   getAssumptions,
   getSpendingTaperFactor,
+  getGlidedReturn,
+  RETURN_GLIDE_YEARS,
 } from "../lib/assumptions.js";
 import { Link } from "../lib/Link.jsx";
 import SiteFooter from "../pages/SiteFooter.jsx";
@@ -31,31 +33,53 @@ function formatGBP(value) {
   }).format(value);
 }
 
-function calcInheritanceFV(amount, receivedAge, retirementAge, r) {
+// Grows a sum year by year from startAge to endAge, adding an optional
+// monthly contribution at the end of each year. Applies the pre-retirement
+// return glide (see getGlidedReturn in assumptions.js) rather than a single
+// flat rate, so it replaces the old closed-form compound-interest formulas —
+// those only work when the rate is constant every year.
+function growPot({ startAge, endAge, startValue, monthlyContribution = 0, retirementAge, annualReturn, retirementReturn }) {
+  let pot = startValue;
+  for (let age = startAge + 1; age <= endAge; age++) {
+    const rate = getGlidedReturn(age, retirementAge, annualReturn, retirementReturn) / 100;
+    pot = pot * (1 + rate) + monthlyContribution * 12;
+  }
+  return pot;
+}
+
+function calcInheritanceFV(amount, receivedAge, retirementAge, annualReturn, retirementReturn) {
   if (!amount || !receivedAge) return { futureValue: 0, afterRetirement: false };
   if (receivedAge < retirementAge) {
     return {
-      futureValue: amount * Math.pow(1 + r, retirementAge - receivedAge),
+      futureValue: growPot({ startAge: receivedAge, endAge: retirementAge, startValue: amount, retirementAge, annualReturn, retirementReturn }),
       afterRetirement: false,
     };
   }
   return { futureValue: amount, afterRetirement: true };
 }
 
-function findCoastAge({ currentAge, retirementAge, currentSavings, monthlySavingsCurrent, targetPot, r, totalInheritanceFV }) {
+function findCoastAge({ currentAge, retirementAge, currentSavings, monthlySavingsCurrent, targetPot, annualReturn, retirementReturn, totalInheritanceFV }) {
   for (let age = currentAge; age <= retirementAge; age++) {
-    const yearsSaving = age - currentAge;
-    const yearsAfterStop = retirementAge - age;
-    const fvCurrentToStop = currentSavings * Math.pow(1 + r, yearsSaving);
-    const fvContributionsToStop =
-      yearsSaving > 0 && r > 0
-        ? monthlySavingsCurrent * 12 * (Math.pow(1 + r, yearsSaving) - 1) / r
-        : monthlySavingsCurrent * 12 * yearsSaving;
-    const potAtStop = fvCurrentToStop + fvContributionsToStop;
-    const fvFinal = potAtStop * Math.pow(1 + r, yearsAfterStop) + totalInheritanceFV;
+    const potAtStop = growPot({ startAge: currentAge, endAge: age, startValue: currentSavings, monthlyContribution: monthlySavingsCurrent, retirementAge, annualReturn, retirementReturn });
+    const fvFinal = growPot({ startAge: age, endAge: retirementAge, startValue: potAtStop, retirementAge, annualReturn, retirementReturn }) + totalInheritanceFV;
     if (fvFinal >= targetPot) return { coastAge: age, yearsUntilCoast: age - currentAge };
   }
   return { coastAge: null, yearsUntilCoast: null };
+}
+
+// Binary search for the level monthly saving that grows totalFutureValueNoSaving
+// up to targetPot by retirement. Needed because the return glide means there's
+// no closed-form annuity formula to invert directly.
+function solveRequiredMonthlySaving({ targetPot, totalFutureValueNoSaving, currentAge, retirementAge, annualReturn, retirementReturn }) {
+  if (totalFutureValueNoSaving >= targetPot) return 0;
+  let lo = 0;
+  let hi = 1_000_000;
+  for (let i = 0; i < 50; i++) {
+    const mid = (lo + hi) / 2;
+    const fvContributions = growPot({ startAge: currentAge, endAge: retirementAge, startValue: 0, monthlyContribution: mid, retirementAge, annualReturn, retirementReturn });
+    if (totalFutureValueNoSaving + fvContributions >= targetPot) hi = mid; else lo = mid;
+  }
+  return hi;
 }
 
 // The withdrawal the pot must fund at a given age in retirement: the target
@@ -75,7 +99,6 @@ function getStatus(isCoast, monthlySavings, savingsGap, yearsToRetirement) {
 }
 
 function calculateAll({ currentAge, retirementAge, currentSavings, desiredIncome, annualReturn, inheritances, includeStatePension, statePensionIncome, monthlySavingsCurrent, statePensionAge, retirementReturn, planningAge }) {
-  const r = annualReturn / 100;
   const retirementR = retirementReturn / 100;
   const years = retirementAge - currentAge;
   const inflationRate = INFLATION_RATE;
@@ -113,18 +136,17 @@ function calculateAll({ currentAge, retirementAge, currentSavings, desiredIncome
       ? incomeNeeded / retirementR
       : null;
 
-  const futureValueCurrent = currentSavings * Math.pow(1 + r, years);
+  // Pre-retirement growth uses the return glide (see growPot / getGlidedReturn)
+  // rather than a single flat rate, so it's computed year by year.
+  const futureValueCurrent = growPot({ startAge: currentAge, endAge: retirementAge, startValue: currentSavings, retirementAge, annualReturn, retirementReturn });
   const inheritanceResults = inheritances.map(({ amount, age }) =>
-    calcInheritanceFV(amount, age > 0 ? age : null, retirementAge, r)
+    calcInheritanceFV(amount, age > 0 ? age : null, retirementAge, annualReturn, retirementReturn)
   );
   const totalInheritanceFV = inheritanceResults.reduce((sum, { futureValue }) => sum + futureValue, 0);
   const totalFutureValue = futureValueCurrent + totalInheritanceFV;
 
   // Contributions from current monthly saving, grown to retirement.
-  const fvContributions =
-    years > 0 && r > 0
-      ? monthlySavingsCurrent * 12 * (Math.pow(1 + r, years) - 1) / r
-      : monthlySavingsCurrent * 12 * years;
+  const fvContributions = growPot({ startAge: currentAge, endAge: retirementAge, startValue: 0, monthlyContribution: monthlySavingsCurrent, retirementAge, annualReturn, retirementReturn });
 
   // Two clearly-defined projected pots at retirement (both in future money):
   //  • no more saving  = today's savings + inheritances, grown, no new contributions
@@ -132,16 +154,11 @@ function calculateAll({ currentAge, retirementAge, currentSavings, desiredIncome
   const projectedPotNoSaving = totalFutureValue;
   const projectedPotWithSaving = totalFutureValue + fvContributions;
 
-  let monthlySavings = 0;
-  if (totalFutureValue < targetPot) {
-    const numerator = (targetPot - totalFutureValue) * r;
-    const denominator = Math.pow(1 + r, years) - 1;
-    monthlySavings = denominator > 0 ? numerator / denominator / 12 : 0;
-  }
+  const monthlySavings = solveRequiredMonthlySaving({ targetPot, totalFutureValueNoSaving: totalFutureValue, currentAge, retirementAge, annualReturn, retirementReturn });
   const savingsGap = monthlySavings - monthlySavingsCurrent;
   const isCoast = totalFutureValue >= targetPot;
   const status = getStatus(isCoast, monthlySavings, savingsGap, years);
-  const { coastAge, yearsUntilCoast } = findCoastAge({ currentAge, retirementAge, currentSavings, monthlySavingsCurrent, targetPot, r, totalInheritanceFV });
+  const { coastAge, yearsUntilCoast } = findCoastAge({ currentAge, retirementAge, currentSavings, monthlySavingsCurrent, targetPot, annualReturn, retirementReturn, totalInheritanceFV });
 
   // Drawdown of the pot the user is actually on track to have (with current
   // saving), so "runs out at age X" reflects their real trajectory rather than
@@ -349,6 +366,7 @@ function AssumptionsFields({ inputs, handleChange }) {
       <div>
         <SliderField label="Expected Annual Return" name="annualReturn" value={inputs.annualReturn} onChange={handleChange} min={1} max={15} step={0.5} formatDisplay={fmtPct} />
         <p className="text-xs text-[#8a9599] mt-2">Default 7% reflects long-run equity market average. Adjust based on your portfolio.</p>
+        <p className="text-xs text-[#8a9599] mt-1">Eases down to your retirement return over the last {RETURN_GLIDE_YEARS} years, reflecting a typical shift to lower-risk assets.</p>
       </div>
       <div>
         <SliderField label="Expected Return in Retirement" name="retirementReturn" value={inputs.retirementReturn} onChange={handleChange} min={1} max={10} step={0.5} formatDisplay={fmtPct} />
@@ -884,28 +902,29 @@ function NumbersDisclaimer({ dark }) {
 // ─── Chart ────────────────────────────────────────────────────────────────────
 
 function buildChartData({ currentAge, retirementAge, currentSavings, monthlySavingsCurrent, annualReturn, inheritances, desiredIncome, includeStatePension, statePensionIncome, statePensionAge, retirementReturn, planningAge }) {
-  const r = annualReturn / 100;
   const retirementR = retirementReturn / 100;
   const inflationRate = INFLATION_RATE;
   const yearsToRetirement = retirementAge - currentAge;
   const inflatedDesiredIncome = desiredIncome * Math.pow(1 + inflationRate, yearsToRetirement);
   const data = [];
 
-  // Accumulation phase
-  for (let age = currentAge; age <= retirementAge; age++) {
-    const y = age - currentAge;
-    const fvSavings = currentSavings * Math.pow(1 + r, y);
-    const fvContributions =
-      y > 0 && r > 0
-        ? monthlySavingsCurrent * 12 * (Math.pow(1 + r, y) - 1) / r
-        : monthlySavingsCurrent * 12 * y;
-    const fvInheritances = inheritances.reduce((sum, { amount, age: recAge }) => {
-      if (!amount || !recAge || recAge > age) return sum;
-      return sum + amount * Math.pow(1 + r, age - recAge);
-    }, 0);
-    const total = fvSavings + fvContributions + fvInheritances;
+  // Accumulation phase — year by year, since the pre-retirement return glides
+  // down towards the retirement return rather than staying flat (see growPot).
+  const inheritanceReceivedByAge = (age) =>
+    inheritances.reduce((sum, { amount, age: recAge }) => (amount > 0 && recAge === age ? sum + amount : sum), 0);
+  let pot = currentSavings + inheritanceReceivedByAge(currentAge);
+  data.push({
+    age: currentAge,
+    total: pot,
+    inheritanceThisYear: inheritances.some(({ amount, age: recAge }) => amount > 0 && recAge === currentAge),
+    statePensionKickIn: false,
+    phase: "accumulation",
+  });
+  for (let age = currentAge + 1; age <= retirementAge; age++) {
+    const rate = getGlidedReturn(age, retirementAge, annualReturn, retirementReturn) / 100;
+    pot = pot * (1 + rate) + monthlySavingsCurrent * 12 + inheritanceReceivedByAge(age);
     const inheritanceThisYear = inheritances.some(({ amount, age: recAge }) => amount > 0 && recAge === age);
-    data.push({ age, total, inheritanceThisYear, statePensionKickIn: false, phase: "accumulation" });
+    data.push({ age, total: pot, inheritanceThisYear, statePensionKickIn: false, phase: "accumulation" });
   }
 
   // Drawdown phase — run to the planning age (capped at the modelling horizon).
@@ -914,7 +933,6 @@ function buildChartData({ currentAge, retirementAge, currentSavings, monthlySavi
     Math.max(retirementAge + MIN_PLANNING_YEARS, planningAge || DEFAULT_PLANNING_AGE),
   );
   const drawdownYears = Math.max(0, planningEnd - retirementAge);
-  let pot = data[data.length - 1].total;
   for (let i = 1; i <= drawdownYears; i++) {
     const age = retirementAge + i;
     const withdrawal = withdrawalForAge({ age, inflatedDesiredIncome, includeStatePension, statePensionIncome, statePensionAge });
