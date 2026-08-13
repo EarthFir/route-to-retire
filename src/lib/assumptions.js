@@ -28,6 +28,29 @@ export const DEFAULT_PLANNING_AGE = 95;
 /** How many years the planning age must sit above the retirement age, at minimum. */
 export const MIN_PLANNING_YEARS = 5;
 
+/** Age retirement income need starts easing off (the "spending taper"). */
+export const SPENDING_TAPER_START_AGE = 72;
+
+/** Age by which the taper is complete and income need levels off. */
+export const SPENDING_TAPER_END_AGE = 82;
+
+/** Income need as a fraction of the target income once the taper is complete. */
+export const SPENDING_TAPER_END_FACTOR = 0.8; // 80%
+
+/**
+ * Fraction of the target income assumed to be needed at a given age in
+ * retirement: 100% until SPENDING_TAPER_START_AGE, tapering in a straight
+ * line down to SPENDING_TAPER_END_FACTOR by SPENDING_TAPER_END_AGE, then
+ * flat. Reflects the common pattern of retirement spending easing in later
+ * years, and lets a pot go a little further than a flat withdrawal would.
+ */
+export function getSpendingTaperFactor(age) {
+  if (age <= SPENDING_TAPER_START_AGE) return 1;
+  if (age >= SPENDING_TAPER_END_AGE) return SPENDING_TAPER_END_FACTOR;
+  const progress = (age - SPENDING_TAPER_START_AGE) / (SPENDING_TAPER_END_AGE - SPENDING_TAPER_START_AGE);
+  return 1 - progress * (1 - SPENDING_TAPER_END_FACTOR);
+}
+
 /**
  * Estimated State Pension age based on the user's current age.
  * Anyone born 1978 or later is assumed to reach it at 68, otherwise 67.
@@ -86,6 +109,13 @@ export function getAssumptions({
       note: `Your target pot is calculated so your savings could fund your target income from your selected retirement age until age ${planningAge}, using the assumed ${fmtPct(
         retirementReturn,
       )} return in retirement.`,
+    },
+    {
+      label: "Spending taper",
+      value: `100% to age ${SPENDING_TAPER_START_AGE}, easing to ${fmtPct(SPENDING_TAPER_END_FACTOR * 100)} by ${SPENDING_TAPER_END_AGE}`,
+      note: `Retirement spending often eases with age. Your target income is assumed to stay level until age ${SPENDING_TAPER_START_AGE}, taper down to ${fmtPct(
+        SPENDING_TAPER_END_FACTOR * 100,
+      )} of its value by age ${SPENDING_TAPER_END_AGE}, then stay level from there — reducing the pot your plan needs to fund it. The conservative comparison below does not apply this taper.`,
     },
     {
       label: "Conservative comparison",

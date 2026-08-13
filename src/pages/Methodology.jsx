@@ -34,6 +34,22 @@ export default function Methodology() {
         </p>
       </Section>
 
+      <Section title="How your income need is assumed to change over retirement">
+        <p>
+          Spending in retirement often eases as people get older and less active. The
+          calculator models this with a simple taper: your target income is assumed to
+          stay level until age 72, then reduce in a straight line to 80% of its value by
+          age 82, and stay flat from there for the rest of your plan. This is applied
+          before the State Pension is deducted, and lets your pot fund a slightly smaller
+          withdrawal in later years rather than a flat amount for life.
+        </p>
+        <p>
+          The conservative comparison figure (see below) doesn't apply this taper — it
+          keeps assuming a flat, full income forever, so it stays a genuinely cautious
+          upper estimate.
+        </p>
+      </Section>
+
       <Section title="How investment growth is estimated">
         <p>
           Before retirement, your savings are assumed to grow at a single average annual

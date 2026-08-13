@@ -13,8 +13,10 @@ import {
   DEFAULT_PLANNING_AGE,
   MIN_PLANNING_YEARS,
   MODELLING_END_AGE,
+  SPENDING_TAPER_START_AGE,
   getStatePensionAge,
   getAssumptions,
+  getSpendingTaperFactor,
 } from "../lib/assumptions.js";
 import { Link } from "../lib/Link.jsx";
 import SiteFooter from "../pages/SiteFooter.jsx";
@@ -56,6 +58,16 @@ function findCoastAge({ currentAge, retirementAge, currentSavings, monthlySaving
   return { coastAge: null, yearsUntilCoast: null };
 }
 
+// The withdrawal the pot must fund at a given age in retirement: the target
+// income (eased by the spending taper — see assumptions.js), less the State
+// Pension once it has started.
+function withdrawalForAge({ age, inflatedDesiredIncome, includeStatePension, statePensionIncome, statePensionAge }) {
+  const taperedIncome = inflatedDesiredIncome * getSpendingTaperFactor(age);
+  return includeStatePension && age >= statePensionAge
+    ? Math.max(0, taperedIncome - statePensionIncome)
+    : taperedIncome;
+}
+
 function getStatus(isCoast, monthlySavings, savingsGap, yearsToRetirement) {
   if (isCoast) return "green";
   if (monthlySavings > 1000 || savingsGap > 250 || (yearsToRetirement < 10 && !isCoast)) return "red";
@@ -78,12 +90,8 @@ function calculateAll({ currentAge, retirementAge, currentSavings, desiredIncome
   );
   const yearsInRetirement = Math.max(0, effectivePlanningAge - retirementAge);
 
-  // The withdrawal the pot must fund at a given retirement age: the full target
-  // income, less the State Pension once it has started.
   const withdrawalAtAge = (age) =>
-    includeStatePension && age >= statePensionAge
-      ? Math.max(0, inflatedDesiredIncome - statePensionIncome)
-      : inflatedDesiredIncome;
+    withdrawalForAge({ age, inflatedDesiredIncome, includeStatePension, statePensionIncome, statePensionAge });
 
   // Target pot = present value at retirement of every yearly withdrawal from
   // retirement until the planning age, discounted at the retirement return.
@@ -741,8 +749,8 @@ function YourNumbersBody({ inputs, result, statePension, inheritances, dark }) {
       value: formatGBP(result.targetPot),
       highlight: true,
       help: statePension.include
-        ? `Based on your inputs and assumptions, the estimated pot needed at age ${inputs.retirementAge} to draw your income down to age ${result.planningAge}, after allowing for ${formatGBP(statePension.income)}/yr of State Pension. Shown in future money.`
-        : `Based on your inputs and assumptions, the estimated pot needed at age ${inputs.retirementAge} to draw your income down to age ${result.planningAge}. Shown in future money.`,
+        ? `Based on your inputs and assumptions, the estimated pot needed at age ${inputs.retirementAge} to draw your income down to age ${result.planningAge}, tapering after age ${SPENDING_TAPER_START_AGE} and after allowing for ${formatGBP(statePension.income)}/yr of State Pension. Shown in future money.`
+        : `Based on your inputs and assumptions, the estimated pot needed at age ${inputs.retirementAge} to draw your income down to age ${result.planningAge}, tapering after age ${SPENDING_TAPER_START_AGE}. Shown in future money.`,
     },
     ...(result.capitalPreservationTargetPot != null ? [{
       icon: "○",
@@ -873,9 +881,7 @@ function buildChartData({ currentAge, retirementAge, currentSavings, monthlySavi
   let pot = data[data.length - 1].total;
   for (let i = 1; i <= drawdownYears; i++) {
     const age = retirementAge + i;
-    const withdrawal = (includeStatePension && age >= statePensionAge)
-      ? Math.max(0, inflatedDesiredIncome - statePensionIncome)
-      : inflatedDesiredIncome;
+    const withdrawal = withdrawalForAge({ age, inflatedDesiredIncome, includeStatePension, statePensionIncome, statePensionAge });
     pot = Math.max(0, pot * (1 + retirementR) - withdrawal);
     const statePensionKickIn = includeStatePension && age === statePensionAge;
     data.push({ age, total: pot, inheritanceThisYear: false, statePensionKickIn, phase: "drawdown" });
