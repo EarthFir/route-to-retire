@@ -1085,7 +1085,10 @@ function MobileLiveTicker({ inputs, inheritances, result, statePension, statePen
   const hasInheritance = inheritances.some(({ amount, age }) => amount > 0 && age > 0);
 
   return (
-    <div className="lg:hidden sticky z-20 pt-3 pb-3" style={{ top: topOffset, backgroundColor: '#F3F2EA' }}>
+    <div
+      className="lg:hidden sticky z-20 pt-3 pb-3"
+      style={{ top: topOffset, backgroundColor: '#F3F2EA' }}
+    >
       <div
         className="rounded-2xl px-4 py-3"
         style={{
@@ -1109,11 +1112,7 @@ function MobileLiveTicker({ inputs, inheritances, result, statePension, statePen
           </div>
         </div>
 
-        {expanded ? (
-          <div className="mt-3">
-            <GrowthChartCard inputs={inputs} result={result} statePension={statePension} statePensionAge={statePensionAge} data={data} hasInheritance={hasInheritance} gradientId="potGradientMobileFull" />
-          </div>
-        ) : (
+        {!expanded && (
           <div style={{ height: 56, marginTop: 4 }}>
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={data} margin={{ top: 4, right: 2, left: 2, bottom: 0 }}>
@@ -1130,6 +1129,20 @@ function MobileLiveTicker({ inputs, inheritances, result, statePension, statePen
             </ResponsiveContainer>
           </div>
         )}
+
+        <div
+          className="grid transition-[grid-template-rows] duration-300 ease-out"
+          style={{ gridTemplateRows: expanded ? '1fr' : '0fr' }}
+        >
+          <div className="overflow-hidden">
+            <div
+              className="mt-3 transition-opacity duration-300"
+              style={{ opacity: expanded ? 1 : 0 }}
+            >
+              <GrowthChartCard inputs={inputs} result={result} statePension={statePension} statePensionAge={statePensionAge} data={data} hasInheritance={hasInheritance} gradientId="potGradientMobileFull" />
+            </div>
+          </div>
+        </div>
 
         <button
           type="button"
@@ -1561,6 +1574,7 @@ export default function RetirementCalculator({ embedded = false } = {}) {
   };
 
   const statePensionAge = getStatePensionAge(inputs.currentAge);
+  const [resultsInView, setResultsInView] = useState(false);
 
   const result = useMemo(() => {
     if (inputs.retirementAge <= inputs.currentAge) return null;
@@ -1573,6 +1587,23 @@ export default function RetirementCalculator({ embedded = false } = {}) {
       retirementReturn: inputs.retirementReturn,
     });
   }, [inputs, inheritances, statePension, statePensionAge]);
+
+  const hasResult = !!result;
+
+  // Once the "Your Projection" card has scrolled into view, the mobile live
+  // ticker and the "View Full Projection" jump bar are showing the same
+  // information a second time — hide both so the card fully takes over.
+  useEffect(() => {
+    if (!hasResult) return;
+    const target = document.getElementById('your-projection');
+    if (!target) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setResultsInView(entry.isIntersecting),
+      { rootMargin: '-100px 0px -55% 0px', threshold: 0 }
+    );
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, [hasResult]);
 
   return (
     <div className={embedded ? "w-full" : "min-h-screen px-4 pt-10 pb-32 lg:pb-10"} style={embedded ? undefined : { backgroundColor: '#F3F2EA' }}>
@@ -1588,26 +1619,20 @@ export default function RetirementCalculator({ embedded = false } = {}) {
           </div>
         )}
 
-        {/* Mobile / tablet: live summary pinned below the site nav — the
-            stand-in for desktop's always-visible results column, so the
-            chart is visible no matter which input card is being edited. */}
-        {result && (
-          <MobileLiveTicker
-            inputs={inputs}
-            inheritances={inheritances}
-            result={result}
-            statePension={statePension}
-            statePensionAge={statePensionAge}
-            topOffset={embedded ? 0 : 69}
-          />
-        )}
-
         {/* Mobile / tablet: sticky jump-link to the full results card, since
-            the tabbed "Your Projection" card now sits below all the inputs. */}
+            the tabbed "Your Projection" card now sits below all the inputs.
+            Slides away once that card has scrolled into view. */}
         {result && (
           <div
             className="lg:hidden fixed bottom-0 inset-x-0 z-30 px-4 pt-3"
-            style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))', background: 'linear-gradient(to top, rgba(243,242,234,1) 65%, rgba(243,242,234,0))' }}
+            style={{
+              paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))',
+              background: 'linear-gradient(to top, rgba(243,242,234,1) 65%, rgba(243,242,234,0))',
+              transform: resultsInView ? 'translateY(100%)' : 'translateY(0)',
+              opacity: resultsInView ? 0 : 1,
+              transition: 'transform 300ms ease, opacity 250ms ease',
+              pointerEvents: resultsInView ? 'none' : 'auto',
+            }}
           >
             <button
               type="button"
@@ -1625,6 +1650,24 @@ export default function RetirementCalculator({ embedded = false } = {}) {
 
           {/* ── LEFT: Inputs ── */}
           <div className="space-y-4">
+
+            {/* Mobile / tablet: live summary pinned below the site nav — the
+                stand-in for desktop's always-visible results column, so the
+                chart is visible no matter which input card is being edited.
+                Nested inside this column (rather than above the whole grid)
+                so its sticky containing block ends exactly where the "Your
+                Projection" card begins — it gets pushed off naturally as
+                that card scrolls up, instead of just vanishing. */}
+            {result && (
+              <MobileLiveTicker
+                inputs={inputs}
+                inheritances={inheritances}
+                result={result}
+                statePension={statePension}
+                statePensionAge={statePensionAge}
+                topOffset={embedded ? 0 : 69}
+              />
+            )}
 
             {/* Mobile / tablet: stacked cards (unchanged below lg) */}
             <div className="lg:hidden space-y-4">
