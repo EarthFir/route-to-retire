@@ -1005,84 +1005,142 @@ function ResultsOverviewBody({ inputs, inheritances, result, statePension, state
         </div>
       </div>
 
-      <div className="relative rounded-2xl p-4" style={{ background: 'linear-gradient(155deg, rgba(255,255,255,.09), rgba(255,255,255,.015))', border: '1px solid rgba(255,255,255,.14)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,.18)' }}>
-        <div className="flex items-center justify-between flex-wrap gap-2 mb-2">
-          <span className="font-display font-semibold text-sm" style={{ color: '#F3F2EA' }}>Projected growth</span>
-          <div className="flex items-center gap-3 text-[11px] flex-wrap" style={{ color: '#AED0C9' }}>
-            <span className="flex items-center gap-1"><span className="w-3 h-0.5 inline-block rounded" style={{ backgroundColor: '#FFFB08' }} /> Projected pot</span>
-            <span className="flex items-center gap-1"><span className="w-3 h-0.5 inline-block rounded" style={{ backgroundColor: '#FF9A85' }} /> Target</span>
-            {result.coastAge && <span className="flex items-center gap-1"><span className="w-3 h-0.5 inline-block rounded" style={{ backgroundColor: '#F3F2EA' }} /> Coast age</span>}
-            {hasInheritance && <span className="flex items-center gap-1"><span className="inline-block w-2.5 h-2.5 rounded-full" style={{ backgroundColor: '#FFFB08' }} /> Inheritance</span>}
-            {statePension.include && statePensionAge > inputs.retirementAge && <span className="flex items-center gap-1"><span className="inline-block w-2.5 h-2.5 rounded-full" style={{ backgroundColor: '#AED0C9' }} /> State pension</span>}
-          </div>
-        </div>
-        <ResponsiveContainer width="100%" height={180}>
-          <AreaChart data={data} margin={{ top: 10, right: 8, left: 8, bottom: 0 }}>
-            <defs>
-              <linearGradient id="potGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#FFFB08" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#AED0C9" stopOpacity={0.02} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="4 6" stroke="rgba(255,255,255,.10)" vertical={false} />
-            <XAxis dataKey="age" tick={{ fontSize: 11, fill: "#7fa0a0" }} tickLine={false} axisLine={false}
-              label={{ value: "Age", position: "insideBottomRight", offset: -4, fontSize: 11, fill: "#7fa0a0" }} />
-            <YAxis tickFormatter={formatYAxis} tick={{ fontSize: 11, fill: "#7fa0a0" }} tickLine={false} axisLine={false} width={48} />
-            <Tooltip content={<CustomTooltip />} />
-            <ReferenceLine y={result.targetPot} stroke="#FF9A85" strokeDasharray="5 3" strokeWidth={1.5}
-              label={{ value: "Target", position: "right", fontSize: 10, fill: "#FF9A85" }} />
-            {result.coastAge && (
-              <ReferenceLine x={result.coastAge} stroke="#F3F2EA" strokeDasharray="4 3" strokeWidth={1.5}
-                label={{ value: "Coast", position: "top", fontSize: 10, fill: "#F3F2EA" }} />
-            )}
-            <ReferenceLine x={inputs.retirementAge} stroke="#FFFB08" strokeDasharray="4 3" strokeWidth={2}
-              label={{ value: `${inputs.annualReturn}%→${inputs.retirementReturn}%`, position: "insideTopRight", fontSize: 9, fill: "#FFFB08" }} />
-            <ReferenceLine x={result.planningAge} stroke="#AED0C9" strokeDasharray="4 3" strokeWidth={1.5}
-              label={{ value: `Plan to ${result.planningAge}`, position: "top", fontSize: 10, fill: "#AED0C9" }} />
-            {statePension.include && statePensionAge > inputs.retirementAge && (
-              <ReferenceLine x={statePensionAge} stroke="#AED0C9" strokeDasharray="4 3" strokeWidth={1.5}
-                label={{ value: "State Pension", position: "top", fontSize: 10, fill: "#AED0C9" }} />
-            )}
-            <Area type="monotone" dataKey="total" stroke="#FFFB08" strokeWidth={2.5} fill="url(#potGradient)"
-              dot={<ChartDot />} activeDot={{ r: 4, fill: "#FFFB08", stroke: "#09324A", strokeWidth: 2 }} />
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
+      <GrowthChartCard inputs={inputs} result={result} statePension={statePension} statePensionAge={statePensionAge} data={data} hasInheritance={hasInheritance} />
     </>
   );
 }
 
-function ResultsPanel({ inputs, inheritances, result, statePension, statePensionAge, monthlySavingsCurrent, currentAge, mobilePinned }) {
-  const panelClass = mobilePinned
-    ? "fixed rounded-t-[28px] lg:rounded-[28px] p-6 sm:p-8 overflow-y-auto overflow-x-hidden lg:overflow-hidden bottom-0 inset-x-0 z-30 max-h-[48vh] lg:max-h-none lg:sticky lg:top-6"
-    : "relative rounded-[28px] p-6 sm:p-9 overflow-hidden";
+// The annotated "Projected growth" chart — axes, legend, reference lines for
+// target/coast/state pension — shared between the desktop/mobile Overview tab
+// and the mobile sticky ticker's expanded state, so both show the same chart.
+function GrowthChartCard({ inputs, result, statePension, statePensionAge, data, hasInheritance, gradientId = "potGradient" }) {
+  return (
+    <div className="relative rounded-2xl p-4" style={{ background: 'linear-gradient(155deg, rgba(255,255,255,.09), rgba(255,255,255,.015))', border: '1px solid rgba(255,255,255,.14)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,.18)' }}>
+      <div className="flex items-center justify-between flex-wrap gap-2 mb-2">
+        <span className="font-display font-semibold text-sm" style={{ color: '#F3F2EA' }}>Projected growth</span>
+        <div className="flex items-center gap-3 text-[11px] flex-wrap" style={{ color: '#AED0C9' }}>
+          <span className="flex items-center gap-1"><span className="w-3 h-0.5 inline-block rounded" style={{ backgroundColor: '#FFFB08' }} /> Projected pot</span>
+          <span className="flex items-center gap-1"><span className="w-3 h-0.5 inline-block rounded" style={{ backgroundColor: '#FF9A85' }} /> Target</span>
+          {result.coastAge && <span className="flex items-center gap-1"><span className="w-3 h-0.5 inline-block rounded" style={{ backgroundColor: '#F3F2EA' }} /> Coast age</span>}
+          {hasInheritance && <span className="flex items-center gap-1"><span className="inline-block w-2.5 h-2.5 rounded-full" style={{ backgroundColor: '#FFFB08' }} /> Inheritance</span>}
+          {statePension.include && statePensionAge > inputs.retirementAge && <span className="flex items-center gap-1"><span className="inline-block w-2.5 h-2.5 rounded-full" style={{ backgroundColor: '#AED0C9' }} /> State pension</span>}
+        </div>
+      </div>
+      <ResponsiveContainer width="100%" height={180}>
+        <AreaChart data={data} margin={{ top: 10, right: 8, left: 8, bottom: 0 }}>
+          <defs>
+            <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#FFFB08" stopOpacity={0.3} />
+              <stop offset="95%" stopColor="#AED0C9" stopOpacity={0.02} />
+            </linearGradient>
+          </defs>
+          <CartesianGrid strokeDasharray="4 6" stroke="rgba(255,255,255,.10)" vertical={false} />
+          <XAxis dataKey="age" tick={{ fontSize: 11, fill: "#7fa0a0" }} tickLine={false} axisLine={false}
+            label={{ value: "Age", position: "insideBottomRight", offset: -4, fontSize: 11, fill: "#7fa0a0" }} />
+          <YAxis tickFormatter={formatYAxis} tick={{ fontSize: 11, fill: "#7fa0a0" }} tickLine={false} axisLine={false} width={48} />
+          <Tooltip content={<CustomTooltip />} />
+          <ReferenceLine y={result.targetPot} stroke="#FF9A85" strokeDasharray="5 3" strokeWidth={1.5}
+            label={{ value: "Target", position: "right", fontSize: 10, fill: "#FF9A85" }} />
+          {result.coastAge && (
+            <ReferenceLine x={result.coastAge} stroke="#F3F2EA" strokeDasharray="4 3" strokeWidth={1.5}
+              label={{ value: "Coast", position: "top", fontSize: 10, fill: "#F3F2EA" }} />
+          )}
+          <ReferenceLine x={inputs.retirementAge} stroke="#FFFB08" strokeDasharray="4 3" strokeWidth={2}
+            label={{ value: `${inputs.annualReturn}%→${inputs.retirementReturn}%`, position: "insideTopRight", fontSize: 9, fill: "#FFFB08" }} />
+          <ReferenceLine x={result.planningAge} stroke="#AED0C9" strokeDasharray="4 3" strokeWidth={1.5}
+            label={{ value: `Plan to ${result.planningAge}`, position: "top", fontSize: 10, fill: "#AED0C9" }} />
+          {statePension.include && statePensionAge > inputs.retirementAge && (
+            <ReferenceLine x={statePensionAge} stroke="#AED0C9" strokeDasharray="4 3" strokeWidth={1.5}
+              label={{ value: "State Pension", position: "top", fontSize: 10, fill: "#AED0C9" }} />
+          )}
+          <Area type="monotone" dataKey="total" stroke="#FFFB08" strokeWidth={2.5} fill={`url(#${gradientId})`}
+            dot={<ChartDot />} activeDot={{ r: 4, fill: "#FFFB08", stroke: "#09324A", strokeWidth: 2 }} />
+        </AreaChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
+// Mobile / tablet only (lg:hidden): a slim bar pinned just below the site nav
+// so the headline numbers + a mini chart stay visible the whole time the user
+// is scrolling through inputs or results — the mobile stand-in for desktop's
+// permanently-visible right-hand results column. Tap to expand into the same
+// annotated chart used in the full "Your Projection" card below.
+function MobileLiveTicker({ inputs, inheritances, result, statePension, statePensionAge, topOffset }) {
+  const [expanded, setExpanded] = useState(false);
+  const data = buildChartData({
+    currentAge: inputs.currentAge,
+    retirementAge: inputs.retirementAge,
+    currentSavings: inputs.currentSavings,
+    monthlySavingsCurrent: inputs.monthlySavingsCurrent,
+    annualReturn: inputs.annualReturn,
+    inheritances,
+    desiredIncome: inputs.desiredIncome,
+    includeStatePension: statePension.include,
+    statePensionIncome: statePension.income,
+    statePensionAge,
+    retirementReturn: inputs.retirementReturn,
+    planningAge: result.planningAge,
+  });
+  const hasInheritance = inheritances.some(({ amount, age }) => amount > 0 && age > 0);
 
   return (
-    <div
-      className={panelClass}
-      style={{
-        background: 'linear-gradient(160deg,#0c4060 0%,#09324A 46%,#061f2e 100%)',
-        border: '1px solid rgba(255,255,255,.10)',
-        boxShadow: '0 42px 90px -46px rgba(6,31,46,.9), inset 0 1px 0 rgba(255,255,255,.16)',
-      }}
-    >
-      <div className="absolute pointer-events-none" style={{ top: -130, right: -70, width: 360, height: 360, borderRadius: '50%', background: 'radial-gradient(circle, rgba(174,208,201,.22), rgba(174,208,201,0) 70%)' }} />
-      <div className="absolute pointer-events-none" style={{ bottom: -160, left: -60, width: 320, height: 320, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,251,8,.10), rgba(255,251,8,0) 70%)' }} />
+    <div className="lg:hidden sticky z-20 pt-3 pb-3" style={{ top: topOffset, backgroundColor: '#F3F2EA' }}>
+      <div
+        className="rounded-2xl px-4 py-3"
+        style={{
+          background: 'linear-gradient(160deg,#0c4060 0%,#09324A 46%,#061f2e 100%)',
+          border: '1px solid rgba(255,255,255,.10)',
+          boxShadow: '0 12px 28px -14px rgba(6,31,46,.6)',
+        }}
+      >
+        <div className="flex items-center justify-between gap-2 mb-2">
+          <span className="font-serif font-bold text-sm" style={{ color: '#F3F2EA' }}>Your Projection</span>
+          <StatPill status={result.status} />
+        </div>
+        <div className="flex items-center justify-between gap-4">
+          <div className="min-w-0">
+            <div className="font-display text-[10px] uppercase tracking-wide truncate" style={{ color: '#AED0C9' }}>{`Target at ${inputs.retirementAge}`}</div>
+            <div className="font-serif font-bold text-base tabular-nums whitespace-nowrap" style={{ color: '#FFFB08' }}>{formatGBP(result.targetPot)}</div>
+          </div>
+          <div className="min-w-0 text-right">
+            <div className="font-display text-[10px] uppercase tracking-wide truncate" style={{ color: '#AED0C9' }}>Projected</div>
+            <div className="font-serif font-bold text-base tabular-nums whitespace-nowrap" style={{ color: '#F3F2EA' }}>{formatGBP(result.projectedPotWithSaving)}</div>
+          </div>
+        </div>
 
-      <div className="relative flex items-center gap-3 mb-7">
-        <div className="font-serif font-bold text-lg" style={{ color: '#F3F2EA' }}>Your Projection</div>
-        <StatPill status={result.status} />
+        {expanded ? (
+          <div className="mt-3">
+            <GrowthChartCard inputs={inputs} result={result} statePension={statePension} statePensionAge={statePensionAge} data={data} hasInheritance={hasInheritance} gradientId="potGradientMobileFull" />
+          </div>
+        ) : (
+          <div style={{ height: 56, marginTop: 4 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={data} margin={{ top: 4, right: 2, left: 2, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="potGradientMobile" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#FFFB08" stopOpacity={0.35} />
+                    <stop offset="95%" stopColor="#AED0C9" stopOpacity={0.02} />
+                  </linearGradient>
+                </defs>
+                <ReferenceLine y={result.targetPot} stroke="#FF9A85" strokeDasharray="4 3" strokeWidth={1} />
+                <ReferenceLine x={inputs.retirementAge} stroke="#FFFB08" strokeDasharray="3 3" strokeWidth={1.5} />
+                <Area type="monotone" dataKey="total" stroke="#FFFB08" strokeWidth={2} fill="url(#potGradientMobile)" dot={false} isAnimationActive={false} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        )}
+
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          className="w-full mt-2 flex items-center justify-center gap-1.5 text-[11px] font-semibold font-display cursor-pointer"
+          style={{ color: '#AED0C9' }}
+        >
+          {expanded ? "Hide full chart" : "Show full chart"}
+          <span style={{ transform: expanded ? 'rotate(180deg)' : 'none', transition: 'transform 150ms' }}>▾</span>
+        </button>
       </div>
-
-      <ResultsOverviewBody
-        inputs={inputs}
-        inheritances={inheritances}
-        result={result}
-        statePension={statePension}
-        statePensionAge={statePensionAge}
-        monthlySavingsCurrent={monthlySavingsCurrent}
-        currentAge={currentAge}
-      />
     </div>
   );
 }
@@ -1411,11 +1469,13 @@ function ResultsTabbedCard({ inputs, inheritances, result, statePension, statePe
 
   return (
     <div
-      className="hidden lg:flex lg:flex-col relative rounded-[28px] p-6 sm:p-8 lg:h-[850px] overflow-hidden"
+      id="your-projection"
+      className="flex flex-col relative rounded-[28px] p-6 sm:p-8 lg:h-[850px] overflow-hidden"
       style={{
         background: 'linear-gradient(160deg,#0c4060 0%,#09324A 46%,#061f2e 100%)',
         border: '1px solid rgba(255,255,255,.10)',
         boxShadow: '0 42px 90px -46px rgba(6,31,46,.9), inset 0 1px 0 rgba(255,255,255,.16)',
+        scrollMarginTop: 292,
       }}
     >
       <div className="absolute pointer-events-none" style={{ top: -130, right: -70, width: 360, height: 360, borderRadius: '50%', background: 'radial-gradient(circle, rgba(174,208,201,.22), rgba(174,208,201,0) 70%)' }} />
@@ -1430,7 +1490,7 @@ function ResultsTabbedCard({ inputs, inheritances, result, statePension, statePe
         <TabBar tabs={RESULT_TABS} active={tab} onChange={setTab} dark />
       </div>
 
-      <div className="relative flex-1 min-h-0 overflow-y-auto pr-1 -mr-1">
+      <div className="relative flex-1 min-h-0 lg:overflow-y-auto lg:pr-1 lg:-mr-1">
         {tab === "overview" && (
           <ResultsOverviewBody
             inputs={inputs}
@@ -1515,20 +1575,48 @@ export default function RetirementCalculator({ embedded = false } = {}) {
   }, [inputs, inheritances, statePension, statePensionAge]);
 
   return (
-    <div className={embedded ? "w-full" : "min-h-screen px-4 pt-10 pb-[50vh] lg:pb-10"} style={embedded ? undefined : { backgroundColor: '#F3F2EA' }}>
+    <div className={embedded ? "w-full" : "min-h-screen px-4 pt-10 pb-32 lg:pb-10"} style={embedded ? undefined : { backgroundColor: '#F3F2EA' }}>
       <div className={embedded ? "w-full" : "w-full max-w-6xl mx-auto"}>
 
         {/* Header */}
         {!embedded && (
           <div className="text-center space-y-4 mb-12">
-            <h1 className="text-6xl sm:text-7xl font-extrabold" style={{ color: '#09324A', fontFamily: "'Source Serif 4', serif", letterSpacing: '-0.02em', lineHeight: 1.02 }}>Route to Retire</h1>
-            <div className="inline-flex items-center gap-2 text-xs font-bold px-3 py-1 rounded-full mb-2 uppercase tracking-widest" style={{ backgroundColor: '#E7F1EF', color: '#1B6F81', fontFamily: "'Manrope', sans-serif" }}>
-              RETIREMENT CALCULATOR
-            </div>
             <h2 className="text-3xl font-bold tracking-tight" style={{ color: '#09324A', fontFamily: "'Source Serif 4', serif" }}>How is your route to retirement looking?</h2>
             <p className="text-sm leading-relaxed max-w-lg mx-auto" style={{ color: '#8a9599' }}>
               See if you're on track to meet your retirement goals — and find out when you could afford to ease back on contributions and let your savings do the work.
             </p>
+          </div>
+        )}
+
+        {/* Mobile / tablet: live summary pinned below the site nav — the
+            stand-in for desktop's always-visible results column, so the
+            chart is visible no matter which input card is being edited. */}
+        {result && (
+          <MobileLiveTicker
+            inputs={inputs}
+            inheritances={inheritances}
+            result={result}
+            statePension={statePension}
+            statePensionAge={statePensionAge}
+            topOffset={embedded ? 0 : 69}
+          />
+        )}
+
+        {/* Mobile / tablet: sticky jump-link to the full results card, since
+            the tabbed "Your Projection" card now sits below all the inputs. */}
+        {result && (
+          <div
+            className="lg:hidden fixed bottom-0 inset-x-0 z-30 px-4 pt-3"
+            style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))', background: 'linear-gradient(to top, rgba(243,242,234,1) 65%, rgba(243,242,234,0))' }}
+          >
+            <button
+              type="button"
+              onClick={() => document.getElementById('your-projection')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+              className="w-full font-display font-bold text-sm rounded-full py-3.5 cursor-pointer"
+              style={{ backgroundColor: '#FFFB08', color: '#09324A', boxShadow: '0 8px 20px -6px rgba(9,50,74,.35)' }}
+            >
+              View Full Projection ↓
+            </button>
           </div>
         )}
 
@@ -1599,68 +1687,16 @@ export default function RetirementCalculator({ embedded = false } = {}) {
           {/* ── RIGHT: Results ── */}
           <div className="space-y-4">
             {result ? (
-              <>
-                {/* Mobile / tablet: pinned overview panel + stacked cards (unchanged below lg) */}
-                <div className="lg:hidden space-y-4">
-                  <ResultsPanel
-                    inputs={inputs}
-                    inheritances={inheritances}
-                    result={result}
-                    statePension={statePension}
-                    statePensionAge={statePensionAge}
-                    monthlySavingsCurrent={inputs.monthlySavingsCurrent}
-                    currentAge={inputs.currentAge}
-                    mobilePinned={!embedded}
-                  />
-                  <div className="rounded-3xl p-6 space-y-4" style={{ backgroundColor: '#F3F2EA', borderColor: '#DAD7C8', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-                    <h2 className="text-sm font-semibold uppercase tracking-wider font-display" style={{ color: '#8a9599' }}>Your Numbers</h2>
-                    <YourNumbersBody inputs={inputs} result={result} statePension={statePension} inheritances={inheritances} />
-                  </div>
-
-                  <ScenarioCards
-                    baseParams={{
-                      ...inputs,
-                      inheritances,
-                      includeStatePension: statePension.include,
-                      statePensionIncome: statePension.income,
-                      statePensionAge,
-                    }}
-                    result={result}
-                    retirementAge={inputs.retirementAge}
-                    currentAge={inputs.currentAge}
-                    desiredIncome={inputs.desiredIncome}
-                    monthlySavingsCurrent={inputs.monthlySavingsCurrent}
-                  />
-
-                  <AssumptionsPanel
-                    assumptions={getAssumptions({
-                      annualReturn: inputs.annualReturn,
-                      retirementReturn: inputs.retirementReturn,
-                      includeStatePension: statePension.include,
-                      statePensionIncome: statePension.income,
-                      statePensionAge,
-                      planningAge: result.planningAge,
-                      capitalPreservationTargetPot: result.capitalPreservationTargetPot,
-                    })}
-                  />
-
-                  <MethodologyLinkCard />
-                </div>
-
-                {/* Desktop (lg+): one 850px card, sections switched via tabs */}
-                <ResultsTabbedCard
-                  inputs={inputs}
-                  inheritances={inheritances}
-                  result={result}
-                  statePension={statePension}
-                  statePensionAge={statePensionAge}
-                />
-              </>
+              <ResultsTabbedCard
+                inputs={inputs}
+                inheritances={inheritances}
+                result={result}
+                statePension={statePension}
+                statePensionAge={statePensionAge}
+              />
             ) : (
               <div
-                className={`bg-white rounded-t-[28px] lg:rounded-3xl p-12 flex flex-col items-center justify-center text-center space-y-3 min-h-64 lg:h-[850px] ${
-                  embedded ? "" : "fixed bottom-0 inset-x-0 z-30 lg:static lg:z-auto"
-                }`}
+                className="bg-white rounded-3xl p-12 flex flex-col items-center justify-center text-center space-y-3 min-h-64 lg:h-[850px]"
                 style={{ borderColor: '#DAD7C8', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}
               >
                 <p className="text-sm font-medium" style={{ color: '#8a9599' }}>Your results will appear here</p>
@@ -1670,10 +1706,10 @@ export default function RetirementCalculator({ embedded = false } = {}) {
           </div>
         </div>
 
-        {/* Desktop (lg+): assumptions live as a dropdown card spanning both
-            main cards, rather than a tab, so they read as reference material. */}
+        {/* Assumptions live as a dropdown card spanning both main cards,
+            rather than a tab, so they read as reference material. */}
         {result && (
-          <div className="hidden lg:block mt-6 space-y-4">
+          <div className="mt-6 space-y-4">
             <AssumptionsPanel
               assumptions={getAssumptions({
                 annualReturn: inputs.annualReturn,
