@@ -92,9 +92,9 @@ function withdrawalForAge({ age, inflatedDesiredIncome, includeStatePension, sta
     : taperedIncome;
 }
 
-function getStatus(isCoast, monthlySavings, savingsGap, yearsToRetirement) {
-  if (isCoast) return "green";
-  if (monthlySavings > 1000 || savingsGap > 250 || (yearsToRetirement < 10 && !isCoast)) return "red";
+function getStatus({ isOnTrack, savingsGap, yearsToRetirement }) {
+  if (isOnTrack) return "green";
+  if (savingsGap > 250 || yearsToRetirement < 10) return "red";
   return "amber";
 }
 
@@ -157,7 +157,6 @@ function calculateAll({ currentAge, retirementAge, currentSavings, desiredIncome
   const monthlySavings = solveRequiredMonthlySaving({ targetPot, totalFutureValueNoSaving: totalFutureValue, currentAge, retirementAge, annualReturn, retirementReturn });
   const savingsGap = monthlySavings - monthlySavingsCurrent;
   const isCoast = totalFutureValue >= targetPot;
-  const status = getStatus(isCoast, monthlySavings, savingsGap, years);
   const { coastAge, yearsUntilCoast } = findCoastAge({ currentAge, retirementAge, currentSavings, monthlySavingsCurrent, targetPot, annualReturn, retirementReturn, totalInheritanceFV });
 
   // Drawdown of the pot the user is actually on track to have (with current
@@ -172,7 +171,16 @@ function calculateAll({ currentAge, retirementAge, currentSavings, desiredIncome
     if (runPot <= 0) { depletionAge = ageI; break; }
   }
 
-  return { incomeNeeded, targetPot, capitalPreservationTargetPot, planningAge: effectivePlanningAge, futureValueCurrent, projectedPotNoSaving, projectedPotWithSaving, inheritanceResults, totalInheritanceFV, totalFutureValue, monthlySavings, savingsGap, isCoast, status, coastAge, yearsUntilCoast, depletionAge };
+  // "On track" means the pot the user is actually projected to have — with
+  // their current saving — is estimated to last to (or beyond) the planning
+  // age, i.e. the same test as the "pot lasts until" figure and the chart.
+  // Basing status on this (rather than only the stricter "could stop saving
+  // today" coast test) avoids telling someone "action needed" when their
+  // own projection already funds their plan, just with money left over.
+  const isOnTrack = depletionAge == null || depletionAge >= effectivePlanningAge;
+  const status = getStatus({ isOnTrack, savingsGap, yearsToRetirement: years });
+
+  return { incomeNeeded, targetPot, capitalPreservationTargetPot, planningAge: effectivePlanningAge, futureValueCurrent, projectedPotNoSaving, projectedPotWithSaving, inheritanceResults, totalInheritanceFV, totalFutureValue, monthlySavings, savingsGap, isCoast, isOnTrack, status, coastAge, yearsUntilCoast, depletionAge };
 }
 
 // ─── Format Helpers ───────────────────────────────────────────────────────────
