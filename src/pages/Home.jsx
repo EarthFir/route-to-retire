@@ -206,8 +206,7 @@ function CheckPreviewWidget() {
       </div>
 
       <div className="flex flex-wrap items-center gap-4 mt-7">
-        <PrimaryCTA to="/check">Continue →</PrimaryCTA>
-        <SecondaryCTA to="/check" dark>Check my route</SecondaryCTA>
+        <PrimaryCTA to="/check">Continue to check my route →</PrimaryCTA>
       </div>
     </div>
   );
