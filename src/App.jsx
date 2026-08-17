@@ -5,6 +5,7 @@ import Resources from "./pages/Resources.jsx";
 import Methodology from "./pages/Methodology.jsx";
 import Disclaimer from "./pages/Disclaimer.jsx";
 import Privacy from "./pages/Privacy.jsx";
+import Terms from "./pages/Terms.jsx";
 import { useRoute } from "./lib/router.js";
 
 function App() {
@@ -23,6 +24,8 @@ function App() {
       return <Disclaimer />;
     case "/privacy":
       return <Privacy />;
+    case "/terms":
+      return <Terms />;
     default:
       return <Home />;
   }

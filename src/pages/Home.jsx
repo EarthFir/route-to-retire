@@ -5,6 +5,7 @@ import {
   NAVY, TEAL, YELLOW, FENNEC, MINT_TINT, BAND, BODY, MUTED,
   Container, Eyebrow, IconCircle, PrimaryCTA, SecondaryCTA, Header, LandingFooter,
 } from "../components/landing/Chrome.jsx";
+import { usePageTitle } from "../lib/usePageTitle.js";
 
 // ─── Route to Retire — Landing Page ───────────────────────────────────────────
 // Marketing homepage. The real calculator lives at /check; this page carries a
@@ -578,6 +579,11 @@ function FinalCTA() {
 
 export default function Home() {
   const [topic, setTopic] = useState("general");
+
+  usePageTitle(
+    "Route to Retire - UK Pension & Retirement Calculator",
+    "Use Route to Retire to see whether your pension is on track, estimate your retirement pot, and understand what could help you retire with more confidence.",
+  );
 
   // Cross-page anchors (header/footer links like "/#trust") land here after a
   // full navigation; same-document hash clicks are handled natively by the

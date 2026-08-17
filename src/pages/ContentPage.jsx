@@ -1,5 +1,6 @@
 import { Link } from "../lib/Link.jsx";
 import SiteFooter from "./SiteFooter.jsx";
+import { usePageTitle } from "../lib/usePageTitle.js";
 
 // ─── Content Page Shell ───────────────────────────────────────────────────────
 // Shared layout for the informational pages (methodology, disclaimer, privacy).
@@ -16,6 +17,8 @@ export function Section({ title, children }) {
 }
 
 export default function ContentPage({ title, intro, children }) {
+  usePageTitle(title ? `${title} - Route to Retire` : undefined, intro);
+
   return (
     <div className="min-h-screen px-4 py-10" style={{ backgroundColor: '#F3F2EA' }}>
       <div className="w-full max-w-2xl mx-auto">

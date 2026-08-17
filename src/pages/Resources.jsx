@@ -2,6 +2,7 @@ import {
   NAVY, FENNEC, BODY, MUTED,
   Container, Eyebrow, Header, LandingFooter,
 } from "../components/landing/Chrome.jsx";
+import { usePageTitle } from "../lib/usePageTitle.js";
 
 // ─── Resources index ──────────────────────────────────────────────────────────
 // A hub for plain-English, scenario-based articles. No content yet — this is
@@ -18,6 +19,11 @@ const TOPICS = [
 ];
 
 export default function Resources() {
+  usePageTitle(
+    "Resources - Route to Retire",
+    "Plain-English articles on common retirement planning scenarios — no jargon, no sales pitch.",
+  );
+
   return (
     <div className="overflow-x-hidden">
       <Header />

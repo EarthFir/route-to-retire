@@ -1,13 +1,14 @@
-import { useForm, ValidationError } from "@formspree/react";
+import { useState } from "react";
 import {
   NAVY, YELLOW, FENNEC, BAND, BODY, MUTED,
   Container, Eyebrow, IconCircle, PrimaryCTA, SecondaryCTA, Header, LandingFooter,
 } from "../components/landing/Chrome.jsx";
+import { usePageTitle } from "../lib/usePageTitle.js";
 
 // ─── Pro details page ─────────────────────────────────────────────────────────
 // Pro isn't built yet — no accounts, no Stripe. This page explains what it will
-// include and collects interest via the same Formspree endpoint used elsewhere,
-// tagged "pro" so waitlist signups are easy to find once payments land.
+// include and collects interest via a Mailchimp waitlist (api/subscribe.js),
+// tagged "pro-waitlist" so signups are easy to find once payments land.
 
 const FEATURES = [
   { icon: "⧉", title: "Save multiple scenarios", copy: "Keep more than one version of your plan and compare them side by side." },
@@ -19,9 +20,34 @@ const FEATURES = [
 ];
 
 function ProWaitlistForm() {
-  const [state, handleSubmit] = useForm("xbdqvqby");
+  const [submitting, setSubmitting] = useState(false);
+  const [succeeded, setSucceeded] = useState(false);
+  const [error, setError] = useState("");
 
-  if (state.succeeded) {
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setSubmitting(true);
+    setError("");
+    const form = e.target;
+    try {
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: form.email.value }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "Something went wrong. Please try again.");
+      }
+      setSucceeded(true);
+    } catch (err) {
+      setError(err.message || "Something went wrong. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  if (succeeded) {
     return (
       <div className="max-w-xl mx-auto rounded-3xl p-8 text-center bg-white" style={{ border: `1px solid ${FENNEC}`, boxShadow: "0 4px 12px rgba(0,0,0,.05)" }}>
         <p className="font-serif font-bold text-xl" style={{ color: NAVY }}>You're on the list.</p>
@@ -32,7 +58,6 @@ function ProWaitlistForm() {
 
   return (
     <form onSubmit={handleSubmit} className="max-w-xl mx-auto bg-white rounded-3xl p-6 sm:p-8 space-y-4" style={{ border: `1px solid ${FENNEC}`, boxShadow: "0 4px 12px rgba(0,0,0,.05)" }}>
-      <input type="hidden" name="topic" value="pro" />
       <div>
         <label htmlFor="pro-email" className="block text-sm font-medium mb-1" style={{ color: NAVY }}>Email</label>
         <input
@@ -44,33 +69,26 @@ function ProWaitlistForm() {
           className="w-full py-2.5 px-3 font-medium bg-white rounded-2xl outline-none"
           style={{ color: NAVY, border: `1px solid ${FENNEC}` }}
         />
-        <ValidationError field="email" errors={state.errors} className="text-xs mt-1" style={{ color: "#E74C3C" }} />
       </div>
-      <div>
-        <label htmlFor="pro-message" className="block text-sm font-medium mb-1" style={{ color: NAVY }}>Anything you'd like Pro to cover? (optional)</label>
-        <textarea
-          id="pro-message"
-          name="message"
-          rows={3}
-          placeholder="A line or two is plenty"
-          className="w-full py-2.5 px-3 font-medium bg-white rounded-2xl outline-none resize-none"
-          style={{ color: NAVY, border: `1px solid ${FENNEC}` }}
-        />
-        <ValidationError field="message" errors={state.errors} className="text-xs mt-1" style={{ color: "#E74C3C" }} />
-      </div>
+      {error && <p className="text-xs" style={{ color: "#E74C3C" }}>{error}</p>}
       <button
         type="submit"
-        disabled={state.submitting}
+        disabled={submitting}
         className="w-full py-3 px-4 font-semibold rounded-2xl hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition font-display"
         style={{ backgroundColor: YELLOW, color: NAVY }}
       >
-        {state.submitting ? "Sending…" : "Join the waitlist"}
+        {submitting ? "Sending…" : "Join the waitlist"}
       </button>
     </form>
   );
 }
 
 export default function Pro() {
+  usePageTitle(
+    "Route to Retire Pro",
+    "Save multiple scenarios, plan as a couple, and export a clean PDF summary with Route to Retire Pro — coming soon.",
+  );
+
   return (
     <div className="overflow-x-hidden">
       <Header />

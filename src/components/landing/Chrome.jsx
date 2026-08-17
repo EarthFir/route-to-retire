@@ -142,7 +142,8 @@ export function LandingFooter() {
         <nav className="flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium mb-6" style={{ color: TEAL }}>
           <Link to="/methodology">Assumptions</Link>
           <Link to="/privacy">Privacy</Link>
-          <Link to="/disclaimer">Terms</Link>
+          <Link to="/terms">Terms</Link>
+          <Link to="/disclaimer">Disclaimer</Link>
           <a href="/#providers">Affiliate disclosure</a>
           <a href="/#advisers">For advisers</a>
           <a href="/#get-in-touch">Contact</a>

@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+/* Self-hosted fonts (replaces the Google Fonts CDN links in index.html) */
+@import "@fontsource-variable/dm-sans/wght.css";
+@import "@fontsource-variable/dm-sans/wght-italic.css";
+@import "@fontsource-variable/manrope/wght.css";
+@import "@fontsource-variable/source-serif-4/wght.css";
+@import "@fontsource-variable/source-serif-4/wght-italic.css";
+
 @theme {
   /* Route to Retire brand palette */
   --color-halite: #09324a;      /* primary — headers, text, dark UI */

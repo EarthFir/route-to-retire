@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://routetoretire.co.uk/sitemap.xml
