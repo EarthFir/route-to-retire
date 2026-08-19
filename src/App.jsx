@@ -6,6 +6,7 @@ import Methodology from "./pages/Methodology.jsx";
 import Disclaimer from "./pages/Disclaimer.jsx";
 import Privacy from "./pages/Privacy.jsx";
 import Terms from "./pages/Terms.jsx";
+import HarbourVale from "./pages/partners/HarbourVale.jsx";
 import { useRoute } from "./lib/router.js";
 
 function App() {
@@ -26,6 +27,8 @@ function App() {
       return <Privacy />;
     case "/terms":
       return <Terms />;
+    case "/partners/harbour-vale":
+      return <HarbourVale />;
     default:
       return <Home />;
   }

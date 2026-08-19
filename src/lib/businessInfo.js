@@ -15,4 +15,9 @@ export const BUSINESS_INFO = {
   address: "",
   // Contact email, e.g. an @routetoretire.co.uk mailbox.
   contactEmail: "",
+  // Scheduling link for "Book a 20-minute demo" CTAs, e.g. a Calendly or
+  // Cal.com URL. Left blank until one exists — callers should fall back to
+  // something else (e.g. the on-page enquiry form) rather than link out to
+  // an empty string.
+  demoBookingUrl: "",
 };
