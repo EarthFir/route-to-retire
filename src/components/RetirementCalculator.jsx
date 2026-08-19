@@ -1204,14 +1204,14 @@ const RESULT_TABS = [
   { key: "scenarios", label: "Scenarios" },
 ];
 
-// Desktop-only (lg+): all four input sections in one 850px-tall card, switched
+// Desktop-only (lg+): all four input sections in one 865px-tall card, switched
 // via tabs instead of stacking as separate cards, so nothing scrolls out of
 // view behind the results panel.
 function InputsTabbedCard({ inputs, handleChange, setInputs, statePension, setStatePension, statePensionAge, inheritances, handleInheritanceChange }) {
   const [tab, setTab] = useState("details");
   return (
     <div
-      className="hidden lg:flex lg:flex-col bg-white rounded-3xl p-6 lg:h-[850px]"
+      className="hidden lg:flex lg:flex-col bg-white rounded-3xl p-6 lg:h-[865px]"
       style={{ borderColor: '#DAD7C8', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}
     >
       <div className="font-serif font-bold text-lg mb-5 shrink-0" style={{ color: 'var(--calc-primary, #09324A)' }}>Your Route</div>
@@ -1479,7 +1479,7 @@ function ScenarioCards({ baseParams, result, retirementAge, currentAge, desiredI
 }
 
 // Desktop-only (lg+): the navy results panel, "Your Numbers" breakdown,
-// scenario cards and assumptions all in one 850px-tall card, switched via
+// scenario cards and assumptions all in one 865px-tall card, switched via
 // tabs so nothing scrolls out of view or ends up hidden behind another card.
 function ResultsTabbedCard({ inputs, inheritances, result, statePension, statePensionAge }) {
   const [tab, setTab] = useState("overview");
@@ -1489,7 +1489,7 @@ function ResultsTabbedCard({ inputs, inheritances, result, statePension, statePe
   return (
     <div
       id="your-projection"
-      className="flex flex-col relative rounded-[28px] p-6 sm:p-8 lg:h-[850px] overflow-hidden"
+      className="flex flex-col relative rounded-[28px] p-6 sm:p-8 lg:h-[865px] overflow-hidden"
       style={{
         background: 'linear-gradient(160deg,var(--calc-primary-mid, #0c4060) 0%,var(--calc-primary, #09324A) 46%,var(--calc-primary-deep, #061f2e) 100%)',
         border: '1px solid rgba(255,255,255,.10)',
@@ -1720,7 +1720,7 @@ export default function RetirementCalculator({ embedded = false, initialInputs }
               </div>
             </div>
 
-            {/* Desktop (lg+): one 850px card, sections switched via tabs */}
+            {/* Desktop (lg+): one 865px card, sections switched via tabs */}
             <InputsTabbedCard
               inputs={inputs}
               handleChange={handleChange}
@@ -1745,7 +1745,7 @@ export default function RetirementCalculator({ embedded = false, initialInputs }
               />
             ) : (
               <div
-                className="bg-white rounded-3xl p-12 flex flex-col items-center justify-center text-center space-y-3 min-h-64 lg:h-[850px]"
+                className="bg-white rounded-3xl p-12 flex flex-col items-center justify-center text-center space-y-3 min-h-64 lg:h-[865px]"
                 style={{ borderColor: '#DAD7C8', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}
               >
                 <p className="text-sm font-medium" style={{ color: '#8a9599' }}>Your results will appear here</p>

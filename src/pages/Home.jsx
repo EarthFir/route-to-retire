@@ -12,9 +12,8 @@ import { usePageTitle } from "../lib/usePageTitle.js";
 // self-contained "teaser" widget (illustrative maths against a fixed £500k
 // goal, not the full model) that hands off to /check to continue for real.
 // Pro / adviser / provider CTAs are marketing placeholders that funnel into a
-// single shared interest-capture form (reusing the same Formspree endpoint as
-// the in-app feedback form) rather than standing up separate half-built
-// backends.
+// single shared interest-capture form (Formspree) rather than standing up
+// separate half-built backends.
 
 function fmtGBP0(n) {
   return "£" + Math.round(n).toLocaleString("en-GB");
@@ -368,113 +367,12 @@ function ProUpsell() {
   );
 }
 
-// ─── Provider / affiliate moment ─────────────────────────────────────────────
-
-const PROVIDER_LINKS = ["Compare pension options", "Explore SIPP providers", "Learn about pension consolidation"];
-
-function ProviderMoment({ setTopic }) {
-  return (
-    <section id="providers" className="py-16 sm:py-20" style={{ backgroundColor: BAND }}>
-      <Container>
-        <div className="max-w-3xl">
-          <Eyebrow>Need somewhere to take action?</Eyebrow>
-          <h2 className="font-serif font-bold text-2xl sm:text-3xl mb-4" style={{ color: NAVY, letterSpacing: "-.02em" }}>
-            We may point you toward pension and SIPP providers.
-          </h2>
-          <p className="text-[15px] leading-relaxed mb-7" style={{ color: BODY }}>
-            We may link to pension and SIPP providers where relevant. Some links may earn Route to Retire a commission. This
-            does not affect your calculator results, and we don't present these as personal recommendations.
-          </p>
-          <div className="flex flex-wrap gap-3">
-            {PROVIDER_LINKS.map((label) => (
-              <a
-                key={label}
-                href="#get-in-touch"
-                onClick={() => setTopic("providers")}
-                className="inline-flex items-center gap-2 font-medium text-sm rounded-full px-5 py-2.5 bg-white hover:opacity-70 transition"
-                style={{ color: TEAL, border: `1px solid ${FENNEC}` }}
-              >
-                {label} →
-              </a>
-            ))}
-          </div>
-        </div>
-      </Container>
-    </section>
-  );
-}
-
-// ─── For financial advisers ──────────────────────────────────────────────────
-
-const ADVISER_BENEFITS = [
-  "Embeddable calculator",
-  "Co-branded experience",
-  "Result-based call to action",
-  "Lead capture after calculator completion",
-  "Adviser-friendly client summary",
-  "Useful for newsletters, campaigns, and website traffic",
-];
-
-function AdviserSection({ setTopic }) {
-  return (
-    <section id="advisers" className="py-16 sm:py-20">
-      <Container>
-        <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_.8fr] gap-12 items-center">
-          <div>
-            <Eyebrow>For financial advisers</Eyebrow>
-            <h2 className="font-serif font-bold text-3xl sm:text-4xl mb-4" style={{ color: NAVY, letterSpacing: "-.02em" }}>
-              Turn retirement curiosity into better conversations.
-            </h2>
-            <p className="text-[15px] leading-relaxed mb-6" style={{ color: BODY }}>
-              Embed Route to Retire in your website, newsletter, or campaign landing page and turn retirement curiosity into
-              better-qualified conversations.
-            </p>
-            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 mb-7">
-              {ADVISER_BENEFITS.map((b) => (
-                <li key={b} className="flex items-start gap-2 text-sm" style={{ color: BODY }}>
-                  <span className="mt-0.5" style={{ color: TEAL }}>✓</span>{b}
-                </li>
-              ))}
-            </ul>
-            <div className="flex flex-wrap items-center gap-4">
-              <PrimaryCTA href="#get-in-touch" onClick={() => setTopic("adviser")}>Ask about adviser embeds →</PrimaryCTA>
-              <SecondaryCTA to="/check">See example journey</SecondaryCTA>
-            </div>
-          </div>
-
-          <div className="rounded-3xl p-5" style={{ backgroundColor: "white", border: `1px solid ${FENNEC}`, boxShadow: "0 20px 44px -28px rgba(9,50,74,.35)" }}>
-            <div className="flex items-center gap-1.5 mb-4">
-              <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: FENNEC }} />
-              <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: FENNEC }} />
-              <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: FENNEC }} />
-              <span className="ml-3 text-xs font-medium truncate" style={{ color: MUTED }}>yourfirm.co.uk/retirement-check</span>
-            </div>
-            <div className="rounded-2xl p-5" style={{ background: "linear-gradient(158deg,#0c3c58,#072839)" }}>
-              <div className="flex items-center justify-between mb-4 gap-2">
-                <span className="font-display font-semibold text-[11px] uppercase tracking-widest" style={{ color: "#AED0C9" }}>Co-branded check</span>
-                <span className="text-[11px] px-2.5 py-1 rounded-full whitespace-nowrap" style={{ color: "rgba(243,242,234,.7)", border: "1px solid rgba(174,208,201,.3)" }}>Your logo here</span>
-              </div>
-              <div className="flex items-baseline justify-between mb-2.5">
-                <span className="text-sm" style={{ color: "rgba(243,242,234,.82)" }}>Projected pot</span>
-                <span className="font-serif font-bold text-2xl" style={{ color: "#FFFB08" }}>£287k</span>
-              </div>
-              <div className="h-1.5 rounded-full relative" style={{ backgroundColor: "rgba(243,242,234,.15)" }}>
-                <div className="absolute inset-y-0 left-0 rounded-full" style={{ width: "62%", backgroundColor: "#FFFB08" }} />
-              </div>
-            </div>
-          </div>
-        </div>
-      </Container>
-    </section>
-  );
-}
-
 // ─── Shared "get in touch" interest capture ──────────────────────────────────
 
 const TOPICS = [
   { value: "general", label: "General question / feedback" },
   { value: "pro", label: "Route to Retire Pro" },
-  { value: "adviser", label: "Adviser embeds" },
+  { value: "adviser", label: "Adviser calculator" },
   { value: "providers", label: "Pension & SIPP providers" },
 ];
 
@@ -501,8 +399,8 @@ function GetInTouch({ topic, setTopic }) {
           <Eyebrow>Get in touch</Eyebrow>
           <h2 className="font-serif font-bold text-3xl sm:text-4xl mb-3" style={{ color: NAVY, letterSpacing: "-.02em" }}>Tell us what you're interested in.</h2>
           <p className="text-[15px] leading-relaxed mb-8" style={{ color: BODY }}>
-            Whether it's Pro, an adviser embed, provider comparisons, or just a question — drop us a note and we'll get back
-            to you. No sales pressure.
+            Whether it's Pro, a branded calculator for your firm, provider comparisons, or just a question — drop us a note
+            and we'll get back to you.
           </p>
           <form onSubmit={handleSubmit} className="bg-white rounded-3xl p-6 sm:p-8 space-y-4" style={{ border: `1px solid ${FENNEC}`, boxShadow: "0 4px 12px rgba(0,0,0,.05)" }}>
             <div>
@@ -604,8 +502,6 @@ export default function Home() {
       <WhatYouGet />
       <Trust />
       <ProUpsell />
-      <ProviderMoment setTopic={setTopic} />
-      <AdviserSection setTopic={setTopic} />
       <GetInTouch topic={topic} setTopic={setTopic} />
       <FinalCTA />
       <LandingFooter />

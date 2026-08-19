@@ -144,8 +144,7 @@ export function LandingFooter() {
           <Link to="/privacy">Privacy</Link>
           <Link to="/terms">Terms</Link>
           <Link to="/disclaimer">Disclaimer</Link>
-          <a href="/#providers">Affiliate disclosure</a>
-          <a href="/#advisers">For advisers</a>
+          <Link to="/partners">Partners</Link>
           <a href="/#get-in-touch">Contact</a>
         </nav>
         <p className="text-xs leading-relaxed max-w-2xl" style={{ color: MUTED }}>
