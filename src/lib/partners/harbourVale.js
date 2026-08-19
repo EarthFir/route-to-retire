@@ -44,9 +44,9 @@ export const HARBOUR_VALE = {
   // metrics we could actually report on (page views, "touched a slider" as a
   // proxy for engagement, and form submissions); anything past the enquiry
   // (e.g. calls booked) happens off-site once the adviser follows up, so it
-  // isn't something Route to Retire could see. PDF export has no real number
-  // behind it yet — it's a "coming soon" placeholder — so it's shown as not
-  // live rather than a fabricated count.
+  // isn't something Route to Retire could see. PDF export downloads entirely
+  // client-side with no server call, so there's no event to count it — shown
+  // as not tracked rather than a fabricated count.
   exampleStats: buildExampleStats({
     visits: { allTime: 2140, thisMonth: 482 },
     calculatorInteractions: { allTime: 1360, thisMonth: 305 },
@@ -66,7 +66,7 @@ function buildExampleStats({ visits, calculatorInteractions, enquiries }) {
   return [
     { label: "Visits", allTime: formatCount(visits.allTime), thisMonth: formatCount(visits.thisMonth) },
     { label: "Calculator interactions", allTime: formatCount(calculatorInteractions.allTime), thisMonth: formatCount(calculatorInteractions.thisMonth) },
-    { label: "PDF exports", note: "Not live yet" },
+    { label: "PDF exports", note: "Not tracked" },
     { label: "Enquiries", allTime: formatCount(enquiries.allTime), thisMonth: formatCount(enquiries.thisMonth) },
     {
       label: "Conversion rate",

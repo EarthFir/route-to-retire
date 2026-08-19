@@ -31,20 +31,6 @@ function PartnerHeader({ config }) {
   );
 }
 
-function PdfPlaceholderButton({ style }) {
-  return (
-    <button
-      type="button"
-      disabled
-      title="Coming soon"
-      className="inline-flex items-center justify-center gap-2 font-semibold text-sm rounded-full px-6 py-3 cursor-not-allowed opacity-60 font-display"
-      style={style}
-    >
-      Download PDF summary — coming soon
-    </button>
-  );
-}
-
 function LeadForm({ config }) {
   const [submitting, setSubmitting] = useState(false);
   const [succeeded, setSucceeded] = useState(false);
@@ -164,7 +150,7 @@ export default function PartnerCalculatorPage({ config }) {
 
       <div className="px-4" style={calculatorThemeVars(config.theme)}>
         <div className="max-w-6xl mx-auto">
-          <RetirementCalculator embedded initialInputs={config.defaultScenario} />
+          <RetirementCalculator embedded initialInputs={config.defaultScenario} enablePdfDownload />
         </div>
       </div>
 
@@ -184,7 +170,6 @@ export default function PartnerCalculatorPage({ config }) {
             >
               {config.adviserCtaLabel}
             </a>
-            <PdfPlaceholderButton style={{ color: primary, border: `1.5px solid ${primary}33` }} />
           </div>
         </div>
 

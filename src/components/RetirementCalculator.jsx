@@ -1,4 +1,5 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
   ReferenceLine, ResponsiveContainer,
@@ -21,6 +22,8 @@ import {
 } from "../lib/assumptions.js";
 import { Link } from "../lib/Link.jsx";
 import SiteFooter from "../pages/SiteFooter.jsx";
+import SummaryDocument from "./pdf/SummaryPages.jsx";
+import { downloadSummaryPdf } from "../lib/pdfDownload.js";
 
 // ─── Pure Calculation Utilities ───────────────────────────────────────────────
 
@@ -1306,6 +1309,54 @@ function MethodologyLinkCard() {
   );
 }
 
+// Renders the summary document off-screen (via a portal into <body>, so it
+// escapes this card's own layout/overflow entirely) and hands it to html2pdf
+// on click — the file downloads directly, with no separate page to view.
+// Position off-screen rather than display:none/visibility:hidden/opacity:0:
+// html2canvas redraws from computed styles rather than screenshotting real
+// pixels, so those would capture as blank; a real (just off-canvas) box works.
+function PdfSummaryCard({ inputs, inheritances, statePension, statePensionAge, result, assumptions }) {
+  const docRef = useRef(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const data = { generatedAt: new Date().toISOString(), inputs, inheritances, statePension, statePensionAge, result, assumptions };
+
+  const handleDownload = async () => {
+    if (isGenerating) return;
+    setIsGenerating(true);
+    try {
+      await downloadSummaryPdf(docRef.current);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-3xl overflow-hidden" style={{ borderColor: '#DAD7C8', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+      <button
+        type="button"
+        onClick={handleDownload}
+        disabled={isGenerating}
+        className="w-full flex items-center justify-between gap-3 px-6 py-4 text-left cursor-pointer disabled:cursor-wait"
+      >
+        <div>
+          <h2 className="text-sm font-semibold uppercase tracking-wider font-display" style={{ color: '#8a9599' }}>PDF summary</h2>
+          <p className="text-xs mt-0.5" style={{ color: '#8a9599' }}>
+            {isGenerating ? 'Preparing your PDF…' : 'Download a copy of your results, assumptions and methodology'}
+          </p>
+        </div>
+        <span className="text-lg font-semibold" style={{ color: 'var(--calc-secondary, #1B6F81)' }}>{isGenerating ? '…' : '↓'}</span>
+      </button>
+      {createPortal(
+        <div style={{ position: 'fixed', top: 0, left: '-10000px', zIndex: -1 }}>
+          <div ref={docRef}><SummaryDocument data={data} /></div>
+        </div>,
+        document.body,
+      )}
+    </div>
+  );
+}
+
 // ─── "What could close the gap?" scenario cards ───────────────────────────────
 
 function ScenarioCard({ title, lead, rows, footnote, tone = "neutral", dark }) {
@@ -1565,7 +1616,11 @@ const DEFAULT_INHERITANCES = [
   { amount: 0, age: 0 },
 ];
 
-export default function RetirementCalculator({ embedded = false, initialInputs } = {}) {
+// enablePdfDownload: off by default (the free /check calculator) — PDF export
+// is a Pro/partner perk, currently on for partner pages (see
+// PartnerCalculatorPage.jsx) and intended for the Pro calculator once that
+// has its own gated experience.
+export default function RetirementCalculator({ embedded = false, initialInputs, enablePdfDownload = false } = {}) {
   const [inputs, setInputs] = useState(() => ({ ...DEFAULT_INPUTS, ...initialInputs }));
   const [inheritances, setInheritances] = useState(DEFAULT_INHERITANCES);
   const [statePension, setStatePension] = useState({ include: false, income: DEFAULT_STATE_PENSION_INCOME });
@@ -1595,6 +1650,19 @@ export default function RetirementCalculator({ embedded = false, initialInputs }
   }, [inputs, inheritances, statePension, statePensionAge]);
 
   const hasResult = !!result;
+
+  const assumptions = useMemo(() => {
+    if (!result) return [];
+    return getAssumptions({
+      annualReturn: inputs.annualReturn,
+      retirementReturn: inputs.retirementReturn,
+      includeStatePension: statePension.include,
+      statePensionIncome: statePension.income,
+      statePensionAge,
+      planningAge: result.planningAge,
+      capitalPreservationTargetPot: result.capitalPreservationTargetPot,
+    });
+  }, [result, inputs.annualReturn, inputs.retirementReturn, statePension, statePensionAge]);
 
   // Once the "Your Projection" card has scrolled into view, the mobile live
   // ticker and the "View Full Projection" jump bar are showing the same
@@ -1759,18 +1827,18 @@ export default function RetirementCalculator({ embedded = false, initialInputs }
             rather than a tab, so they read as reference material. */}
         {result && (
           <div className="mt-6 space-y-4">
-            <AssumptionsPanel
-              assumptions={getAssumptions({
-                annualReturn: inputs.annualReturn,
-                retirementReturn: inputs.retirementReturn,
-                includeStatePension: statePension.include,
-                statePensionIncome: statePension.income,
-                statePensionAge,
-                planningAge: result.planningAge,
-                capitalPreservationTargetPot: result.capitalPreservationTargetPot,
-              })}
-            />
+            <AssumptionsPanel assumptions={assumptions} />
             <MethodologyLinkCard />
+            {enablePdfDownload && (
+              <PdfSummaryCard
+                inputs={inputs}
+                inheritances={inheritances}
+                statePension={statePension}
+                statePensionAge={statePensionAge}
+                result={result}
+                assumptions={assumptions}
+              />
+            )}
           </div>
         )}
 

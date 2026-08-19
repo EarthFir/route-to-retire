@@ -83,3 +83,36 @@ input[data-dark]::-moz-range-thumb {
   background: #FFFB08;
   border: 4px solid #09324A;
 }
+
+/* PDF summary — the three A4-width "pages" that make up a downloaded
+   retirement summary. Rendered off-screen (never seen — see PdfSummaryCard
+   in RetirementCalculator.jsx) purely so html2pdf/html2canvas has real,
+   laid-out DOM to capture; downloadSummaryPdf() (pdfDownload.js) does the
+   actual pagination. No forced page height here: html2pdf's page-break-pad
+   mechanism pads to fill out to a page boundary, and a height that happens
+   to land exactly on a page-height multiple makes that pad a whole blank
+   page — leaving each page exactly as tall as its content sidesteps that. */
+.pdf-page-wrap {
+  /* White, not the site's beige surface colour: html2pdf's page-break padding
+     divs (used to push a section onto its own fresh page) are transparent, so
+     whatever's behind them shows through in that gap — should read as blank
+     page, not a visible colour band. */
+  background: white;
+}
+.pdf-page {
+  width: 210mm;
+  padding: 16mm;
+  background: white;
+  box-sizing: border-box;
+  break-after: page;
+  page-break-after: always; /* legacy alias — html2pdf's pagebreak detection reads this */
+}
+.pdf-page:last-child {
+  break-after: auto;
+  page-break-after: auto;
+}
+/* Keeps a card/section from being sliced across two PDF pages. */
+.pdf-avoid-break {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
