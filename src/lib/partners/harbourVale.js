@@ -40,15 +40,14 @@ export const HARBOUR_VALE = {
   },
 
   // Example numbers for the "what an adviser would see" section below the
-  // calculator. Visits, calculator interactions and enquiries are static,
-  // illustrative placeholders — not wired to real analytics. PDF exports is
-  // the exception: it's genuinely live, fetched from api/pdf-downloads.js
-  // (see the "live" flag on that entry in buildExampleStats, and
-  // PartnerCalculatorPage.jsx's LiveDownloadStatCard), because a real beacon
-  // fires on every download and there was no reason to fake that one.
+  // calculator — static, illustrative placeholders, not wired to real
+  // analytics. (RetirementCalculator still beacons real PDF downloads to
+  // api/pdf-downloads.js/Upstash in the background; this dashboard just
+  // isn't reading it back for now.)
   exampleStats: buildExampleStats({
     visits: { allTime: 2140, thisMonth: 482 },
     calculatorInteractions: { allTime: 1360, thisMonth: 305 },
+    pdfExports: { allTime: 825, thisMonth: 62 },
     enquiries: { allTime: 168, thisMonth: 47 },
   }),
 };
@@ -61,11 +60,11 @@ function formatConversion(enquiries, visits) {
   return `${((enquiries / visits) * 100).toFixed(1)}%`;
 }
 
-function buildExampleStats({ visits, calculatorInteractions, enquiries }) {
+function buildExampleStats({ visits, calculatorInteractions, pdfExports, enquiries }) {
   return [
     { label: "Visits", allTime: formatCount(visits.allTime), thisMonth: formatCount(visits.thisMonth) },
     { label: "Calculator interactions", allTime: formatCount(calculatorInteractions.allTime), thisMonth: formatCount(calculatorInteractions.thisMonth) },
-    { label: "PDF exports", live: true },
+    { label: "PDF exports", allTime: formatCount(pdfExports.allTime), thisMonth: formatCount(pdfExports.thisMonth) },
     { label: "Enquiries", allTime: formatCount(enquiries.allTime), thisMonth: formatCount(enquiries.thisMonth) },
     {
       label: "Conversion rate",
