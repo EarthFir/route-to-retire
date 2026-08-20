@@ -135,8 +135,8 @@ export default function Pro() {
             <Eyebrow>Coming soon</Eyebrow>
             <h2 className="font-serif font-bold text-3xl sm:text-4xl mb-3" style={{ color: NAVY, letterSpacing: "-.02em" }}>Pro is on its way.</h2>
             <p className="text-[15px] leading-relaxed" style={{ color: BODY }}>
-              We're building Route to Retire Pro now, with secure payment at launch. Leave your email and we'll let you
-              know the moment it's ready — no obligation, no spam.
+              We're currently building Route to Retire Pro, leave your email and we'll let you know the moment it's
+              ready — no obligation, no spam.
             </p>
           </div>
           <ProWaitlistForm />

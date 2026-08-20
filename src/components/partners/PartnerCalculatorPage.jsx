@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import RetirementCalculator from "../RetirementCalculator.jsx";
 import { calculatorThemeVars } from "../../lib/partners/theme.js";
 import { submitLead } from "../../lib/partners/leadCapture.js";
@@ -150,7 +150,7 @@ export default function PartnerCalculatorPage({ config }) {
 
       <div className="px-4" style={calculatorThemeVars(config.theme)}>
         <div className="max-w-6xl mx-auto">
-          <RetirementCalculator embedded initialInputs={config.defaultScenario} enablePdfDownload />
+          <RetirementCalculator embedded initialInputs={config.defaultScenario} enablePdfDownload partnerSlug={config.slug} />
         </div>
       </div>
 
@@ -192,6 +192,64 @@ export default function PartnerCalculatorPage({ config }) {
   );
 }
 
+// Fetches the real download count for a partner from api/pdf-downloads.js
+// (a beacon RetirementCalculator fires after each successful PDF download).
+// Unlike the rest of exampleStats, which are static illustrative numbers,
+// this one is genuinely live — see the "PDF exports" entry in
+// harbourVale.js's buildExampleStats.
+function useLiveDownloadStats(partnerSlug) {
+  const [state, setState] = useState({ status: "loading" });
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`/api/pdf-downloads?partner=${encodeURIComponent(partnerSlug)}`)
+      .then((res) => (res.ok ? res.json() : Promise.reject(new Error("bad response"))))
+      .then((data) => {
+        if (cancelled) return;
+        setState(data.configured ? { status: "ready", allTime: data.allTime, thisMonth: data.thisMonth } : { status: "unconfigured" });
+      })
+      .catch(() => {
+        if (!cancelled) setState({ status: "error" });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [partnerSlug]);
+
+  return state;
+}
+
+function StatCard({ label, allTime, thisMonth, note }) {
+  return (
+    <div className="rounded-2xl px-5 py-4" style={{ backgroundColor: "rgba(255,255,255,.06)" }}>
+      <div className="font-serif font-bold text-xl mb-3" style={{ color: "#F3F2EA" }}>{label}</div>
+      {note ? (
+        <p className="text-xs" style={{ color: "rgba(243,242,234,.55)" }}>{note}</p>
+      ) : (
+        <>
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-xs" style={{ color: "rgba(243,242,234,.55)" }}>All time</span>
+            <span className="text-sm font-semibold tabular-nums" style={{ color: "#F3F2EA" }}>{allTime}</span>
+          </div>
+          <div className="flex items-center justify-between gap-3 mt-1.5 pt-1.5" style={{ borderTop: "1px solid rgba(255,255,255,.14)" }}>
+            <span className="text-xs" style={{ color: "rgba(243,242,234,.55)" }}>This month</span>
+            <span className="text-sm font-semibold tabular-nums" style={{ color: "#F3F2EA" }}>{thisMonth}</span>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+function LiveDownloadStatCard({ label, partnerSlug }) {
+  const state = useLiveDownloadStats(partnerSlug);
+  if (state.status === "ready") {
+    return <StatCard label={label} allTime={state.allTime.toLocaleString("en-GB")} thisMonth={state.thisMonth.toLocaleString("en-GB")} />;
+  }
+  const note = state.status === "loading" ? "Loading…" : state.status === "unconfigured" ? "Not tracked yet" : "Unavailable right now";
+  return <StatCard label={label} note={note} />;
+}
+
 // A short, clearly-separated "meta" section explaining the pilot to the
 // adviser reviewing it. Deliberately styled as a distinct dark panel —
 // neither the light Route to Retire palette nor the partner's own theme —
@@ -230,25 +288,13 @@ function AdviserExplainer({ config }) {
 
         <div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 max-w-3xl mx-auto">
-            {config.exampleStats.map(({ label, allTime, thisMonth, note }) => (
-              <div key={label} className="rounded-2xl px-5 py-4" style={{ backgroundColor: "rgba(255,255,255,.06)" }}>
-                <div className="font-serif font-bold text-xl mb-3" style={{ color: "#F3F2EA" }}>{label}</div>
-                {note ? (
-                  <p className="text-xs" style={{ color: "rgba(243,242,234,.55)" }}>{note}</p>
-                ) : (
-                  <>
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="text-xs" style={{ color: "rgba(243,242,234,.55)" }}>All time</span>
-                      <span className="text-sm font-semibold tabular-nums" style={{ color: "#F3F2EA" }}>{allTime}</span>
-                    </div>
-                    <div className="flex items-center justify-between gap-3 mt-1.5 pt-1.5" style={{ borderTop: "1px solid rgba(255,255,255,.14)" }}>
-                      <span className="text-xs" style={{ color: "rgba(243,242,234,.55)" }}>This month</span>
-                      <span className="text-sm font-semibold tabular-nums" style={{ color: "#F3F2EA" }}>{thisMonth}</span>
-                    </div>
-                  </>
-                )}
-              </div>
-            ))}
+            {config.exampleStats.map((stat) =>
+              stat.live ? (
+                <LiveDownloadStatCard key={stat.label} label={stat.label} partnerSlug={config.slug} />
+              ) : (
+                <StatCard key={stat.label} {...stat} />
+              )
+            )}
           </div>
         </div>
       </div>

@@ -1315,7 +1315,7 @@ function MethodologyLinkCard() {
 // Position off-screen rather than display:none/visibility:hidden/opacity:0:
 // html2canvas redraws from computed styles rather than screenshotting real
 // pixels, so those would capture as blank; a real (just off-canvas) box works.
-function PdfSummaryCard({ inputs, inheritances, statePension, statePensionAge, result, assumptions }) {
+function PdfSummaryCard({ inputs, inheritances, statePension, statePensionAge, result, assumptions, partnerSlug }) {
   const docRef = useRef(null);
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -1326,6 +1326,15 @@ function PdfSummaryCard({ inputs, inheritances, statePension, statePensionAge, r
     setIsGenerating(true);
     try {
       await downloadSummaryPdf(docRef.current);
+      if (partnerSlug) {
+        // Fire-and-forget: the file has already downloaded regardless of
+        // whether this beacon succeeds, so a failure here must never surface.
+        fetch("/api/pdf-downloads", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ partner: partnerSlug }),
+        }).catch(() => {});
+      }
     } finally {
       setIsGenerating(false);
     }
@@ -1619,8 +1628,11 @@ const DEFAULT_INHERITANCES = [
 // enablePdfDownload: off by default (the free /check calculator) — PDF export
 // is a Pro/partner perk, currently on for partner pages (see
 // PartnerCalculatorPage.jsx) and intended for the Pro calculator once that
-// has its own gated experience.
-export default function RetirementCalculator({ embedded = false, initialInputs, enablePdfDownload = false } = {}) {
+// has its own gated experience. partnerSlug: only meaningful alongside
+// enablePdfDownload — identifies which partner's download counter to
+// increment (see api/pdf-downloads.js); omit it (as /check does implicitly,
+// by never setting enablePdfDownload) and no tracking call is made.
+export default function RetirementCalculator({ embedded = false, initialInputs, enablePdfDownload = false, partnerSlug } = {}) {
   const [inputs, setInputs] = useState(() => ({ ...DEFAULT_INPUTS, ...initialInputs }));
   const [inheritances, setInheritances] = useState(DEFAULT_INHERITANCES);
   const [statePension, setStatePension] = useState({ include: false, income: DEFAULT_STATE_PENSION_INCOME });
@@ -1837,6 +1849,7 @@ export default function RetirementCalculator({ embedded = false, initialInputs, 
                 statePensionAge={statePensionAge}
                 result={result}
                 assumptions={assumptions}
+                partnerSlug={partnerSlug}
               />
             )}
           </div>

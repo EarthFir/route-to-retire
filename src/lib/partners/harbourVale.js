@@ -39,14 +39,13 @@ export const HARBOUR_VALE = {
     endpoint: import.meta.env.VITE_HARBOUR_VALE_LEAD_ENDPOINT || "",
   },
 
-  // Static, illustrative example numbers for the "what an adviser would see"
-  // section below the calculator — not wired to real analytics. Limited to
-  // metrics we could actually report on (page views, "touched a slider" as a
-  // proxy for engagement, and form submissions); anything past the enquiry
-  // (e.g. calls booked) happens off-site once the adviser follows up, so it
-  // isn't something Route to Retire could see. PDF export downloads entirely
-  // client-side with no server call, so there's no event to count it — shown
-  // as not tracked rather than a fabricated count.
+  // Example numbers for the "what an adviser would see" section below the
+  // calculator. Visits, calculator interactions and enquiries are static,
+  // illustrative placeholders — not wired to real analytics. PDF exports is
+  // the exception: it's genuinely live, fetched from api/pdf-downloads.js
+  // (see the "live" flag on that entry in buildExampleStats, and
+  // PartnerCalculatorPage.jsx's LiveDownloadStatCard), because a real beacon
+  // fires on every download and there was no reason to fake that one.
   exampleStats: buildExampleStats({
     visits: { allTime: 2140, thisMonth: 482 },
     calculatorInteractions: { allTime: 1360, thisMonth: 305 },
@@ -66,7 +65,7 @@ function buildExampleStats({ visits, calculatorInteractions, enquiries }) {
   return [
     { label: "Visits", allTime: formatCount(visits.allTime), thisMonth: formatCount(visits.thisMonth) },
     { label: "Calculator interactions", allTime: formatCount(calculatorInteractions.allTime), thisMonth: formatCount(calculatorInteractions.thisMonth) },
-    { label: "PDF exports", note: "Not tracked" },
+    { label: "PDF exports", live: true },
     { label: "Enquiries", allTime: formatCount(enquiries.allTime), thisMonth: formatCount(enquiries.thisMonth) },
     {
       label: "Conversion rate",
