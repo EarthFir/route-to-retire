@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import RetirementCalculator from "../RetirementCalculator.jsx";
 import { calculatorThemeVars } from "../../lib/partners/theme.js";
 import { submitLead } from "../../lib/partners/leadCapture.js";
+import { trackEngagement, trackVisit } from "../../lib/partners/engagement.js";
 import { Link } from "../../lib/Link.jsx";
 import PricingCTA from "./PricingCTA.jsx";
 
@@ -16,9 +17,13 @@ function PartnerHeader({ config }) {
   return (
     <header className="sticky top-0 z-40 bg-white" style={{ borderBottom: `1px solid ${config.theme.primary}22` }}>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
-        <div className="font-serif font-bold text-lg sm:text-xl" style={{ color: config.theme.primary }}>
-          {config.logoText}
-        </div>
+        {config.logoSrc ? (
+          <img src={config.logoSrc} alt={config.logoText} className="h-8 sm:h-9 w-auto" />
+        ) : (
+          <div className="font-serif font-bold text-lg sm:text-xl" style={{ color: config.theme.primary }}>
+            {config.logoText}
+          </div>
+        )}
         <Link
           to="/"
           className="text-xs font-medium shrink-0"
@@ -54,6 +59,10 @@ function LeadForm({ config }) {
         preferredRetirementAge: form.preferredRetirementAge.value,
         message: form.message.value,
       });
+      // Count-only beacon, separate from the lead payload above — fires even
+      // when that payload goes straight to the partner's own CRM (see
+      // leadCapture.js), so submission counts stay ours regardless of mode.
+      trackEngagement(config.slug, "enquiry-submitted");
       setSucceeded(true);
     } catch (err) {
       setError(err.message || "Something went wrong. Please try again.");
@@ -131,6 +140,10 @@ function LeadForm({ config }) {
 export default function PartnerCalculatorPage({ config }) {
   const { primary, accent } = config.theme;
 
+  useEffect(() => {
+    trackVisit(config.slug);
+  }, [config.slug]);
+
   return (
     <div className="overflow-x-clip" style={{ backgroundColor: "#F3F2EA" }}>
       <PartnerHeader config={config} />
@@ -150,7 +163,7 @@ export default function PartnerCalculatorPage({ config }) {
 
       <div className="px-4" style={calculatorThemeVars(config.theme)}>
         <div className="max-w-6xl mx-auto">
-          <RetirementCalculator embedded initialInputs={config.defaultScenario} enablePdfDownload partnerSlug={config.slug} />
+          <RetirementCalculator embedded initialInputs={config.defaultScenario} enablePdfDownload partnerSlug={config.slug} partnerBrand={config} />
         </div>
       </div>
 
@@ -165,6 +178,7 @@ export default function PartnerCalculatorPage({ config }) {
           <div className="flex flex-wrap items-center justify-center gap-3">
             <a
               href="#enquiry-form"
+              onClick={() => trackEngagement(config.slug, "cta-click")}
               className="inline-flex items-center justify-center gap-2 font-semibold text-sm sm:text-base rounded-full px-7 py-3.5 hover:opacity-90 transition font-display"
               style={{ backgroundColor: accent, color: primary }}
             >
@@ -273,7 +287,9 @@ function AdviserExplainer({ config }) {
             Financial Advisor Overview
           </h2>
           <p className="text-sm max-w-md mx-auto" style={{ color: "rgba(243,242,234,.65)" }}>
-            This page is a working example of a Route to Retire partner calculator, branded for a fictional firm.
+            {config.fictional
+              ? "This page is a working example of a Route to Retire partner calculator, branded for a fictional firm."
+              : `This is a prototype built by Route to Retire to show ${config.firmName} what a branded calculator could look like — not yet a commissioned build.`}
           </p>
         </div>
 
@@ -317,7 +333,11 @@ function PartnerFooter({ config }) {
         <span style={{ color: "#DAD7C8" }}>·</span>
         <Link to="/privacy" style={{ color: "#1B6F81" }}>Privacy</Link>
       </nav>
-      <p className="text-[11px]" style={{ color: "#8a9599" }}>{config.firmName} is a fictional firm used for demonstration only.</p>
+      <p className="text-[11px]" style={{ color: "#8a9599" }}>
+        {config.fictional
+          ? `${config.firmName} is a fictional firm used for demonstration only.`
+          : `This is a Route to Retire prototype and is not affiliated with or endorsed by ${config.firmName}.`}
+      </p>
     </footer>
   );
 }

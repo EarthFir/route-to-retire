@@ -5,6 +5,7 @@
 
 export const HARBOUR_VALE = {
   slug: "harbour-vale",
+  fictional: true,
   firmName: "Harbour & Vale Financial Planning",
   logoText: "Harbour & Vale",
   tagline: "Independent financial planning, built around your goals.",

@@ -1174,7 +1174,7 @@ function TabBar({ tabs, active, onChange, dark }) {
   return (
     <div
       className="grid gap-1 p-1 rounded-2xl mb-5 shrink-0"
-      style={{ gridTemplateColumns: `repeat(${tabs.length}, minmax(0,1fr))`, backgroundColor: dark ? 'rgba(255,255,255,.07)' : '#F3F2EA' }}
+      style={{ gridTemplateColumns: `repeat(${tabs.length}, minmax(0,1fr))`, backgroundColor: dark ? 'rgba(255,255,255,.1)' : '#EAE8DC' }}
     >
       {tabs.map((t) => {
         const isActive = t.key === active;
@@ -1185,8 +1185,8 @@ function TabBar({ tabs, active, onChange, dark }) {
             onClick={() => onChange(t.key)}
             className="text-xs sm:text-[13px] font-bold px-2 py-2.5 rounded-xl transition-all duration-150 whitespace-nowrap cursor-pointer"
             style={isActive
-              ? { backgroundColor: dark ? 'var(--calc-accent, #FFFB08)' : 'var(--calc-primary, #09324A)', color: dark ? 'var(--calc-primary, #09324A)' : 'var(--calc-accent, #FFFB08)', boxShadow: '0 2px 8px rgba(0,0,0,.15)' }
-              : { backgroundColor: 'transparent', color: dark ? 'rgba(243,242,234,.62)' : '#8a9599' }}
+              ? { backgroundColor: dark ? 'var(--calc-accent, #FFFB08)' : 'var(--calc-primary, #09324A)', color: dark ? 'var(--calc-primary, #09324A)' : 'var(--calc-tab-active-text, var(--calc-accent, #FFFB08))', boxShadow: '0 2px 8px rgba(0,0,0,.15)' }
+              : { backgroundColor: 'transparent', color: dark ? 'rgba(243,242,234,.85)' : '#5B6770' }}
           >
             {t.label}
           </button>
@@ -1315,7 +1315,7 @@ function MethodologyLinkCard() {
 // Position off-screen rather than display:none/visibility:hidden/opacity:0:
 // html2canvas redraws from computed styles rather than screenshotting real
 // pixels, so those would capture as blank; a real (just off-canvas) box works.
-function PdfSummaryCard({ inputs, inheritances, statePension, statePensionAge, result, assumptions, partnerSlug }) {
+function PdfSummaryCard({ inputs, inheritances, statePension, statePensionAge, result, assumptions, partnerSlug, partnerBrand }) {
   const docRef = useRef(null);
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -1325,7 +1325,8 @@ function PdfSummaryCard({ inputs, inheritances, statePension, statePensionAge, r
     if (isGenerating) return;
     setIsGenerating(true);
     try {
-      await downloadSummaryPdf(docRef.current);
+      const filename = partnerBrand ? `${partnerBrand.slug}-retirement-summary.pdf` : undefined;
+      await downloadSummaryPdf(docRef.current, filename);
       if (partnerSlug) {
         // Fire-and-forget: the file has already downloaded regardless of
         // whether this beacon succeeds, so a failure here must never surface.
@@ -1358,7 +1359,7 @@ function PdfSummaryCard({ inputs, inheritances, statePension, statePensionAge, r
       </button>
       {createPortal(
         <div style={{ position: 'fixed', top: 0, left: '-10000px', zIndex: -1 }}>
-          <div ref={docRef}><SummaryDocument data={data} /></div>
+          <div ref={docRef}><SummaryDocument data={data} brand={partnerBrand} /></div>
         </div>,
         document.body,
       )}
@@ -1632,7 +1633,10 @@ const DEFAULT_INHERITANCES = [
 // enablePdfDownload — identifies which partner's download counter to
 // increment (see api/pdf-downloads.js); omit it (as /check does implicitly,
 // by never setting enablePdfDownload) and no tracking call is made.
-export default function RetirementCalculator({ embedded = false, initialInputs, enablePdfDownload = false, partnerSlug } = {}) {
+// partnerBrand: the partner config object (see src/lib/partners/*.js), used
+// to re-brand the downloaded PDF summary (logo, colors, filename) — omit it
+// and the PDF renders with Route to Retire's own branding, as /check does.
+export default function RetirementCalculator({ embedded = false, initialInputs, enablePdfDownload = false, partnerSlug, partnerBrand } = {}) {
   const [inputs, setInputs] = useState(() => ({ ...DEFAULT_INPUTS, ...initialInputs }));
   const [inheritances, setInheritances] = useState(DEFAULT_INHERITANCES);
   const [statePension, setStatePension] = useState({ include: false, income: DEFAULT_STATE_PENSION_INCOME });
@@ -1850,6 +1854,7 @@ export default function RetirementCalculator({ embedded = false, initialInputs, 
                 result={result}
                 assumptions={assumptions}
                 partnerSlug={partnerSlug}
+                partnerBrand={partnerBrand}
               />
             )}
           </div>

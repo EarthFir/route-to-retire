@@ -11,19 +11,9 @@
 // add the same two to .env.local for local testing. Until those are set, GET
 // responds { configured: false } rather than a fabricated number.
 
-const KNOWN_PARTNERS = ["harbour-vale"];
+import { redis, monthKey } from "./_lib/upstash.js";
 
-function monthKey(date = new Date()) {
-  return date.toISOString().slice(0, 7); // YYYY-MM (UTC)
-}
-
-async function redis(pathSegments, { url, token }) {
-  const res = await fetch(`${url}/${pathSegments.map(encodeURIComponent).join("/")}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  if (!res.ok) throw new Error(`Upstash command failed: ${res.status}`);
-  return (await res.json()).result;
-}
+const KNOWN_PARTNERS = ["harbour-vale", "simpsonfs"];
 
 export default async function handler(req, res) {
   const partner = req.method === "GET" ? req.query.partner : req.body?.partner;
