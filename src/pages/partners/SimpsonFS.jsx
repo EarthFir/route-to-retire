@@ -10,7 +10,7 @@ import { usePageTitle } from "../../lib/usePageTitle.js";
 export default function SimpsonFS() {
   usePageTitle(
     `${SIMPSON_FS.firmName} - Retirement Readiness Check`,
-    `A retirement calculator prototype built for ${SIMPSON_FS.firmName}, powered by Route to Retire.`,
+    `A retirement calculator for ${SIMPSON_FS.firmName}.`,
   );
 
   return <PartnerCalculatorPage config={SIMPSON_FS} />;

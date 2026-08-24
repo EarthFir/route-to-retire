@@ -24,13 +24,15 @@ function PartnerHeader({ config }) {
             {config.logoText}
           </div>
         )}
-        <Link
-          to="/"
-          className="text-xs font-medium shrink-0"
-          style={{ color: "#8a9599" }}
-        >
-          Calculator by Route to Retire
-        </Link>
+        {!config.whiteLabel && (
+          <Link
+            to="/"
+            className="text-xs font-medium shrink-0"
+            style={{ color: "#8a9599" }}
+          >
+            Calculator by Route to Retire
+          </Link>
+        )}
       </div>
     </header>
   );
@@ -131,7 +133,9 @@ function LeadForm({ config }) {
       </button>
 
       <p className="text-[11px] leading-relaxed text-center" style={{ color: "#8a9599" }}>
-        Your details are sent to {config.firmName} (or its chosen form provider). Route to Retire does not store or see this enquiry.
+        {config.whiteLabel
+          ? `Your details go straight to ${config.firmName} — nothing here stores or sees this enquiry.`
+          : `Your details are sent to ${config.firmName} (or its chosen form provider). Route to Retire does not store or see this enquiry.`}
       </p>
     </form>
   );
@@ -197,9 +201,12 @@ export default function PartnerCalculatorPage({ config }) {
         </p>
       </section>
 
-      <AdviserExplainer config={config} />
-
-      <PricingCTA />
+      {!config.whiteLabel && (
+        <>
+          <AdviserExplainer config={config} />
+          <PricingCTA />
+        </>
+      )}
 
       <PartnerFooter config={config} />
     </div>
@@ -322,9 +329,15 @@ function PartnerFooter({ config }) {
   return (
     <footer className="py-10 text-center space-y-3" style={{ backgroundColor: "#F3F2EA" }}>
       <p className="text-xs" style={{ color: "#8a9599" }}>
-        Calculator hosted and maintained by{" "}
-        <Link to="/" style={{ color: "#1B6F81" }}>Route to Retire</Link>.
-        For illustrative purposes only — not financial advice.
+        {config.whiteLabel ? (
+          "For illustrative purposes only — not financial advice."
+        ) : (
+          <>
+            Calculator hosted and maintained by{" "}
+            <Link to="/" style={{ color: "#1B6F81" }}>Route to Retire</Link>.
+            For illustrative purposes only — not financial advice.
+          </>
+        )}
       </p>
       <nav className="flex items-center justify-center gap-4 text-xs font-medium flex-wrap">
         <Link to="/methodology" style={{ color: "#1B6F81" }}>Methodology</Link>
@@ -333,11 +346,13 @@ function PartnerFooter({ config }) {
         <span style={{ color: "#DAD7C8" }}>·</span>
         <Link to="/privacy" style={{ color: "#1B6F81" }}>Privacy</Link>
       </nav>
-      <p className="text-[11px]" style={{ color: "#8a9599" }}>
-        {config.fictional
-          ? `${config.firmName} is a fictional firm used for demonstration only.`
-          : `This is a Route to Retire prototype and is not affiliated with or endorsed by ${config.firmName}.`}
-      </p>
+      {!config.whiteLabel && (
+        <p className="text-[11px]" style={{ color: "#8a9599" }}>
+          {config.fictional
+            ? `${config.firmName} is a fictional firm used for demonstration only.`
+            : `This is a Route to Retire prototype and is not affiliated with or endorsed by ${config.firmName}.`}
+        </p>
+      )}
     </footer>
   );
 }

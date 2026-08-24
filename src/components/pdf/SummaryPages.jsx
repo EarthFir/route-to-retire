@@ -58,9 +58,11 @@ function PageHeader({ eyebrow, palette, brand }) {
             ) : (
               <span className={`${palette.headingFont} font-bold text-base`} style={{ color: palette.navy }}>{brand.firmName}</span>
             )}
-            <span className="text-[8px] leading-tight" style={{ color: palette.muted }}>
-              Powered by<br />Route to Retire
-            </span>
+            {!brand.whiteLabel && (
+              <span className="text-[8px] leading-tight" style={{ color: palette.muted }}>
+                Powered by<br />Route to Retire
+              </span>
+            )}
           </>
         ) : (
           <>
@@ -197,7 +199,8 @@ function AssumptionsPage({ data, palette, brand }) {
   );
 }
 
-const METHODOLOGY_SECTIONS = [
+function methodologySections(whiteLabel) {
+  return [
   {
     title: "What the calculator estimates",
     body: "It estimates how much you might need to have saved by your chosen retirement age, and roughly how much you'd need to save each month to get there, so your pot can fund a target income through retirement.",
@@ -236,19 +239,25 @@ const METHODOLOGY_SECTIONS = [
   },
   {
     title: "Why results should be treated as illustrative only",
-    body: "Route to Retire is an educational calculator. It does not provide regulated financial advice, tax advice or a personal recommendation. The results are based on simplified assumptions and user-entered data, and small changes to those inputs can move the figures significantly.",
+    body: whiteLabel
+      ? "This is an educational calculator. It does not provide regulated financial advice, tax advice or a personal recommendation. The results are based on simplified assumptions and user-entered data, and small changes to those inputs can move the figures significantly."
+      : "Route to Retire is an educational calculator. It does not provide regulated financial advice, tax advice or a personal recommendation. The results are based on simplified assumptions and user-entered data, and small changes to those inputs can move the figures significantly.",
   },
-];
+  ];
+}
 
 function MethodologyPage({ palette, brand }) {
+  const whiteLabel = Boolean(brand?.whiteLabel);
   return (
     <div className="pdf-page">
       <PageHeader eyebrow="Methodology" palette={palette} brand={brand} />
       <h1 className={`${palette.headingFont} font-bold text-2xl mb-1`} style={{ color: palette.navy }}>How this calculator works</h1>
-      <p className="text-xs mb-6" style={{ color: palette.muted }}>A plain-English summary of the model behind Route to Retire.</p>
+      <p className="text-xs mb-6" style={{ color: palette.muted }}>
+        {whiteLabel ? "A plain-English summary of the model behind this calculator." : "A plain-English summary of the model behind Route to Retire."}
+      </p>
 
       <div className="space-y-4">
-        {METHODOLOGY_SECTIONS.map(({ title, body }) => (
+        {methodologySections(whiteLabel).map(({ title, body }) => (
           <div key={title} className="pdf-avoid-break">
             <h3 className="text-[12px] font-bold mb-1" style={{ color: palette.navy }}>{title}</h3>
             <p className="text-[11px] leading-relaxed" style={{ color: palette.body }}>{body}</p>

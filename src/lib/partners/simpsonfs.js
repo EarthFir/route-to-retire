@@ -11,6 +11,11 @@ import simpsonFsLogo from "../../assets/partners/simpson-fs-logo.svg";
 export const SIMPSON_FS = {
   slug: "simpsonfs",
   fictional: false,
+  // Real outreach material, not an internal pitch — hides the "for advisers"
+  // dashboard/pricing section and every on-page "Route to Retire" mention so
+  // the page reads as Simpson's own calculator. The routetoretire.co.uk URL
+  // is the one thing this can't hide; that needs the iframe embed instead.
+  whiteLabel: true,
   firmName: "Simpson Financial Services",
   logoText: "Simpson Financial Services",
   logoSrc: simpsonFsLogo,
