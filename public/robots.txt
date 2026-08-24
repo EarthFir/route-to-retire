@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://routetoretire.co.uk/sitemap.xml
+Sitemap: https://www.routetoretire.co.uk/sitemap.xml
