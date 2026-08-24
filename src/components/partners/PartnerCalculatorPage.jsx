@@ -340,11 +340,11 @@ function PartnerFooter({ config }) {
         )}
       </p>
       <nav className="flex items-center justify-center gap-4 text-xs font-medium flex-wrap">
-        <Link to="/methodology" style={{ color: "#1B6F81" }}>Methodology</Link>
+        <Link to={config.whiteLabel ? "/partners/methodology" : "/methodology"} style={{ color: "#1B6F81" }}>Methodology</Link>
         <span style={{ color: "#DAD7C8" }}>·</span>
-        <Link to="/disclaimer" style={{ color: "#1B6F81" }}>Disclaimer</Link>
+        <Link to={config.whiteLabel ? "/partners/disclaimer" : "/disclaimer"} style={{ color: "#1B6F81" }}>Disclaimer</Link>
         <span style={{ color: "#DAD7C8" }}>·</span>
-        <Link to="/privacy" style={{ color: "#1B6F81" }}>Privacy</Link>
+        <Link to={config.whiteLabel ? "/partners/privacy" : "/privacy"} style={{ color: "#1B6F81" }}>Privacy</Link>
       </nav>
       {!config.whiteLabel && (
         <p className="text-[11px]" style={{ color: "#8a9599" }}>

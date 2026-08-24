@@ -708,7 +708,7 @@ function MiniStatCard({ label, value, accent }) {
 // The detailed pot-by-pot breakdown, shared between the mobile "Your Numbers"
 // card (light rows, full descriptions) and the "Your Numbers" tab of the
 // desktop results card (dark=true: compact blue cards, no scrollbar).
-function YourNumbersBody({ inputs, result, statePension, inheritances, dark }) {
+function YourNumbersBody({ inputs, result, statePension, inheritances, dark, partnerBrand }) {
   const items = [
     {
       icon: "●",
@@ -793,7 +793,7 @@ function YourNumbersBody({ inputs, result, statePension, inheritances, dark }) {
           totalInheritanceFV={result.totalInheritanceFV}
           retirementAge={inputs.retirementAge}
         />
-        <NumbersDisclaimer dark />
+        <NumbersDisclaimer dark partnerBrand={partnerBrand} />
       </div>
     );
   }
@@ -809,14 +809,15 @@ function YourNumbersBody({ inputs, result, statePension, inheritances, dark }) {
         totalInheritanceFV={result.totalInheritanceFV}
         retirementAge={inputs.retirementAge}
       />
-      <NumbersDisclaimer />
+      <NumbersDisclaimer partnerBrand={partnerBrand} />
     </div>
   );
 }
 
 // Short-form reminder of the headline points from the Disclaimer page, shown
 // at the foot of "Your Numbers" so it travels with the figures themselves.
-function NumbersDisclaimer({ dark }) {
+function NumbersDisclaimer({ dark, partnerBrand }) {
+  const disclaimerHref = partnerBrand?.whiteLabel ? "/partners/disclaimer" : "/disclaimer";
   const points = [
     "Educational tool only — not financial or tax advice.",
     "Results are estimates, not guarantees.",
@@ -840,7 +841,7 @@ function NumbersDisclaimer({ dark }) {
       </ul>
       <p className="mt-1">
         See the{" "}
-        <Link to="/disclaimer" style={{ color: dark ? "var(--calc-positive, #AED0C9)" : "var(--calc-secondary, #1B6F81)" }}>
+        <Link to={disclaimerHref} style={{ color: dark ? "var(--calc-positive, #AED0C9)" : "var(--calc-secondary, #1B6F81)" }}>
           full disclaimer
         </Link>.
       </p>
@@ -1295,10 +1296,11 @@ function AssumptionsPanel({ assumptions }) {
 // Matches AssumptionsPanel's collapsed-row styling so the two read as a pair,
 // but this one links straight through to the methodology page rather than
 // expanding in place.
-function MethodologyLinkCard() {
+function MethodologyLinkCard({ partnerBrand }) {
+  const to = partnerBrand?.whiteLabel ? "/partners/methodology" : "/methodology";
   return (
     <div className="bg-white rounded-3xl overflow-hidden" style={{ borderColor: '#DAD7C8', borderWidth: '1px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-      <Link to="/methodology" className="w-full flex items-center justify-between gap-3 px-6 py-4 text-left">
+      <Link to={to} className="w-full flex items-center justify-between gap-3 px-6 py-4 text-left">
         <div>
           <h2 className="text-sm font-semibold uppercase tracking-wider font-display" style={{ color: '#8a9599' }}>Methodology</h2>
           <p className="text-xs mt-0.5" style={{ color: '#8a9599' }}>Read how this calculator works</p>
@@ -1542,7 +1544,7 @@ function ScenarioCards({ baseParams, result, retirementAge, currentAge, desiredI
 // Desktop-only (lg+): the navy results panel, "Your Numbers" breakdown,
 // scenario cards and assumptions all in one 865px-tall card, switched via
 // tabs so nothing scrolls out of view or ends up hidden behind another card.
-function ResultsTabbedCard({ inputs, inheritances, result, statePension, statePensionAge }) {
+function ResultsTabbedCard({ inputs, inheritances, result, statePension, statePensionAge, partnerBrand }) {
   const [tab, setTab] = useState("overview");
   const monthlySavingsCurrent = inputs.monthlySavingsCurrent;
   const currentAge = inputs.currentAge;
@@ -1583,7 +1585,7 @@ function ResultsTabbedCard({ inputs, inheritances, result, statePension, statePe
           />
         )}
         {tab === "numbers" && (
-          <YourNumbersBody dark inputs={inputs} result={result} statePension={statePension} inheritances={inheritances} />
+          <YourNumbersBody dark inputs={inputs} result={result} statePension={statePension} inheritances={inheritances} partnerBrand={partnerBrand} />
         )}
         {tab === "scenarios" && (
           <ScenarioCards
@@ -1826,6 +1828,7 @@ export default function RetirementCalculator({ embedded = false, initialInputs, 
                 result={result}
                 statePension={statePension}
                 statePensionAge={statePensionAge}
+                partnerBrand={partnerBrand}
               />
             ) : (
               <div
@@ -1844,7 +1847,7 @@ export default function RetirementCalculator({ embedded = false, initialInputs, 
         {result && (
           <div className="mt-6 space-y-4">
             <AssumptionsPanel assumptions={assumptions} />
-            <MethodologyLinkCard />
+            <MethodologyLinkCard partnerBrand={partnerBrand} />
             {enablePdfDownload && (
               <PdfSummaryCard
                 inputs={inputs}
