@@ -1638,7 +1638,11 @@ const DEFAULT_INHERITANCES = [
 // partnerBrand: the partner config object (see src/lib/partners/*.js), used
 // to re-brand the downloaded PDF summary (logo, colors, filename) — omit it
 // and the PDF renders with Route to Retire's own branding, as /check does.
-export default function RetirementCalculator({ embedded = false, initialInputs, enablePdfDownload = false, partnerSlug, partnerBrand } = {}) {
+// onSummaryChange: optional callback fired with { inputs, statePension, result }
+// whenever the calculation changes (or null while there's no valid result) —
+// lets a parent page (e.g. PartnerCalculatorPage's lead form) offer to include
+// the same numbers shown on screen without duplicating the calculation itself.
+export default function RetirementCalculator({ embedded = false, initialInputs, enablePdfDownload = false, partnerSlug, partnerBrand, onSummaryChange } = {}) {
   const [inputs, setInputs] = useState(() => ({ ...DEFAULT_INPUTS, ...initialInputs }));
   const [inheritances, setInheritances] = useState(DEFAULT_INHERITANCES);
   const [statePension, setStatePension] = useState({ include: false, income: DEFAULT_STATE_PENSION_INCOME });
@@ -1668,6 +1672,10 @@ export default function RetirementCalculator({ embedded = false, initialInputs, 
   }, [inputs, inheritances, statePension, statePensionAge]);
 
   const hasResult = !!result;
+
+  useEffect(() => {
+    onSummaryChange?.(result ? { inputs, statePension, result } : null);
+  }, [result, inputs, statePension, onSummaryChange]);
 
   const assumptions = useMemo(() => {
     if (!result) return [];

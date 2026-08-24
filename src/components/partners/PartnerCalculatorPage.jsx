@@ -38,7 +38,35 @@ function PartnerHeader({ config }) {
   );
 }
 
-function LeadForm({ config }) {
+function formatGBP(value) {
+  return new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP", maximumFractionDigits: 0 }).format(value);
+}
+
+const STATUS_LABEL = { green: "On track", amber: "Close to target", red: "Action needed" };
+
+// Plain-text digest of the calculator's current numbers, built from the same
+// `result`/`inputs`/`statePension` shape RetirementCalculator already computes
+// (see its onSummaryChange) — sent as a form field alongside the enquiry, not
+// as a PDF attachment, so it reaches any partner endpoint (Formspree, CRM,
+// Zapier/Make webhook) without relying on that endpoint handling file uploads.
+function buildResultsSummary({ inputs, statePension, result }) {
+  const lines = [
+    `Status: ${STATUS_LABEL[result.status] || result.status}`,
+    `Current age ${inputs.currentAge} -> target retirement age ${inputs.retirementAge}`,
+    `Target retirement income: ${formatGBP(inputs.desiredIncome)}/yr${statePension.include ? ` (plus ${formatGBP(statePension.income)}/yr State Pension)` : ""}`,
+    `Current savings: ${formatGBP(inputs.currentSavings)}, saving ${formatGBP(inputs.monthlySavingsCurrent)}/mo`,
+    `Target pot needed by ${inputs.retirementAge}: ${formatGBP(result.targetPot)}`,
+    `Projected pot at ${inputs.retirementAge} at current saving: ${formatGBP(result.projectedPotWithSaving)}`,
+  ];
+  if (result.savingsGap > 0) {
+    lines.push(`Estimated monthly shortfall: ${formatGBP(result.savingsGap)}/mo`);
+  } else if (result.savingsGap < 0) {
+    lines.push(`Estimated monthly surplus: ${formatGBP(Math.abs(result.savingsGap))}/mo`);
+  }
+  return lines.join("\n");
+}
+
+function LeadForm({ config, summary }) {
   const [submitting, setSubmitting] = useState(false);
   const [succeeded, setSucceeded] = useState(false);
   const [error, setError] = useState("");
@@ -60,6 +88,7 @@ function LeadForm({ config }) {
         phone: form.phone.value,
         preferredRetirementAge: form.preferredRetirementAge.value,
         message: form.message.value,
+        ...(summary && form.includeSummary.checked ? { resultsSummary: buildResultsSummary(summary) } : {}),
       });
       // Count-only beacon, separate from the lead payload above — fires even
       // when that payload goes straight to the partner's own CRM (see
@@ -116,6 +145,13 @@ function LeadForm({ config }) {
           className="w-full py-2.5 px-3 font-medium bg-white rounded-2xl outline-none border resize-none" style={{ color: primary, borderColor: "#DAD7C8" }} />
       </div>
 
+      {summary && (
+        <label className="flex items-start gap-2.5 text-xs leading-relaxed cursor-pointer" style={{ color: "#8a9599" }}>
+          <input type="checkbox" name="includeSummary" defaultChecked={false} className="mt-0.5 shrink-0" />
+          Include a summary of my results (target pot, projected pot, monthly gap) so {config.firmName} has some numbers to start with.
+        </label>
+      )}
+
       <label className="flex items-start gap-2.5 text-xs leading-relaxed cursor-pointer" style={{ color: "#8a9599" }}>
         <input type="checkbox" name="consent" defaultChecked={false} className="mt-0.5 shrink-0" />
         {config.consentLabel}
@@ -143,6 +179,7 @@ function LeadForm({ config }) {
 
 export default function PartnerCalculatorPage({ config }) {
   const { primary, accent } = config.theme;
+  const [summary, setSummary] = useState(null);
 
   useEffect(() => {
     trackVisit(config.slug);
@@ -167,7 +204,7 @@ export default function PartnerCalculatorPage({ config }) {
 
       <div className="px-4" style={calculatorThemeVars(config.theme)}>
         <div className="max-w-6xl mx-auto">
-          <RetirementCalculator embedded initialInputs={config.defaultScenario} enablePdfDownload partnerSlug={config.slug} partnerBrand={config} />
+          <RetirementCalculator embedded initialInputs={config.defaultScenario} enablePdfDownload partnerSlug={config.slug} partnerBrand={config} onSummaryChange={setSummary} />
         </div>
       </div>
 
@@ -192,7 +229,7 @@ export default function PartnerCalculatorPage({ config }) {
         </div>
 
         <div id="enquiry-form" className="pt-4" style={{ scrollMarginTop: 96 }}>
-          <LeadForm config={config} />
+          <LeadForm config={config} summary={summary} />
         </div>
 
         <p className="text-xs text-center max-w-lg mx-auto leading-relaxed" style={{ color: "#8a9599" }}>
