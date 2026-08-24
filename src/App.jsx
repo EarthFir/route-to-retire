@@ -8,7 +8,9 @@ import Privacy from "./pages/Privacy.jsx";
 import Terms from "./pages/Terms.jsx";
 import Partners from "./pages/Partners.jsx";
 import HarbourVale from "./pages/partners/HarbourVale.jsx";
+import HarbourValeStats from "./pages/partners/HarbourValeStats.jsx";
 import SimpsonFS from "./pages/partners/SimpsonFS.jsx";
+import SimpsonFSStats from "./pages/partners/SimpsonFSStats.jsx";
 import { useRoute } from "./lib/router.js";
 
 function App() {
@@ -33,8 +35,12 @@ function App() {
       return <Partners />;
     case "/partners/harbour-vale":
       return <HarbourVale />;
+    case "/partners/harbour-vale/stats":
+      return <HarbourValeStats />;
     case "/partners/simpsonfs":
       return <SimpsonFS />;
+    case "/partners/simpsonfs/stats":
+      return <SimpsonFSStats />;
     default:
       return <Home />;
   }
