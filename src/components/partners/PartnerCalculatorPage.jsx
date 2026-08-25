@@ -185,6 +185,17 @@ export default function PartnerCalculatorPage({ config }) {
     trackVisit(config.slug);
   }, [config.slug]);
 
+  // Partner pages are hosted on Route to Retire's domain but represent the
+  // partner's own brand — they shouldn't compete with the partner's own site
+  // (or with routetoretire.co.uk) in search results.
+  useEffect(() => {
+    const meta = document.createElement("meta");
+    meta.name = "robots";
+    meta.content = "noindex";
+    document.head.appendChild(meta);
+    return () => document.head.removeChild(meta);
+  }, []);
+
   return (
     <div className="overflow-x-clip" style={{ backgroundColor: "#F3F2EA" }}>
       <PartnerHeader config={config} />
@@ -335,6 +346,9 @@ function AdviserExplainer({ config }) {
               ? "This page is a working example of a Route to Retire partner calculator, branded for a fictional firm."
               : `This is a prototype built by Route to Retire to show ${config.firmName} what a branded calculator could look like — not yet a commissioned build.`}
           </p>
+          <p className="text-xs max-w-md mx-auto" style={{ color: "rgba(243,242,234,.5)" }}>
+            The figures below are illustrative examples of what this dashboard would show, not real activity.
+          </p>
         </div>
 
         <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl mx-auto">
@@ -347,6 +361,14 @@ function AdviserExplainer({ config }) {
         </ul>
 
         <div>
+          <div className="flex justify-center mb-3">
+            <span
+              className="inline-flex items-center font-display font-bold text-[10px] uppercase tracking-widest px-2.5 py-1 rounded-full"
+              style={{ backgroundColor: "rgba(255,255,255,.1)", color: "rgba(243,242,234,.75)", border: "1px solid rgba(255,255,255,.18)" }}
+            >
+              Illustrative data
+            </span>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 max-w-3xl mx-auto">
             {config.exampleStats.map((stat) =>
               stat.live ? (

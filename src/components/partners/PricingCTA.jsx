@@ -41,19 +41,18 @@ export default function PricingCTA({ demoFallbackHref, demoFallbackLabel }) {
       >
         <div className="relative mb-5">
           <div className="inline-flex font-display font-bold text-[11px] uppercase tracking-widest px-3 py-1 rounded-full" style={{ backgroundColor: "rgba(255,251,8,.14)", color: "#FFFB08" }}>
-            Early Adopter Offer
+            Founding Partner Offer
           </div>
         </div>
 
         <div className="relative mb-6">
           <div className="flex items-baseline gap-2.5">
-            <span className="font-serif text-xl line-through" style={{ color: "rgba(243,242,234,.45)" }}>£149/mo</span>
-            <span className="font-serif font-bold text-3xl" style={{ color: "#FFFB08" }}>£99<span className="text-base font-sans font-medium">/mo</span></span>
+            <span className="font-serif font-bold text-3xl" style={{ color: "#FFFB08" }}>£149<span className="text-base font-sans font-medium">/mo</span></span>
           </div>
           <div className="text-xs mt-1.5" style={{ color: "rgba(243,242,234,.55)" }}>
-            <span className="line-through">£299</span> £199 one-off setup
+            Setup fee waived <span className="line-through">£199</span>
           </div>
-          <div className="text-xs mt-0.5" style={{ color: "rgba(243,242,234,.55)" }}>Minimum 3 months</div>
+          <div className="text-xs mt-0.5" style={{ color: "rgba(243,242,234,.55)" }}>No minimum term — cancel any time</div>
         </div>
 
         <ul className="relative space-y-2 mb-6">

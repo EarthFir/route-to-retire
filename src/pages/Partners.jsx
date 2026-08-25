@@ -1,100 +1,281 @@
 import {
   NAVY, TEAL, FENNEC, BAND, BODY, MUTED,
-  Container, Eyebrow, PrimaryCTA, SecondaryCTA, Header, LandingFooter,
+  Container, Eyebrow, IconCircle, PrimaryCTA, Header, LandingFooter,
 } from "../components/landing/Chrome.jsx";
-import PricingCTA from "../components/partners/PricingCTA.jsx";
+import BookDemoButton from "../components/partners/BookDemoButton.jsx";
 import { usePageTitle } from "../lib/usePageTitle.js";
 
 // ─── Partners overview page ────────────────────────────────────────────────────
 // The real, Route to Retire-branded pitch for the adviser partner program —
-// reachable from the footer, not pushed on B2C visitors. Explains the hosted
-// (not embedded) model and links through to the Harbour & Vale page as a
-// live example, since that page is styled entirely as a fictional firm and
-// isn't a fit to land B2C or cold-adviser traffic on directly.
+// reachable from the footer, not pushed on B2C visitors. One CTA throughout
+// ("See your branded calculator", -> /partners/preview) plus a secondary
+// "Book a 20 minute call" fallback. Ordered to answer, in sequence, the three
+// things a sceptical adviser is actually thinking: will this produce
+// enquiries (ROI block), will compliance let me (moved up, right after ROI),
+// and is this still going to exist in six months (founding offer + demo).
 
-const PARTNER_BENEFITS = [
-  "Hosted, branded calculator page",
-  "Your colours, logo, and contact details",
-  "Result-based call to action",
-  "Lead capture after calculator completion",
-  "Monthly activity summary",
-  "Useful for newsletters, campaigns, and website traffic",
+const VALUE_LEGS = [
+  {
+    title: "Your website tells people about you. This finds out about them.",
+    copy: "A brochure page lets a visitor read and leave, and the firm never knows they were there. A calculator turns an anonymous visitor into a named enquiry.",
+  },
+  {
+    title: "It gives you something to send.",
+    copy: "Most small firms have a newsletter, a website and nothing interesting to put in either. A branded calculator is an evergreen answer to “what do I send the list this month”, and it works across newsletter, website, campaigns and social.",
+  },
+  {
+    title: "The enquiry arrives already briefed.",
+    copy: "You know their pot, their target retirement age, their income target and their projected shortfall before you pick up the phone. That is a brief, not a lead.",
+  },
 ];
+
+const COMPLIANCE_POINTS = [
+  "The tool models what the user enters and nothing more. It does not give financial advice, tax advice or personal recommendations, and every projection carries that in writing.",
+  "Assumptions and methodology are published and linked from every calculation, so your compliance officer can read exactly how the numbers are produced.",
+  "Enquiries go straight to you. We never store your clients' contact details. We are selling you a lead generating tool, not building a duplicate of your client list.",
+  "Our hosted partner pages are not indexed by Google and so never compete with your own site in search results.",
+];
+
+const DELIVERY_OPTIONS = [
+  { label: "Hosted by us", meaning: "A branded page at routetoretire.co.uk/partners/yourfirm. Send people to it from anywhere.", effort: "Nothing to install" },
+  { label: "Your own subdomain", meaning: "calculator.yourfirm.co.uk pointing at our infrastructure.", effort: "One DNS record" },
+  { label: "Embedded", meaning: "Runs inside a page on your own site.", effort: "One script tag" },
+];
+
+const FAQS = [
+  { q: "Is this financial advice?", a: "No. It models the figures the user enters and says so on every result." },
+  { q: "What happens to my clients' data?", a: "The enquiry goes directly to your inbox or CRM. We keep no copy." },
+  { q: "Do I need a developer?", a: "No. Hosted needs nothing, a subdomain needs one DNS record, and the embed is a single line of code." },
+  { q: "Will it compete with my own website in Google?", a: "No, hosted partner pages are noindexed." },
+  { q: "What if I cancel?", a: "The page comes down, or redirects to any URL you nominate. Your choice, written into the terms." },
+];
+
+function SectionEyebrow({ children }) {
+  return (
+    <div className="text-center mb-4">
+      <span className="inline-flex font-display font-semibold text-[12px] uppercase tracking-widest" style={{ color: TEAL }}>{children}</span>
+    </div>
+  );
+}
 
 export default function Partners() {
   usePageTitle(
     "Partner With Route to Retire",
-    "Launch a branded retirement calculator for your firm, hosted and maintained by Route to Retire.",
+    "A branded retirement calculator for your firm — turn anonymous website visitors into named, briefed enquiries.",
   );
 
   return (
     <div className="overflow-x-hidden">
       <Header />
 
+      {/* ─── Hero ─────────────────────────────────────────────────────── */}
       <section className="pt-16 pb-14 sm:pt-20 sm:pb-16">
         <Container>
-          <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_.8fr] gap-12 items-center">
-            <div>
-              <Eyebrow>For financial advisers</Eyebrow>
-              <h1 className="font-serif font-bold text-4xl sm:text-5xl mb-5" style={{ color: NAVY, letterSpacing: "-.02em" }}>
-                Turn retirement curiosity into better conversations.
-              </h1>
-              <p className="text-[15px] leading-relaxed mb-6" style={{ color: BODY }}>
-                We host a branded retirement calculator for your firm — no code or website changes on your end. Send
-                clients there from your newsletter, campaigns, or website, and warmer, better-qualified enquiries come
-                back to you.
-              </p>
-              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 mb-7">
-                {PARTNER_BENEFITS.map((b) => (
-                  <li key={b} className="flex items-start gap-2 text-sm" style={{ color: BODY }}>
-                    <span className="mt-0.5" style={{ color: TEAL }}>✓</span>{b}
-                  </li>
-                ))}
-              </ul>
-              <div className="flex flex-wrap items-center gap-4">
-                <PrimaryCTA to="/partners/harbour-vale">See a live example →</PrimaryCTA>
-                <SecondaryCTA href="/#get-in-touch">Get in touch</SecondaryCTA>
-              </div>
-            </div>
-
-            <div className="rounded-3xl p-5" style={{ backgroundColor: "white", border: `1px solid ${FENNEC}`, boxShadow: "0 20px 44px -28px rgba(9,50,74,.35)" }}>
-              <div className="flex items-center gap-1.5 mb-4">
-                <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: FENNEC }} />
-                <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: FENNEC }} />
-                <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: FENNEC }} />
-                <span className="ml-3 text-xs font-medium truncate" style={{ color: MUTED }}>routetoretire.co.uk/partners/yourfirm</span>
-              </div>
-              <div className="rounded-2xl p-5" style={{ background: "linear-gradient(158deg,#0c3c58,#072839)" }}>
-                <div className="flex items-center justify-between mb-4 gap-2">
-                  <span className="font-display font-semibold text-[11px] uppercase tracking-widest" style={{ color: "#AED0C9" }}>Branded calculator</span>
-                  <span className="text-[11px] px-2.5 py-1 rounded-full whitespace-nowrap" style={{ color: "rgba(243,242,234,.7)", border: "1px solid rgba(174,208,201,.3)" }}>Your logo here</span>
-                </div>
-                <div className="flex items-baseline justify-between mb-2.5">
-                  <span className="text-sm" style={{ color: "rgba(243,242,234,.82)" }}>Projected pot</span>
-                  <span className="font-serif font-bold text-2xl" style={{ color: "#FFFB08" }}>£287k</span>
-                </div>
-                <div className="h-1.5 rounded-full relative" style={{ backgroundColor: "rgba(243,242,234,.15)" }}>
-                  <div className="absolute inset-y-0 left-0 rounded-full" style={{ width: "62%", backgroundColor: "#FFFB08" }} />
-                </div>
-              </div>
+          <div className="max-w-3xl">
+            <Eyebrow>For financial advisers</Eyebrow>
+            <h1 className="font-serif font-bold text-4xl sm:text-5xl mb-5" style={{ color: NAVY, letterSpacing: "-.02em" }}>
+              Helping financial advisers turn website visits into client conversations.
+            </h1>
+            <p className="text-[16px] leading-relaxed mb-8 max-w-xl" style={{ color: BODY }}>
+              A retirement calculator in your firm's branding. Put it on your site or send people to it from a
+              newsletter, and enquiries come back to you with the client's own numbers attached.
+            </p>
+            <div className="flex flex-wrap items-center gap-4">
+              <PrimaryCTA to="/partners/preview">See your branded calculator →</PrimaryCTA>
+              <BookDemoButton
+                className="inline-flex items-center justify-center gap-2 font-semibold text-[15px] sm:text-base rounded-full px-6 py-3 transition hover:opacity-70 font-display"
+                style={{ color: NAVY, border: "1.5px solid rgba(9,50,74,.2)" }}
+                fallbackHref="/#get-in-touch"
+                fallbackLabel="Book a 20 minute call"
+              />
             </div>
           </div>
         </Container>
       </section>
 
-      <PricingCTA demoFallbackHref="/#get-in-touch" demoFallbackLabel="Get in touch" />
+      {/* ─── Three-leg value proposition ─────────────────────────────── */}
+      <section className="pb-16 sm:pb-20">
+        <Container>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {VALUE_LEGS.map((leg) => (
+              <div key={leg.title} className="rounded-3xl p-6" style={{ backgroundColor: "white", border: `1px solid ${FENNEC}` }}>
+                <h3 className="font-serif font-bold text-lg mb-2" style={{ color: NAVY }}>{leg.title}</h3>
+                <p className="text-sm leading-relaxed" style={{ color: BODY }}>{leg.copy}</p>
+              </div>
+            ))}
+          </div>
+        </Container>
+      </section>
 
+      {/* ─── ROI block ────────────────────────────────────────────────── */}
+      <section className="py-16 sm:py-20" style={{ backgroundColor: BAND }}>
+        <Container>
+          <div className="max-w-2xl mx-auto text-center">
+            <SectionEyebrow>The maths</SectionEyebrow>
+            <h2 className="font-serif font-bold text-3xl sm:text-4xl mb-6" style={{ color: NAVY, letterSpacing: "-.02em" }}>
+              Acquire one client and the tool pays for itself.
+            </h2>
+            <p className="text-[15px] leading-relaxed mb-3" style={{ color: BODY }}>
+              The FCA's 2025 market survey puts the median advised client at around <strong>£2,000</strong> a year, on{" "}
+              <strong>£250,000</strong> of assets — one new client more than covers what this costs for the year.
+            </p>
+            <p className="text-xs mb-0" style={{ color: MUTED }}>
+              Source:{" "}
+              <a href="https://www.fca.org.uk/data/understanding-financial-advice-market" target="_blank" rel="noopener noreferrer" style={{ color: TEAL }}>
+                FCA, Understanding the advice market: financial advice firms survey 2025
+              </a>
+              . We make no claim about how many enquiries your firm will get — that depends on your site traffic and mailing list.
+            </p>
+          </div>
+        </Container>
+      </section>
+
+      {/* ─── Compliance & data ────────────────────────────────────────── */}
+      <section className="py-16 sm:py-20">
+        <Container>
+          <div className="max-w-2xl mx-auto text-center mb-10">
+            <SectionEyebrow>Compliance &amp; data</SectionEyebrow>
+            <h2 className="font-serif font-bold text-3xl sm:text-4xl" style={{ color: NAVY, letterSpacing: "-.02em" }}>
+              Built so your compliance officer says yes.
+            </h2>
+          </div>
+          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl mx-auto">
+            {COMPLIANCE_POINTS.map((point) => (
+              <li key={point} className="flex items-start gap-3 text-sm leading-relaxed rounded-2xl p-5" style={{ backgroundColor: "white", border: `1px solid ${FENNEC}`, color: BODY }}>
+                <span className="mt-0.5 shrink-0" style={{ color: TEAL }}>●</span>{point}
+              </li>
+            ))}
+          </ul>
+        </Container>
+      </section>
+
+      {/* ─── Delivery options ─────────────────────────────────────────── */}
+      <section className="py-16 sm:py-20" style={{ backgroundColor: BAND }}>
+        <Container>
+          <div className="max-w-2xl mx-auto text-center mb-10">
+            <SectionEyebrow>How it's delivered</SectionEyebrow>
+            <h2 className="font-serif font-bold text-3xl sm:text-4xl mb-3" style={{ color: NAVY, letterSpacing: "-.02em" }}>
+              One price. Three ways to run it.
+            </h2>
+          </div>
+          <div className="max-w-2xl mx-auto space-y-3">
+            {DELIVERY_OPTIONS.map((opt, i) => (
+              <div key={opt.label} className="flex items-start gap-4 rounded-2xl p-5" style={{ backgroundColor: "white", border: `1px solid ${FENNEC}` }}>
+                <IconCircle>{i + 1}</IconCircle>
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 mb-1">
+                    <h3 className="font-serif font-bold text-[15px]" style={{ color: NAVY }}>{opt.label}</h3>
+                    <span className="text-xs font-medium" style={{ color: TEAL }}>{opt.effort}</span>
+                  </div>
+                  <p className="text-sm leading-relaxed" style={{ color: BODY }}>{opt.meaning}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="text-sm leading-relaxed max-w-2xl mx-auto text-center mt-6" style={{ color: BODY }}>
+            Most firms eventually want this on their own domain, so the traffic, the analytics and any search benefit
+            stay with you rather than with us. Same price either way, and you can switch whenever you like.
+          </p>
+        </Container>
+      </section>
+
+      {/* ─── Founding offer + annual ──────────────────────────────────── */}
+      <section className="py-16 sm:py-20">
+        <Container>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-4xl mx-auto items-stretch">
+            <div className="rounded-3xl p-7 sm:p-8" style={{ background: "linear-gradient(160deg,#0c4060 0%,#09324A 46%,#061f2e 100%)", boxShadow: "0 30px 70px -40px rgba(6,31,46,.7)" }}>
+              <div className="inline-flex font-display font-bold text-[11px] uppercase tracking-widest px-3 py-1 rounded-full mb-5" style={{ backgroundColor: "rgba(255,251,8,.14)", color: "#FFFB08" }}>
+                Founding Partner Offer
+              </div>
+              <h3 className="font-serif font-bold text-2xl mb-1" style={{ color: "#F3F2EA" }}>First ten firms.</h3>
+              <div className="font-serif font-bold text-3xl mb-4" style={{ color: "#FFFB08" }}>£149<span className="text-base font-sans font-medium">/mo</span></div>
+              <ul className="space-y-2 mb-6">
+                {[
+                  "You keep that rate for as long as you stay",
+                  "Setup fee waived — normally £199",
+                  "No minimum term. Cancel any time.",
+                ].map((f) => (
+                  <li key={f} className="flex items-start gap-2 text-sm" style={{ color: "rgba(243,242,234,.85)" }}>
+                    <span className="shrink-0" style={{ color: "#AED0C9" }}>✓</span>{f}
+                  </li>
+                ))}
+              </ul>
+              <p className="text-xs leading-relaxed" style={{ color: "rgba(243,242,234,.65)" }}>
+                In return we ask for three things: a short testimonial once you've seen it working, permission to use
+                your logo, and one number a month telling us how many enquiries turned into clients. We never ask for
+                client details, fee information, or anything about your other marketing.
+              </p>
+            </div>
+
+            <div className="rounded-3xl p-7 sm:p-8 flex flex-col justify-center" style={{ background: "linear-gradient(160deg,#0c4060 0%,#09324A 46%,#061f2e 100%)", boxShadow: "0 30px 70px -40px rgba(6,31,46,.7)" }}>
+              <div className="inline-flex font-display font-bold text-[11px] uppercase tracking-widest px-3 py-1 rounded-full mb-5" style={{ backgroundColor: "rgba(255,251,8,.14)", color: "#FFFB08" }}>
+                Prefer annual?
+              </div>
+              <h3 className="font-serif font-bold text-2xl mb-1" style={{ color: "#F3F2EA" }}>Two months free.</h3>
+              <div className="font-serif font-bold text-3xl mb-4" style={{ color: "#FFFB08" }}>£1,490<span className="text-base font-sans font-medium">/yr</span></div>
+              <p className="text-sm leading-relaxed mb-2" style={{ color: "rgba(243,242,234,.85)" }}>
+                Twelve months for the price of ten — £1,490 instead of £1,788.
+              </p>
+              <p className="text-xs" style={{ color: "rgba(243,242,234,.65)" }}>Same features, same founding rate, billed once a year.</p>
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* ─── Live example ─────────────────────────────────────────────── */}
       <section className="py-16 sm:py-20 text-center" style={{ backgroundColor: BAND }}>
         <Container>
-          <Eyebrow>See it in action</Eyebrow>
+          <SectionEyebrow>See it in action</SectionEyebrow>
           <h2 className="font-serif font-bold text-3xl sm:text-4xl mb-4" style={{ color: NAVY, letterSpacing: "-.02em" }}>
             See a live example
           </h2>
           <p className="text-[15px] leading-relaxed max-w-xl mx-auto mb-8" style={{ color: BODY }}>
             Harbour &amp; Vale Financial Planning is a fictional firm we built to show exactly what a branded page for
-            your firm could look like — try the calculator, the enquiry form, and the numbers an adviser would see.
+            your firm could look like — try the calculator, the enquiry form, and the format an adviser dashboard
+            would take.
           </p>
           <PrimaryCTA to="/partners/harbour-vale">View the Harbour &amp; Vale demo →</PrimaryCTA>
+        </Container>
+      </section>
+
+      {/* ─── FAQ ───────────────────────────────────────────────────────── */}
+      <section className="py-16 sm:py-20">
+        <Container>
+          <div className="max-w-2xl mx-auto">
+            <div className="text-center mb-10">
+              <SectionEyebrow>Questions</SectionEyebrow>
+              <h2 className="font-serif font-bold text-3xl sm:text-4xl" style={{ color: NAVY, letterSpacing: "-.02em" }}>Before you ask.</h2>
+            </div>
+            <div className="space-y-3">
+              {FAQS.map((f) => (
+                <div key={f.q} className="rounded-2xl p-5" style={{ backgroundColor: "white", border: `1px solid ${FENNEC}` }}>
+                  <p className="font-serif font-bold text-[15px] mb-1.5" style={{ color: NAVY }}>{f.q}</p>
+                  <p className="text-sm leading-relaxed" style={{ color: BODY }}>{f.a}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* ─── Final CTA ─────────────────────────────────────────────────── */}
+      <section className="py-16 sm:py-20 text-center" style={{ background: "linear-gradient(158deg,#0c3c58 0%,#09324A 60%,#072839 100%)" }}>
+        <Container>
+          <h2 className="font-serif font-bold text-2xl sm:text-3xl mb-4" style={{ color: "#F3F2EA", letterSpacing: "-.02em" }}>
+            See what yours would look like.
+          </h2>
+          <p className="text-base leading-relaxed max-w-lg mx-auto mb-7" style={{ color: "rgba(243,242,234,.75)" }}>
+            Add your colours and logo and see your branded calculator in a couple of minutes — no commitment.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <PrimaryCTA to="/partners/preview">See your branded calculator →</PrimaryCTA>
+            <BookDemoButton
+              className="inline-flex items-center justify-center gap-2 font-semibold text-[15px] sm:text-base rounded-full px-6 py-3 transition hover:opacity-70 font-display"
+              style={{ color: "#F3F2EA", border: "1.5px solid rgba(243,242,234,.35)" }}
+              fallbackHref="/#get-in-touch"
+              fallbackLabel="Book a 20 minute call"
+            />
+          </div>
         </Container>
       </section>
 

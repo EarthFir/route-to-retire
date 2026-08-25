@@ -373,7 +373,7 @@ const TOPICS = [
   { value: "general", label: "General question / feedback" },
   { value: "pro", label: "Route to Retire Pro" },
   { value: "adviser", label: "Adviser calculator" },
-  { value: "providers", label: "Pension & SIPP providers" },
+  { value: "call", label: "Book a 20 minute call" },
 ];
 
 function GetInTouch({ topic, setTopic }) {

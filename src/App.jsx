@@ -7,6 +7,7 @@ import Disclaimer from "./pages/Disclaimer.jsx";
 import Privacy from "./pages/Privacy.jsx";
 import Terms from "./pages/Terms.jsx";
 import Partners from "./pages/Partners.jsx";
+import PartnerPreview from "./pages/partners/PartnerPreview.jsx";
 import HarbourVale from "./pages/partners/HarbourVale.jsx";
 import HarbourValeStats from "./pages/partners/HarbourValeStats.jsx";
 import SimpsonFS from "./pages/partners/SimpsonFS.jsx";
@@ -36,6 +37,8 @@ function App() {
       return <Terms />;
     case "/partners":
       return <Partners />;
+    case "/partners/preview":
+      return <PartnerPreview />;
     case "/partners/methodology":
       return <PartnerMethodology />;
     case "/partners/disclaimer":
