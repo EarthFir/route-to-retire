@@ -19,6 +19,8 @@ import {
   getSpendingTaperFactor,
   getGlidedReturn,
   RETURN_GLIDE_YEARS,
+  RETIREMENT_LIVING_STANDARDS,
+  RETIREMENT_LIVING_STANDARDS_URL,
 } from "../lib/assumptions.js";
 import { Link } from "../lib/Link.jsx";
 import SiteFooter from "../pages/SiteFooter.jsx";
@@ -130,14 +132,6 @@ function calculateAll({ currentAge, retirementAge, currentSavings, desiredIncome
   }
   if (!Number.isFinite(targetPot) || targetPot < 0) targetPot = 0;
 
-  // Conservative comparison only: the pot needed to live off investment return
-  // alone, preserving the capital indefinitely. Shown for reference, never the
-  // default target. Undefined when the retirement return is 0%.
-  const capitalPreservationTargetPot =
-    retirementR > 0 && Number.isFinite(incomeNeeded / retirementR)
-      ? incomeNeeded / retirementR
-      : null;
-
   // Pre-retirement growth uses the return glide (see growPot / getGlidedReturn)
   // rather than a single flat rate, so it's computed year by year.
   const futureValueCurrent = growPot({ startAge: currentAge, endAge: retirementAge, startValue: currentSavings, retirementAge, annualReturn, retirementReturn });
@@ -182,7 +176,7 @@ function calculateAll({ currentAge, retirementAge, currentSavings, desiredIncome
   const isOnTrack = depletionAge == null || depletionAge >= effectivePlanningAge;
   const status = getStatus({ isOnTrack, savingsGap, yearsToRetirement: years });
 
-  return { incomeNeeded, targetPot, capitalPreservationTargetPot, planningAge: effectivePlanningAge, futureValueCurrent, projectedPotNoSaving, projectedPotWithSaving, inheritanceResults, totalInheritanceFV, totalFutureValue, monthlySavings, savingsGap, isCoast, isOnTrack, status, coastAge, yearsUntilCoast, depletionAge };
+  return { incomeNeeded, targetPot, planningAge: effectivePlanningAge, futureValueCurrent, projectedPotNoSaving, projectedPotWithSaving, inheritanceResults, totalInheritanceFV, totalFutureValue, monthlySavings, savingsGap, isCoast, isOnTrack, status, coastAge, yearsUntilCoast, depletionAge };
 }
 
 // ─── Format Helpers ───────────────────────────────────────────────────────────
@@ -341,7 +335,7 @@ function IncomeSection({ desiredIncome, onChange, currentAge, retirementAge }) {
         value={desiredIncome}
         onChange={(e) => onChange(Number(e.target.value))}
         min={10000}
-        max={120000}
+        max={75000}
         step={1000}
         formatDisplay={fmtMoneyYr}
       />
@@ -350,6 +344,36 @@ function IncomeSection({ desiredIncome, onChange, currentAge, retirementAge }) {
           This equals {formatGBP(inflated)} in {retirementYear} at 2.5% inflation
         </p>
       )}
+      <p className="text-xs pt-1" style={{ color: '#8a9599' }}>
+        Not sure? Try a benchmark from{" "}
+        <a
+          href={RETIREMENT_LIVING_STANDARDS_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline"
+        >
+          PLSA Retirement Living Standards
+        </a>
+      </p>
+      <div className="flex items-center gap-1.5">
+        {RETIREMENT_LIVING_STANDARDS.map((std) => {
+          const active = desiredIncome === std.income;
+          return (
+            <button
+              key={std.key}
+              type="button"
+              onClick={() => onChange(std.income)}
+              className="flex-1 min-w-0 text-xs px-2 py-1 rounded-full font-medium text-center transition-colors cursor-pointer whitespace-nowrap overflow-hidden text-ellipsis"
+              style={{
+                color: active ? 'var(--calc-primary, #09324A)' : 'var(--calc-secondary, #1B6F81)',
+                backgroundColor: active ? 'var(--calc-accent, #FFFB08)' : 'var(--calc-secondary-tint, #E7F1EF)',
+              }}
+            >
+              {std.label} {fmtMoneyYr(std.income)}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -547,7 +571,7 @@ function getGuidance(result, retirementAge) {
   return {
     tone: "coral",
     title: "You may be short of your target on these assumptions.",
-    body: `The model estimates you're currently ${formatGBP(savingsGap)}/month short of the amount needed for your pot to last to age ${planningAge}. You could explore saving more, retiring later, or adjusting your income target.`,
+    body: `The model estimates you're currently ${formatGBP(savingsGap)}/month short of the amount needed for your pot to last to age ${planningAge}. Three inputs change this figure: how much you save each month, the age you retire, and the income you target.`,
   };
 }
 
@@ -719,12 +743,6 @@ function YourNumbersBody({ inputs, result, statePension, inheritances, dark, par
         ? `Based on your inputs and assumptions, the estimated pot needed at age ${inputs.retirementAge} to draw your income down to age ${result.planningAge}, tapering after age ${SPENDING_TAPER_START_AGE} and after allowing for ${formatGBP(statePension.income)}/yr of State Pension. Shown in future money.`
         : `Based on your inputs and assumptions, the estimated pot needed at age ${inputs.retirementAge} to draw your income down to age ${result.planningAge}, tapering after age ${SPENDING_TAPER_START_AGE}. Shown in future money.`,
     },
-    ...(result.capitalPreservationTargetPot != null ? [{
-      icon: "○",
-      label: "Conservative comparison (preserve capital)",
-      value: formatGBP(result.capitalPreservationTargetPot),
-      help: `Preserving the pot and drawing only the assumed ${inputs.retirementReturn}% return would require around this much — it never runs down. Shown for reference, not as your target.`,
-    }] : []),
     {
       icon: "●",
       label: "Projected pot at retirement with current monthly saving",
@@ -1686,7 +1704,6 @@ export default function RetirementCalculator({ embedded = false, initialInputs, 
       statePensionIncome: statePension.income,
       statePensionAge,
       planningAge: result.planningAge,
-      capitalPreservationTargetPot: result.capitalPreservationTargetPot,
     });
   }, [result, inputs.annualReturn, inputs.retirementReturn, statePension, statePensionAge]);
 

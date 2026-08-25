@@ -207,11 +207,11 @@ function methodologySections(whiteLabel) {
   },
   {
     title: "How the target retirement pot is calculated",
-    body: "The default target is a drawdown figure: the size of pot that could pay your target income each year from your retirement age until a planning age you choose, with the remaining pot still assumed to grow at a cautious rate along the way. A conservative comparison is also shown — the larger pot needed to live off investment growth alone, never touching the capital — for context, not as the main target.",
+    body: "The default target is a drawdown figure: the size of pot that could pay your target income each year from your retirement age until a planning age you choose, with the remaining pot still assumed to grow at a cautious rate along the way.",
   },
   {
     title: "How your income need is assumed to change over retirement",
-    body: "Spending in retirement often eases as people get older. The calculator models this with a simple taper: your target income stays level until age 72, reduces in a straight line to 80% of its value by age 82, then stays flat. The conservative comparison figure does not apply this taper, so it stays a genuinely cautious upper estimate.",
+    body: "Spending in retirement often eases as people get older. The calculator models this with a simple taper: your target income stays level until age 72, reduces in a straight line to 80% of its value by age 82, then stays flat.",
   },
   {
     title: "How investment growth is estimated",

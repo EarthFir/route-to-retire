@@ -19,6 +19,20 @@ export const DEFAULT_RETIREMENT_RETURN = 3.5; // %
 /** Default full UK State Pension, gross per year. */
 export const DEFAULT_STATE_PENSION_INCOME = 11500; // £/yr
 
+/**
+ * PLSA Retirement Living Standards: what a single person might need per year,
+ * in today's money, to fund each standard of living. Published independently
+ * of this calculator — offered as a rough external benchmark for the Desired
+ * Annual Income input, not derived from our own modelling.
+ */
+export const RETIREMENT_LIVING_STANDARDS = [
+  { key: "minimum", label: "Minimum", income: 13900 },
+  { key: "moderate", label: "Moderate", income: 32700 },
+  { key: "comfortable", label: "Comfortable", income: 45400 },
+];
+
+export const RETIREMENT_LIVING_STANDARDS_URL = "https://www.retirementlivingstandards.org.uk/";
+
 /** Oldest age the drawdown / depletion model runs to. */
 export const MODELLING_END_AGE = 100;
 
@@ -99,7 +113,6 @@ export function getAssumptions({
   statePensionIncome,
   statePensionAge,
   planningAge,
-  capitalPreservationTargetPot,
 }) {
   const rows = [
     {
@@ -143,18 +156,7 @@ export function getAssumptions({
       value: `100% to age ${SPENDING_TAPER_START_AGE}, easing to ${fmtPct(SPENDING_TAPER_END_FACTOR * 100)} by ${SPENDING_TAPER_END_AGE}`,
       note: `Retirement spending often eases with age. Your target income is assumed to stay level until age ${SPENDING_TAPER_START_AGE}, taper down to ${fmtPct(
         SPENDING_TAPER_END_FACTOR * 100,
-      )} of its value by age ${SPENDING_TAPER_END_AGE}, then stay level from there — reducing the pot your plan needs to fund it. The conservative comparison below does not apply this taper.`,
-    },
-    {
-      label: "Conservative comparison",
-      value:
-        capitalPreservationTargetPot != null
-          ? `${fmtGBP(capitalPreservationTargetPot)}`
-          : "Not available",
-      note:
-        capitalPreservationTargetPot != null
-          ? `The capital-preservation comparison estimates the pot required to draw your target income from investment return only, preserving the capital indefinitely. Shown for reference, not as the main target.`
-          : "A capital-preservation figure needs a retirement return above 0%.",
+      )} of its value by age ${SPENDING_TAPER_END_AGE}, then stay level from there — reducing the pot your plan needs to fund it.`,
     },
     {
       label: "State Pension age",
@@ -181,7 +183,7 @@ export function getAssumptions({
     {
       label: "Tax",
       value: "Not included",
-      note: "All figures are gross. Income tax, dividend tax and pension tax relief are not modelled.",
+      note: "All figures are gross. Income tax, dividend tax and pension tax relief are not modelled — how much tax you actually pay depends on how you take your pension (lump sum, drawdown, annuity), which is worth discussing with a financial adviser.",
     },
   ];
 

@@ -27,11 +27,6 @@ export default function Methodology() {
           gradually and is designed to be largely used up by your planning age — not
           preserved forever.
         </p>
-        <p>
-          For reference, the calculator also shows a <strong>conservative comparison</strong>:
-          the larger pot you'd need to live off investment growth alone while never
-          touching the capital. This is shown for context, not as the main target.
-        </p>
       </Section>
 
       <Section title="How your income need is assumed to change over retirement">
@@ -42,11 +37,6 @@ export default function Methodology() {
           age 82, and stay flat from there for the rest of your plan. This is applied
           before the State Pension is deducted, and lets your pot fund a slightly smaller
           withdrawal in later years rather than a flat amount for life.
-        </p>
-        <p>
-          The conservative comparison figure (see below) doesn't apply this taper — it
-          keeps assuming a flat, full income forever, so it stays a genuinely cautious
-          upper estimate.
         </p>
       </Section>
 
@@ -102,6 +92,11 @@ export default function Methodology() {
           tax relief are not included. The model also doesn't account for changing
           contributions over time, career breaks, specific product charges, or guaranteed
           annuity rates.
+        </p>
+        <p>
+          How much tax you actually pay in retirement depends on how you take your pension —
+          tax-free lump sum, drawdown, annuity purchase and your other income all affect it —
+          so it's best discussed with a financial adviser rather than estimated here.
         </p>
       </Section>
 
