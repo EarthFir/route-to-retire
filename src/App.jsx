@@ -12,6 +12,8 @@ import HarbourVale from "./pages/partners/HarbourVale.jsx";
 import HarbourValeStats from "./pages/partners/HarbourValeStats.jsx";
 import SimpsonFS from "./pages/partners/SimpsonFS.jsx";
 import SimpsonFSStats from "./pages/partners/SimpsonFSStats.jsx";
+import InnesReid from "./pages/partners/InnesReid.jsx";
+import InnesReidStats from "./pages/partners/InnesReidStats.jsx";
 import PartnerMethodology from "./pages/partners/PartnerMethodology.jsx";
 import PartnerDisclaimer from "./pages/partners/PartnerDisclaimer.jsx";
 import PartnerPrivacy from "./pages/partners/PartnerPrivacy.jsx";
@@ -53,6 +55,10 @@ function App() {
       return <SimpsonFS />;
     case "/partners/simpsonfs/stats":
       return <SimpsonFSStats />;
+    case "/partners/innes-reid":
+      return <InnesReid />;
+    case "/partners/innes-reid/stats":
+      return <InnesReidStats />;
     default:
       return <Home />;
   }

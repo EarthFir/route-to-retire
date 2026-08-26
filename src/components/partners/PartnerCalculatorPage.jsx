@@ -70,7 +70,7 @@ function LeadForm({ config, summary }) {
   const [submitting, setSubmitting] = useState(false);
   const [succeeded, setSucceeded] = useState(false);
   const [error, setError] = useState("");
-  const { primary, accent } = config.theme;
+  const { primary, accent, ctaBackground, ctaText } = config.theme;
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -163,7 +163,7 @@ function LeadForm({ config, summary }) {
         type="submit"
         disabled={submitting}
         className="w-full py-3 px-4 font-semibold rounded-2xl hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition font-display"
-        style={{ backgroundColor: accent, color: primary }}
+        style={{ backgroundColor: ctaBackground || accent, color: ctaText || primary }}
       >
         {submitting ? "Sending…" : config.adviserCtaLabel}
       </button>
@@ -197,15 +197,24 @@ export default function PartnerCalculatorPage({ config }) {
   }, []);
 
   return (
-    <div className="overflow-x-clip" style={{ backgroundColor: "#F3F2EA" }}>
+    <div className="overflow-x-clip" style={{ backgroundColor: "#F3F2EA", ...calculatorThemeVars(config.theme) }}>
       <PartnerHeader config={config} />
 
       <section className="text-center px-4 pt-14 pb-8 max-w-2xl mx-auto space-y-3">
         <div className="inline-flex items-center font-display font-bold text-[11px] uppercase tracking-widest px-3 py-1.5 rounded-full" style={{ backgroundColor: `${accent}26`, color: primary }}>
           Retirement Readiness Check
         </div>
-        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight" style={{ color: primary, fontFamily: "'Source Serif 4', serif" }}>
-          {config.tagline}
+        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight" style={{ color: primary, fontFamily: "var(--font-serif)" }}>
+          {config.taglineLines ? (
+            config.taglineLines.map((line, i, arr) => (
+              <div key={i}>
+                {line}
+                {i < arr.length - 1 && <br />}
+              </div>
+            ))
+          ) : (
+            config.tagline
+          )}
         </h1>
         <p className="text-sm leading-relaxed max-w-lg mx-auto" style={{ color: "#8a9599" }}>
           Run the numbers on your own retirement plan below. It only takes a minute, and there's no obligation —
@@ -213,7 +222,7 @@ export default function PartnerCalculatorPage({ config }) {
         </p>
       </section>
 
-      <div className="px-4" style={calculatorThemeVars(config.theme)}>
+      <div className="px-4">
         <div className="max-w-6xl mx-auto">
           <RetirementCalculator embedded initialInputs={config.defaultScenario} enablePdfDownload partnerSlug={config.slug} partnerBrand={config} onSummaryChange={setSummary} />
         </div>
@@ -221,22 +230,12 @@ export default function PartnerCalculatorPage({ config }) {
 
       <section id="enquiry" className="px-4 pt-4 pb-16 max-w-6xl mx-auto space-y-6">
         <div className="text-center space-y-4">
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight" style={{ color: primary, fontFamily: "'Source Serif 4', serif" }}>
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight" style={{ color: primary, fontFamily: "var(--font-serif)" }}>
             Want to talk through what this means for you?
           </h2>
           <p className="text-sm max-w-md mx-auto" style={{ color: "#8a9599" }}>
-            {config.firmName} can help you turn this into a plan. Leave your details below and they'll be in touch.
+            {config.firmName} can help you turn this into a plan. Leave your details below and we'll be in touch.
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <a
-              href="#enquiry-form"
-              onClick={() => trackEngagement(config.slug, "cta-click")}
-              className="inline-flex items-center justify-center gap-2 font-semibold text-sm sm:text-base rounded-full px-7 py-3.5 hover:opacity-90 transition font-display"
-              style={{ backgroundColor: accent, color: primary }}
-            >
-              {config.adviserCtaLabel}
-            </a>
-          </div>
         </div>
 
         <div id="enquiry-form" className="pt-4" style={{ scrollMarginTop: 96 }}>

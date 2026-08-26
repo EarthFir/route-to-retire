@@ -645,7 +645,7 @@ function InheritanceResultBox({ inheritances, inheritanceResults, totalInheritan
             const { futureValue, afterRetirement } = inheritanceResults[i];
             return (
               <div key={i} className="rounded-xl p-2" style={{ backgroundColor: 'rgba(255,255,255,.06)' }}>
-                <p className="text-[10px] font-semibold uppercase tracking-wider font-display" style={{ color: 'var(--calc-positive, #AED0C9)' }}>Inheritance {i + 1}</p>
+                <p className="text-[10px] font-semibold uppercase tracking-wider font-display" style={{ color: 'var(--calc-secondary-text, var(--calc-positive, #AED0C9))' }}>Inheritance {i + 1}</p>
                 <p className="text-xs mt-1" style={{ color: 'rgba(243,242,234,.7)' }}>
                   {formatGBP(entry.amount)} at age {entry.age}
                 </p>
@@ -723,7 +723,7 @@ function MiniStatCard({ label, value, accent }) {
         ? { background: 'linear-gradient(155deg, color-mix(in srgb, var(--calc-accent, #FFFB08) 14%, transparent), rgba(255,255,255,.03))', border: '1px solid color-mix(in srgb, var(--calc-accent, #FFFB08) 28%, transparent)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,.18)' }
         : { background: 'linear-gradient(155deg, rgba(255,255,255,.09), rgba(255,255,255,.015))', border: '1px solid rgba(255,255,255,.14)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,.18)' }}
     >
-      <div className="font-display text-[10px] leading-tight" style={{ color: 'var(--calc-positive, #AED0C9)' }}>{label}</div>
+      <div className="font-display text-[10px] leading-tight" style={{ color: 'var(--calc-secondary-text, var(--calc-positive, #AED0C9))' }}>{label}</div>
       <div className="font-serif font-bold text-[21px] leading-tight mt-1 tabular-nums" style={{ color: accent ? 'var(--calc-accent, #FFFB08)' : '#F3F2EA' }}>{value}</div>
     </div>
   );
@@ -968,9 +968,9 @@ function StatTile({ label, value, sub, accent }) {
         ? { background: 'linear-gradient(155deg, color-mix(in srgb, var(--calc-accent, #FFFB08) 14%, transparent), rgba(255,255,255,.03))', border: '1px solid color-mix(in srgb, var(--calc-accent, #FFFB08) 28%, transparent)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,.18)' }
         : { background: 'linear-gradient(155deg, rgba(255,255,255,.10), rgba(255,255,255,.02))', border: '1px solid rgba(255,255,255,.14)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,.18)' }}
     >
-      <div className="font-display text-xs" style={{ color: 'var(--calc-positive, #AED0C9)' }}>{label}</div>
+      <div className="font-display text-xs" style={{ color: 'var(--calc-secondary-text, var(--calc-positive, #AED0C9))' }}>{label}</div>
       <div className="font-serif font-bold text-lg sm:text-xl mt-2 whitespace-nowrap tabular-nums" style={{ color: accent ? 'var(--calc-accent, #FFFB08)' : '#F3F2EA', lineHeight: 1.15 }}>{value}</div>
-      {sub && <div className="text-xs mt-2 break-words" style={{ color: 'var(--calc-positive, #AED0C9)' }}>{sub}</div>}
+      {sub && <div className="text-xs mt-2 break-words" style={{ color: 'var(--calc-secondary-text, var(--calc-positive, #AED0C9))' }}>{sub}</div>}
     </div>
   );
 }
@@ -1009,11 +1009,11 @@ function ResultsOverviewBody({ inputs, inheritances, result, statePension, state
           style={{ background: 'linear-gradient(155deg, color-mix(in srgb, var(--calc-accent, #FFFB08) 14%, transparent), rgba(255,255,255,.03))', border: '1px solid color-mix(in srgb, var(--calc-accent, #FFFB08) 28%, transparent)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,.18)' }}
         >
           <div className="flex items-center justify-between gap-3 flex-wrap">
-            <div className="font-display text-xs" style={{ color: 'var(--calc-positive, #AED0C9)' }}>{`Target pot at ${inputs.retirementAge}`}</div>
+            <div className="font-display text-xs" style={{ color: 'var(--calc-secondary-text, var(--calc-positive, #AED0C9))' }}>{`Target pot at ${inputs.retirementAge}`}</div>
             <div className="font-serif font-bold text-[19.8px] sm:text-[22px] text-right whitespace-nowrap tabular-nums" style={{ color: 'var(--calc-accent, #FFFB08)', lineHeight: 1.15 }}>{formatGBP(result.targetPot)}</div>
           </div>
           <div className="flex items-center justify-between gap-3 flex-wrap">
-            <div className="font-display text-xs" style={{ color: 'var(--calc-positive, #AED0C9)' }}>{`Projected pot at ${inputs.retirementAge}`}</div>
+            <div className="font-display text-xs" style={{ color: 'var(--calc-secondary-text, var(--calc-positive, #AED0C9))' }}>{`Projected pot at ${inputs.retirementAge}`}</div>
             <div className="font-serif font-bold text-[19.8px] sm:text-[22px] text-right whitespace-nowrap tabular-nums" style={{ color: '#F3F2EA', lineHeight: 1.15 }}>{formatGBP(result.projectedPotWithSaving)}</div>
           </div>
         </div>
@@ -1046,7 +1046,7 @@ function GrowthChartCard({ inputs, result, statePension, statePensionAge, data, 
     <div className="relative rounded-2xl p-4" style={{ background: 'linear-gradient(155deg, rgba(255,255,255,.09), rgba(255,255,255,.015))', border: '1px solid rgba(255,255,255,.14)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,.18)' }}>
       <div className="flex items-center justify-between flex-wrap gap-2 mb-2">
         <span className="font-display font-semibold text-sm" style={{ color: '#F3F2EA' }}>Projected growth</span>
-        <div className="flex items-center gap-3 text-[11px] flex-wrap" style={{ color: 'var(--calc-positive, #AED0C9)' }}>
+        <div className="flex items-center gap-3 text-[11px] flex-wrap" style={{ color: 'var(--calc-secondary-text, var(--calc-positive, #AED0C9))' }}>
           <span className="flex items-center gap-1"><span className="w-3 h-0.5 inline-block rounded" style={{ backgroundColor: 'var(--calc-accent, #FFFB08)' }} /> Projected pot</span>
           <span className="flex items-center gap-1"><span className="w-3 h-0.5 inline-block rounded" style={{ backgroundColor: '#FF9A85' }} /> Target</span>
           {result.coastAge && <span className="flex items-center gap-1"><span className="w-3 h-0.5 inline-block rounded" style={{ backgroundColor: '#F3F2EA' }} /> Coast age</span>}
@@ -1131,11 +1131,11 @@ function MobileLiveTicker({ inputs, inheritances, result, statePension, statePen
         </div>
         <div className="flex items-center justify-between gap-4">
           <div className="min-w-0">
-            <div className="font-display text-[10px] uppercase tracking-wide truncate" style={{ color: 'var(--calc-positive, #AED0C9)' }}>{`Target at ${inputs.retirementAge}`}</div>
+            <div className="font-display text-[10px] uppercase tracking-wide truncate" style={{ color: 'var(--calc-secondary-text, var(--calc-positive, #AED0C9))' }}>{`Target at ${inputs.retirementAge}`}</div>
             <div className="font-serif font-bold text-base tabular-nums whitespace-nowrap" style={{ color: 'var(--calc-accent, #FFFB08)' }}>{formatGBP(result.targetPot)}</div>
           </div>
           <div className="min-w-0 text-right">
-            <div className="font-display text-[10px] uppercase tracking-wide truncate" style={{ color: 'var(--calc-positive, #AED0C9)' }}>Projected</div>
+            <div className="font-display text-[10px] uppercase tracking-wide truncate" style={{ color: 'var(--calc-secondary-text, var(--calc-positive, #AED0C9))' }}>Projected</div>
             <div className="font-serif font-bold text-base tabular-nums whitespace-nowrap" style={{ color: '#F3F2EA' }}>{formatGBP(result.projectedPotWithSaving)}</div>
           </div>
         </div>

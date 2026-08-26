@@ -7,7 +7,7 @@ import { mixHex } from "../colorMix.js";
 // today when nothing overrides them. This turns a partner's four base colors
 // into the full set of CSS variables (including derived tints/shades) and
 // returns them as a React inline-style object to spread onto a wrapper div.
-export function calculatorThemeVars({ primary, secondary, accent, positive, tabActiveText }) {
+export function calculatorThemeVars({ primary, secondary, accent, positive, tabActiveText, headingFont, secondaryText }) {
   return {
     "--calc-primary": primary,
     "--calc-secondary": secondary,
@@ -17,6 +17,15 @@ export function calculatorThemeVars({ primary, secondary, accent, positive, tabA
     // partners whose accent is too close in hue/lightness to their primary
     // to read clearly there (falls back to --calc-accent when unset).
     ...(tabActiveText ? { "--calc-tab-active-text": tabActiveText } : {}),
+    // Optional: overrides Tailwind's own --font-serif variable within this
+    // subtree, so every `font-serif` class and `var(--font-serif)` inline
+    // style (calculator headings/labels, the partner page's own H1/H2)
+    // switches font for partners who don't want Route to Retire's serif.
+    ...(headingFont ? { "--font-serif": headingFont } : {}),
+    // Optional: overrides the secondary/tertiary text colour used for labels,
+    // chart legends, and other supporting text throughout the calculator.
+    // Falls back to the positive colour when unset.
+    ...(secondaryText ? { "--calc-secondary-text": secondaryText } : {}),
     "--calc-primary-mid": mixHex(primary, "#FFFFFF", 0.18),
     "--calc-primary-deep": mixHex(primary, "#000000", 0.4),
     "--calc-accent-tint": mixHex(accent, "#FFFFFF", 0.9),

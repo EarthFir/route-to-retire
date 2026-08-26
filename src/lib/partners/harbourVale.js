@@ -17,7 +17,7 @@ export const HARBOUR_VALE = {
     positive: "#9FC6B8",
   },
 
-  adviserCtaLabel: "Discuss this with Harbour & Vale",
+  adviserCtaLabel: "Discuss with a Financial Advisor",
   adviserContactLabel: "Harbour & Vale will be in touch",
   consentLabel:
     "I agree for my details to be shared with Harbour & Vale Financial Planning so they can contact me about my retirement planning enquiry.",

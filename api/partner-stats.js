@@ -15,6 +15,7 @@ import { redis, monthKey } from "./_lib/upstash.js";
 const STATS_KEY_ENV = {
   "harbour-vale": "STATS_KEY_HARBOUR_VALE",
   simpsonfs: "STATS_KEY_SIMPSONFS",
+  "innes-reid": "STATS_KEY_INNES_REID",
 };
 const EVENTS = ["visit", "cta-click", "enquiry-submitted"];
 

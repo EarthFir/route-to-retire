@@ -31,7 +31,7 @@ export const SIMPSON_FS = {
     tabActiveText: "#FFFFFF",
   },
 
-  adviserCtaLabel: "Discuss this with Simpson Financial Services",
+  adviserCtaLabel: "Discuss with a Financial Advisor",
   adviserContactLabel: "Simpson Financial Services will be in touch",
   consentLabel:
     "I agree for my details to be shared with Simpson Financial Services so they can contact me about my retirement planning enquiry.",
