@@ -61,11 +61,8 @@ export const INNES_REID = {
   },
 
   // No real lead endpoint yet — this is a prototype, not a commissioned
-  // build. Falls back to "mock" until/unless Innes Reid supplies one.
-  lead: {
-    mode: import.meta.env.VITE_INNES_REID_LEAD_ENDPOINT ? "externalFormEndpoint" : "mock",
-    endpoint: import.meta.env.VITE_INNES_REID_LEAD_ENDPOINT || "",
-  },
+  // build. Falls back to mock delivery until Innes Reid supplies one (set
+  // INNES_REID_LEAD_ENDPOINT server-side — see api/_lib/partners.js).
 
   // Static, illustrative placeholders for the "what an adviser would see"
   // section — there's no real traffic yet, so nothing here is live. See

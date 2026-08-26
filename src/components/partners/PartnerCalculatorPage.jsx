@@ -170,8 +170,8 @@ function LeadForm({ config, summary }) {
 
       <p className="text-[11px] leading-relaxed text-center" style={{ color: "#8a9599" }}>
         {config.whiteLabel
-          ? `Your details go straight to ${config.firmName} — nothing here stores or sees this enquiry.`
-          : `Your details are sent to ${config.firmName} (or its chosen form provider). Route to Retire does not store or see this enquiry.`}
+          ? `Your details are processed securely and forwarded to ${config.firmName}.`
+          : `Your details are processed securely and forwarded to ${config.firmName}. Route to Retire doesn't retain them, except briefly if delivery to ${config.firmName} ever fails.`}
       </p>
     </form>
   );

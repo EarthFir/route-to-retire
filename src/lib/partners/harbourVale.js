@@ -30,15 +30,10 @@ export const HARBOUR_VALE = {
     desiredIncome: 30000,
   },
 
-  // "mock" logs the submission locally and shows the success state — nothing
-  // is sent anywhere, which is what this fictional demo should do. Setting
-  // VITE_HARBOUR_VALE_LEAD_ENDPOINT switches to "externalFormEndpoint" mode,
-  // where the browser posts the lead straight to that (partner-owned) URL;
-  // Route to Retire never stores it.
-  lead: {
-    mode: import.meta.env.VITE_HARBOUR_VALE_LEAD_ENDPOINT ? "externalFormEndpoint" : "mock",
-    endpoint: import.meta.env.VITE_HARBOUR_VALE_LEAD_ENDPOINT || "",
-  },
+  // Real delivery endpoint (if any) lives server-side now — see
+  // HARBOUR_VALE_LEAD_ENDPOINT in api/_lib/partners.js / api/lead-submit.js,
+  // which retries on failure and alerts Route to Retire rather than failing
+  // silently. Nothing left to configure here.
 
   // Example numbers for the "what an adviser would see" section below the
   // calculator — static, illustrative placeholders, not wired to real
