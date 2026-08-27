@@ -35,6 +35,11 @@ const PARTNERS = {
     endpoint: process.env.CHURCHILL_WM_LEAD_ENDPOINT || "",
     fallbackEmail: process.env.CHURCHILL_WM_FALLBACK_EMAIL || "",
   },
+  hartsfield: {
+    firmName: "Hartsfield",
+    endpoint: process.env.HARTSFIELD_LEAD_ENDPOINT || "",
+    fallbackEmail: process.env.HARTSFIELD_FALLBACK_EMAIL || "",
+  },
 };
 
 export function getPartner(slug) {

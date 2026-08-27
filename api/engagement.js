@@ -12,7 +12,7 @@
 
 import { redis, monthKey } from "./_lib/upstash.js";
 
-const KNOWN_PARTNERS = ["harbour-vale", "simpsonfs", "innes-reid", "acumen", "churchill-wm"];
+const KNOWN_PARTNERS = ["harbour-vale", "simpsonfs", "innes-reid", "acumen", "churchill-wm", "hartsfield"];
 const EVENTS = ["visit", "cta-click", "enquiry-submitted"];
 
 function keysFor(partner, event) {

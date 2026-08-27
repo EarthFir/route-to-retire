@@ -18,6 +18,7 @@ const STATS_KEY_ENV = {
   "innes-reid": "STATS_KEY_INNES_REID",
   acumen: "STATS_KEY_ACUMEN",
   "churchill-wm": "STATS_KEY_CHURCHILL_WM",
+  hartsfield: "STATS_KEY_HARTSFIELD",
 };
 const EVENTS = ["visit", "cta-click", "enquiry-submitted"];
 

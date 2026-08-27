@@ -18,6 +18,8 @@ import Acumen from "./pages/partners/Acumen.jsx";
 import AcumenStats from "./pages/partners/AcumenStats.jsx";
 import ChurchillWm from "./pages/partners/ChurchillWm.jsx";
 import ChurchillWmStats from "./pages/partners/ChurchillWmStats.jsx";
+import Hartsfield from "./pages/partners/Hartsfield.jsx";
+import HartsfieldStats from "./pages/partners/HartsfieldStats.jsx";
 import PartnerMethodology from "./pages/partners/PartnerMethodology.jsx";
 import PartnerDisclaimer from "./pages/partners/PartnerDisclaimer.jsx";
 import PartnerPrivacy from "./pages/partners/PartnerPrivacy.jsx";
@@ -71,6 +73,10 @@ function App() {
       return <ChurchillWm />;
     case "/partners/churchill-wm/stats":
       return <ChurchillWmStats />;
+    case "/partners/hartsfield":
+      return <Hartsfield />;
+    case "/partners/hartsfield/stats":
+      return <HartsfieldStats />;
     default:
       return <Home />;
   }
