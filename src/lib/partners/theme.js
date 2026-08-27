@@ -22,10 +22,14 @@ export function calculatorThemeVars({ primary, secondary, accent, positive, tabA
     // style (calculator headings/labels, the partner page's own H1/H2)
     // switches font for partners who don't want Route to Retire's serif.
     ...(headingFont ? { "--font-serif": headingFont } : {}),
-    // Optional: overrides the secondary/tertiary text colour used for labels,
-    // chart legends, and other supporting text throughout the calculator.
-    // Falls back to the positive colour when unset.
-    ...(secondaryText ? { "--calc-secondary-text": secondaryText } : {}),
+    // Secondary/tertiary text colour used for labels, chart legends, and
+    // other supporting text on the dark "Your Projection" panel. Defaults to
+    // white — RetirementCalculator.jsx's own fallback chain would otherwise
+    // fall through to --calc-positive, which reads as unintentional green
+    // leftover branding for any partner whose positive colour isn't meant
+    // for text (e.g. Churchill's sage green). Only override per-partner
+    // (see innesReid.js) when white doesn't suit their palette.
+    "--calc-secondary-text": secondaryText || "#FFFFFF",
     "--calc-primary-mid": mixHex(primary, "#FFFFFF", 0.18),
     "--calc-primary-deep": mixHex(primary, "#000000", 0.4),
     "--calc-accent-tint": mixHex(accent, "#FFFFFF", 0.9),
