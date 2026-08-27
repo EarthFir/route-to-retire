@@ -20,7 +20,7 @@ function PartnerHeader({ config }) {
     <header className="sticky top-0 z-40 bg-white" style={{ borderBottom: `1px solid ${config.theme.primary}22` }}>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
         {config.logoSrc ? (
-          <img src={config.logoSrc} alt={config.logoText} className="h-8 sm:h-9 w-auto" />
+          <img src={config.logoSrc} alt={config.logoText} className={config.logoClassName || "h-8 sm:h-9 w-auto"} />
         ) : (
           <div className="font-serif font-bold text-lg sm:text-xl" style={{ color: config.theme.primary }}>
             {config.logoText}
