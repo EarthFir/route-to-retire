@@ -1203,7 +1203,7 @@ function TabBar({ tabs, active, onChange, dark }) {
             onClick={() => onChange(t.key)}
             className="text-xs sm:text-[13px] font-bold px-2 py-2.5 rounded-xl transition-all duration-150 whitespace-nowrap cursor-pointer"
             style={isActive
-              ? { backgroundColor: dark ? 'var(--calc-accent, #FFFB08)' : 'var(--calc-primary, #09324A)', color: dark ? 'var(--calc-primary, #09324A)' : 'var(--calc-tab-active-text, var(--calc-accent, #FFFB08))', boxShadow: '0 2px 8px rgba(0,0,0,.15)' }
+              ? { backgroundColor: dark ? 'var(--calc-accent, #FFFB08)' : 'var(--calc-primary, #09324A)', color: dark ? 'var(--calc-results-tab-active-text, var(--calc-primary, #09324A))' : 'var(--calc-tab-active-text, var(--calc-accent, #FFFB08))', boxShadow: '0 2px 8px rgba(0,0,0,.15)' }
               : { backgroundColor: 'transparent', color: dark ? 'rgba(243,242,234,.85)' : '#5B6770' }}
           >
             {t.label}
@@ -1569,7 +1569,7 @@ function ResultsTabbedCard({ inputs, inheritances, result, statePension, statePe
   return (
     <div
       id="your-projection"
-      className="flex flex-col relative rounded-[28px] p-6 sm:p-8 lg:h-[865px] overflow-hidden"
+      className="flex flex-col relative rounded-[28px] p-6 lg:h-[865px] overflow-hidden"
       style={{
         background: 'linear-gradient(160deg,var(--calc-primary-mid, #0c4060) 0%,var(--calc-primary, #09324A) 46%,var(--calc-primary-deep, #061f2e) 100%)',
         border: '1px solid rgba(255,255,255,.10)',

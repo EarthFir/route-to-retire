@@ -7,7 +7,7 @@ import { mixHex } from "../colorMix.js";
 // today when nothing overrides them. This turns a partner's four base colors
 // into the full set of CSS variables (including derived tints/shades) and
 // returns them as a React inline-style object to spread onto a wrapper div.
-export function calculatorThemeVars({ primary, secondary, accent, positive, tabActiveText, headingFont, secondaryText }) {
+export function calculatorThemeVars({ primary, secondary, accent, positive, tabActiveText, resultsTabActiveText, headingFont, secondaryText }) {
   return {
     "--calc-primary": primary,
     "--calc-secondary": secondary,
@@ -17,6 +17,13 @@ export function calculatorThemeVars({ primary, secondary, accent, positive, tabA
     // partners whose accent is too close in hue/lightness to their primary
     // to read clearly there (falls back to --calc-accent when unset).
     ...(tabActiveText ? { "--calc-tab-active-text": tabActiveText } : {}),
+    // Optional: overrides the active-tab text color on the dark "Your
+    // Projection" card (falls back to --calc-primary when unset). No safe
+    // universal default here, unlike secondaryText above — this text sits
+    // directly on --calc-accent, which ranges from pale yellow to a bold
+    // red across partners, so the readable color depends entirely on that
+    // partner's own accent.
+    ...(resultsTabActiveText ? { "--calc-results-tab-active-text": resultsTabActiveText } : {}),
     // Optional: overrides Tailwind's own --font-serif variable within this
     // subtree, so every `font-serif` class and `var(--font-serif)` inline
     // style (calculator headings/labels, the partner page's own H1/H2)
