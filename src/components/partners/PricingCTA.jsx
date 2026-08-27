@@ -39,6 +39,13 @@ export default function PricingCTA({ demoFallbackHref, demoFallbackLabel }) {
           boxShadow: "0 30px 70px -40px rgba(6,31,46,.7), inset 0 1px 0 rgba(255,255,255,.16)",
         }}
       >
+        <div
+          className="absolute top-6 -right-11 w-40 rotate-45 text-center py-1 font-display font-bold text-[10px] uppercase tracking-wider"
+          style={{ backgroundColor: "#FFFB08", color: "#09324A" }}
+        >
+          First 30 days free
+        </div>
+
         <div className="relative mb-5">
           <div className="inline-flex font-display font-bold text-[11px] uppercase tracking-widest px-3 py-1 rounded-full" style={{ backgroundColor: "rgba(255,251,8,.14)", color: "#FFFB08" }}>
             Founding Partner Offer
@@ -49,8 +56,7 @@ export default function PricingCTA({ demoFallbackHref, demoFallbackLabel }) {
           <div className="flex items-baseline gap-2.5">
             <span className="font-serif font-bold text-3xl" style={{ color: "#FFFB08" }}>£149<span className="text-base font-sans font-medium">/mo</span></span>
           </div>
-          <div className="text-xs mt-1.5" style={{ color: "rgba(243,242,234,.55)" }}>First 30 days free</div>
-          <div className="text-xs mt-0.5" style={{ color: "rgba(243,242,234,.55)" }}>
+          <div className="text-xs mt-1.5" style={{ color: "rgba(243,242,234,.55)" }}>
             Setup fee waived <span className="line-through">£199</span>
           </div>
           <div className="text-xs mt-0.5" style={{ color: "rgba(243,242,234,.55)" }}>No minimum term — cancel any time</div>

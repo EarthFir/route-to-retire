@@ -399,16 +399,15 @@ function AssumptionsFields({ inputs, handleChange }) {
     <div className="space-y-5">
       <div>
         <SliderField label="Expected Annual Return" name="annualReturn" value={inputs.annualReturn} onChange={handleChange} min={1} max={15} step={0.5} formatDisplay={fmtPct} />
-        <p className="text-xs text-[#8a9599] mt-2">Default 7% reflects long-run equity market average. Adjust based on your portfolio.</p>
-        <p className="text-xs text-[#8a9599] mt-1">Eases down to your retirement return over the last {RETURN_GLIDE_YEARS} years, reflecting a typical shift to lower-risk assets.</p>
+        <p className="text-xs text-[#8a9599] mt-2">Defaults to 7% (long-run equity average), easing to your retirement return over the last {RETURN_GLIDE_YEARS} years as you de-risk.</p>
       </div>
       <div>
         <SliderField label="Expected Return in Retirement" name="retirementReturn" value={inputs.retirementReturn} onChange={handleChange} min={1} max={10} step={0.5} formatDisplay={fmtPct} />
-        <p className="text-xs text-[#8a9599] mt-2">Portfolio typically de-risks into bonds near retirement. 3–4% reflects a balanced/cautious allocation.</p>
+        <p className="text-xs text-[#8a9599] mt-2">Typically de-risks near retirement. 3–4% reflects a balanced allocation.</p>
       </div>
       <div>
         <SliderField label="Plan for pot to last until" name="planningAge" value={inputs.planningAge} onChange={handleChange} min={80} max={100} step={1} formatDisplay={fmtAge} />
-        <p className="text-xs text-[#8a9599] mt-2">The age you want your retirement pot to be modelled to last until. Your target pot is sized to draw your income down to this age, not to last forever.</p>
+        <p className="text-xs text-[#8a9599] mt-2">Your target pot draws down to this age, not forever.</p>
         {inputs.planningAge < inputs.retirementAge + MIN_PLANNING_YEARS && inputs.retirementAge > inputs.currentAge && (
           <p className="text-xs mt-1" style={{ color: 'var(--calc-secondary, #1B6F81)' }}>Modelled to age {inputs.retirementAge + MIN_PLANNING_YEARS} — the plan needs at least {MIN_PLANNING_YEARS} years beyond your retirement age.</p>
         )}

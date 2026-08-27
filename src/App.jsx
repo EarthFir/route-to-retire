@@ -14,6 +14,8 @@ import SimpsonFS from "./pages/partners/SimpsonFS.jsx";
 import SimpsonFSStats from "./pages/partners/SimpsonFSStats.jsx";
 import InnesReid from "./pages/partners/InnesReid.jsx";
 import InnesReidStats from "./pages/partners/InnesReidStats.jsx";
+import Acumen from "./pages/partners/Acumen.jsx";
+import AcumenStats from "./pages/partners/AcumenStats.jsx";
 import PartnerMethodology from "./pages/partners/PartnerMethodology.jsx";
 import PartnerDisclaimer from "./pages/partners/PartnerDisclaimer.jsx";
 import PartnerPrivacy from "./pages/partners/PartnerPrivacy.jsx";
@@ -59,6 +61,10 @@ function App() {
       return <InnesReid />;
     case "/partners/innes-reid/stats":
       return <InnesReidStats />;
+    case "/partners/acumen":
+      return <Acumen />;
+    case "/partners/acumen/stats":
+      return <AcumenStats />;
     default:
       return <Home />;
   }

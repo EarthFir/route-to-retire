@@ -25,6 +25,11 @@ const PARTNERS = {
     endpoint: process.env.INNES_REID_LEAD_ENDPOINT || "",
     fallbackEmail: process.env.INNES_REID_FALLBACK_EMAIL || "",
   },
+  acumen: {
+    firmName: "Acumen Financial Planning",
+    endpoint: process.env.ACUMEN_LEAD_ENDPOINT || "",
+    fallbackEmail: process.env.ACUMEN_FALLBACK_EMAIL || "",
+  },
 };
 
 export function getPartner(slug) {
