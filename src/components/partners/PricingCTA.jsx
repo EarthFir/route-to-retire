@@ -49,7 +49,8 @@ export default function PricingCTA({ demoFallbackHref, demoFallbackLabel }) {
           <div className="flex items-baseline gap-2.5">
             <span className="font-serif font-bold text-3xl" style={{ color: "#FFFB08" }}>£149<span className="text-base font-sans font-medium">/mo</span></span>
           </div>
-          <div className="text-xs mt-1.5" style={{ color: "rgba(243,242,234,.55)" }}>
+          <div className="text-xs mt-1.5" style={{ color: "rgba(243,242,234,.55)" }}>First 30 days free</div>
+          <div className="text-xs mt-0.5" style={{ color: "rgba(243,242,234,.55)" }}>
             Setup fee waived <span className="line-through">£199</span>
           </div>
           <div className="text-xs mt-0.5" style={{ color: "rgba(243,242,234,.55)" }}>No minimum term — cancel any time</div>

@@ -8,10 +8,12 @@ import PricingCTA from "./PricingCTA.jsx";
 
 // ─── Partner-branded calculator page (generic) ────────────────────────────────
 // Renders the real calculator inside a themed wrapper (see theme.js) plus a
-// branded header/hero, a lead capture CTA, and an "for advisers" explainer —
-// all driven entirely by the partner `config` object passed in, so a second
-// partner is a new config file, not a copy of this page. Currently used only
-// by the fictional Harbour & Vale demo (src/pages/partners/HarbourVale.jsx).
+// branded header/hero, a lead capture CTA, and a "for advisers" explainer +
+// pricing pitch — all driven entirely by the partner `config` object passed
+// in, so a second partner is a new config file, not a copy of this page. The
+// adviser explainer/pricing section shows on every partner page (Harbour &
+// Vale, Simpson FS, Innes Reid) since all three are outreach material aimed
+// at the prospective firm itself, not a live customer's own end clients.
 
 function PartnerHeader({ config }) {
   return (
@@ -248,12 +250,8 @@ export default function PartnerCalculatorPage({ config }) {
         </p>
       </section>
 
-      {!config.whiteLabel && (
-        <>
-          <AdviserExplainer config={config} />
-          <PricingCTA />
-        </>
-      )}
+      <AdviserExplainer config={config} />
+      <PricingCTA />
 
       <PartnerFooter config={config} />
     </div>

@@ -7,12 +7,14 @@ import { usePageTitle } from "../lib/usePageTitle.js";
 
 // ─── Partners overview page ────────────────────────────────────────────────────
 // The real, Route to Retire-branded pitch for the adviser partner program —
-// reachable from the footer, not pushed on B2C visitors. One CTA throughout
-// ("See your branded calculator", -> /partners/preview) plus a secondary
-// "Book a 20 minute call" fallback. Ordered to answer, in sequence, the three
-// things a sceptical adviser is actually thinking: will this produce
-// enquiries (ROI block), will compliance let me (moved up, right after ROI),
-// and is this still going to exist in six months (founding offer + demo).
+// reachable from the footer, not pushed on B2C visitors. CTA hierarchy is
+// deliberate: the hero leads with the single primary "See your branded
+// calculator" action (-> /partners/preview); the closing section is the
+// secondary "Contact us" fallback for anyone who wants to talk it through
+// instead. Ordered to answer, in sequence, the three things a sceptical
+// adviser is actually thinking: will this produce enquiries (ROI block),
+// will compliance let me (moved up, right after ROI), and is this still
+// going to exist in six months (founding offer + demo).
 
 const VALUE_LEGS = [
   {
@@ -82,12 +84,6 @@ export default function Partners() {
             </p>
             <div className="flex flex-wrap items-center gap-4">
               <PrimaryCTA to="/partners/preview">See your branded calculator →</PrimaryCTA>
-              <BookDemoButton
-                className="inline-flex items-center justify-center gap-2 font-semibold text-[15px] sm:text-base rounded-full px-6 py-3 transition hover:opacity-70 font-display"
-                style={{ color: NAVY, border: "1.5px solid rgba(9,50,74,.2)" }}
-                fallbackHref="/#get-in-touch"
-                fallbackLabel="Book a 20 minute call"
-              />
             </div>
           </div>
         </Container>
@@ -183,13 +179,19 @@ export default function Partners() {
       <section className="py-16 sm:py-20">
         <Container>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-4xl mx-auto items-stretch">
-            <div className="rounded-3xl p-7 sm:p-8" style={{ background: "linear-gradient(160deg,#0c4060 0%,#09324A 46%,#061f2e 100%)", boxShadow: "0 30px 70px -40px rgba(6,31,46,.7)" }}>
+            <div className="relative overflow-hidden rounded-3xl p-6 sm:p-7" style={{ background: "linear-gradient(160deg,#0c4060 0%,#09324A 46%,#061f2e 100%)", boxShadow: "0 30px 70px -40px rgba(6,31,46,.7)" }}>
+              <div
+                className="absolute top-6 -right-11 w-40 rotate-45 text-center py-1 font-display font-bold text-[10px] uppercase tracking-wider"
+                style={{ backgroundColor: "#FFFB08", color: "#09324A" }}
+              >
+                First 30 days free
+              </div>
               <div className="inline-flex font-display font-bold text-[11px] uppercase tracking-widest px-3 py-1 rounded-full mb-5" style={{ backgroundColor: "rgba(255,251,8,.14)", color: "#FFFB08" }}>
                 Founding Partner Offer
               </div>
               <h3 className="font-serif font-bold text-2xl mb-1" style={{ color: "#F3F2EA" }}>First ten firms.</h3>
               <div className="font-serif font-bold text-3xl mb-4" style={{ color: "#FFFB08" }}>£149<span className="text-base font-sans font-medium">/mo</span></div>
-              <ul className="space-y-2 mb-6">
+              <ul className="space-y-2">
                 {[
                   "You keep that rate for as long as you stay",
                   "Setup fee waived — normally £199",
@@ -200,14 +202,9 @@ export default function Partners() {
                   </li>
                 ))}
               </ul>
-              <p className="text-xs leading-relaxed" style={{ color: "rgba(243,242,234,.65)" }}>
-                In return we ask for three things: a short testimonial once you've seen it working, permission to use
-                your logo, and one number a month telling us how many enquiries turned into clients. We never ask for
-                client details, fee information, or anything about your other marketing.
-              </p>
             </div>
 
-            <div className="rounded-3xl p-7 sm:p-8 flex flex-col justify-center" style={{ background: "linear-gradient(160deg,#0c4060 0%,#09324A 46%,#061f2e 100%)", boxShadow: "0 30px 70px -40px rgba(6,31,46,.7)" }}>
+            <div className="rounded-3xl p-6 sm:p-7" style={{ background: "linear-gradient(160deg,#0c4060 0%,#09324A 46%,#061f2e 100%)", boxShadow: "0 30px 70px -40px rgba(6,31,46,.7)" }}>
               <div className="inline-flex font-display font-bold text-[11px] uppercase tracking-widest px-3 py-1 rounded-full mb-5" style={{ backgroundColor: "rgba(255,251,8,.14)", color: "#FFFB08" }}>
                 Prefer annual?
               </div>
@@ -219,6 +216,9 @@ export default function Partners() {
               <p className="text-xs" style={{ color: "rgba(243,242,234,.65)" }}>Same features, same founding rate, billed once a year.</p>
             </div>
           </div>
+          <p className="text-center font-serif font-bold text-lg sm:text-xl mt-8 max-w-2xl mx-auto" style={{ color: NAVY, letterSpacing: "-.01em" }}>
+            Land one new client a year and the tool has already covered its cost.
+          </p>
         </Container>
       </section>
 
@@ -262,18 +262,17 @@ export default function Partners() {
       <section className="py-16 sm:py-20 text-center" style={{ background: "linear-gradient(158deg,#0c3c58 0%,#09324A 60%,#072839 100%)" }}>
         <Container>
           <h2 className="font-serif font-bold text-2xl sm:text-3xl mb-4" style={{ color: "#F3F2EA", letterSpacing: "-.02em" }}>
-            See what yours would look like.
+            Ready to get yours set up?
           </h2>
           <p className="text-base leading-relaxed max-w-lg mx-auto mb-7" style={{ color: "rgba(243,242,234,.75)" }}>
-            Add your colours and logo and see your branded calculator in a couple of minutes — no commitment.
+            Get in touch and we'll get your customised calculator set up today.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
-            <PrimaryCTA to="/partners/preview">See your branded calculator →</PrimaryCTA>
             <BookDemoButton
-              className="inline-flex items-center justify-center gap-2 font-semibold text-[15px] sm:text-base rounded-full px-6 py-3 transition hover:opacity-70 font-display"
-              style={{ color: "#F3F2EA", border: "1.5px solid rgba(243,242,234,.35)" }}
+              className="inline-flex items-center justify-center gap-2 font-semibold text-[15px] sm:text-base rounded-full px-7 py-3.5 transition hover:opacity-90 font-display"
+              style={{ backgroundColor: "#FFFB08", color: "#09324A", boxShadow: "0 10px 26px -10px rgba(255,251,8,.55)" }}
               fallbackHref="/#get-in-touch"
-              fallbackLabel="Book a 20 minute call"
+              fallbackLabel="Contact us"
             />
           </div>
         </Container>
