@@ -8,9 +8,9 @@ import {
 import { usePageTitle } from "../lib/usePageTitle.js";
 
 // ─── Route to Retire — Landing Page ───────────────────────────────────────────
-// Marketing homepage. The real calculator lives at /check; this page carries a
+// Marketing homepage. The real calculator lives at /your-route; this page carries a
 // self-contained "teaser" widget (illustrative maths against a fixed £500k
-// goal, not the full model) that hands off to /check to continue for real.
+// goal, not the full model) that hands off to /your-route to continue for real.
 // Pro / adviser / provider CTAs are marketing placeholders that funnel into a
 // single shared interest-capture form (Formspree) rather than standing up
 // separate half-built backends.
@@ -85,7 +85,7 @@ function Hero() {
 // ─── Check teaser widget ──────────────────────────────────────────────────────
 // A self-contained, illustrative slider widget (fixed 42-year-old saver, fixed
 // £500k goal, 5% growth) — not the real model. Both buttons hand off to the
-// full calculator at /check to continue for real.
+// full calculator at /your-route to continue for real.
 
 function SliderRow({ label, display, value, min, max, step, onChange }) {
   const pct = ((value - min) / (max - min)) * 100;
@@ -206,7 +206,7 @@ function CheckPreviewWidget() {
       </div>
 
       <div className="flex flex-wrap items-center gap-4 mt-7">
-        <PrimaryCTA to="/check">Continue to check my route →</PrimaryCTA>
+        <PrimaryCTA to="/your-route">Continue to check my route →</PrimaryCTA>
       </div>
     </div>
   );
@@ -235,7 +235,7 @@ function CheckSection() {
 // ─── How it works ───────────────────────────────────────────────────────────────
 
 const STEPS = [
-  { n: 1, title: "Tell us where you are", copy: "A few light questions. Rough numbers are fine to start." },
+  { n: 1, title: "Input your numbers", copy: "A few light questions. Rough numbers are fine to start." },
   { n: 2, title: "See your route", copy: "Whether you look on track, behind, or closer than you thought." },
   { n: 3, title: "Understand your next step", copy: "See the one or two changes that could make the biggest difference." },
 ];
@@ -349,7 +349,7 @@ function ProUpsell() {
               </p>
               <div className="flex flex-wrap items-center gap-4">
                 <PrimaryCTA to="/pro">Unlock Pro →</PrimaryCTA>
-                <SecondaryCTA to="/check" dark>Continue with the free check</SecondaryCTA>
+                <SecondaryCTA to="/your-route" dark>Continue with the free check</SecondaryCTA>
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -467,7 +467,7 @@ function FinalCTA() {
         <p className="text-base sm:text-lg leading-relaxed max-w-xl mx-auto mb-8" style={{ color: "rgba(243,242,234,.75)" }}>
           No exact numbers needed to start. See where you stand today, then decide what to do next — in your own time.
         </p>
-        <PrimaryCTA to="/check">Start my check →</PrimaryCTA>
+        <PrimaryCTA to="/your-route">Start my check →</PrimaryCTA>
       </Container>
     </section>
   );

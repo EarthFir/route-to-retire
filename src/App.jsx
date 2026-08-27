@@ -25,7 +25,7 @@ function App() {
   const path = useRoute();
 
   switch (path) {
-    case "/check":
+    case "/your-route":
       return <Check />;
     case "/pro":
       return <Pro />;

@@ -4,7 +4,7 @@ import { usePageTitle } from "../../lib/usePageTitle.js";
 // ─── Unbranded content page shell ──────────────────────────────────────────────
 // Same visual language as ContentPage.jsx (soft grey backdrop, white rounded
 // card) but with every Route to Retire mention/link stripped out — no RTR
-// wordmark header, no "back to the calculator" link into RTR's own /check,
+// wordmark header, no "back to the calculator" link into RTR's own /your-route,
 // no SiteFooter. Used by the three shared /partners/* legal pages
 // (PartnerMethodology, PartnerDisclaimer, PartnerPrivacy), which read the
 // same regardless of which white-label partner's calculator linked here, so

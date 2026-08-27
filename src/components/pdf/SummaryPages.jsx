@@ -10,10 +10,10 @@ import { NAVY as RTR_NAVY, TEAL as RTR_TEAL, FENNEC as RTR_FENNEC, BODY as RTR_B
 //
 // `brand`: the partner config object (see src/lib/partners/*.js) when this PDF
 // is downloaded from a partner-branded calculator page, or undefined for the
-// default Route to Retire /check calculator. All colors/logo/firm name below
+// default Route to Retire /your-route calculator. All colors/logo/firm name below
 // derive from `brand.theme` (same base colors calculatorThemeVars uses on
 // screen) and fall back to Route to Retire's own when brand is undefined, so
-// /check's PDF is unaffected.
+// /your-route's PDF is unaffected.
 
 function buildPalette(brand) {
   if (!brand) {

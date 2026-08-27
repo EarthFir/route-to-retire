@@ -76,7 +76,7 @@ export function Header() {
           Route to Retire
         </Link>
         <nav className="hidden md:flex items-center gap-7 text-[15px] font-medium" style={{ color: NAVY }}>
-          <Link to="/check">Check</Link>
+          <Link to="/your-route">Your Route</Link>
           <a href="/#how-it-works">How it works</a>
           <Link to="/resources">Resources</Link>
           <Link to="/pro">Pro</Link>
@@ -84,7 +84,7 @@ export function Header() {
         </nav>
         <div className="flex items-center gap-3">
           <Link
-            to="/check"
+            to="/your-route"
             className="hidden sm:inline-flex font-semibold text-sm rounded-full px-6 py-2.5 hover:opacity-90 transition font-display"
             style={{ backgroundColor: YELLOW, color: NAVY }}
           >
@@ -106,13 +106,13 @@ export function Header() {
       {open && (
         <div className="md:hidden" style={{ borderTop: "1px solid rgba(9,50,74,.08)" }}>
           <Container className="flex flex-col gap-1 py-4 text-[15px] font-medium" style={{ color: NAVY }}>
-            <Link to="/check" onClick={() => setOpen(false)} className="py-2">Check</Link>
+            <Link to="/your-route" onClick={() => setOpen(false)} className="py-2">Your Route</Link>
             <a href="/#how-it-works" onClick={() => setOpen(false)} className="py-2">How it works</a>
             <Link to="/resources" onClick={() => setOpen(false)} className="py-2">Resources</Link>
             <Link to="/pro" onClick={() => setOpen(false)} className="py-2">Pro</Link>
             <a href="/#trust" onClick={() => setOpen(false)} className="py-2">About</a>
             <Link
-              to="/check"
+              to="/your-route"
               onClick={() => setOpen(false)}
               className="mt-2 inline-flex justify-center font-semibold text-sm rounded-full px-6 py-2.5 font-display"
               style={{ backgroundColor: YELLOW, color: NAVY }}

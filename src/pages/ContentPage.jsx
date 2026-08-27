@@ -31,7 +31,7 @@ export default function ContentPage({ title, intro, children }) {
           <h1 className="text-2xl font-bold tracking-tight font-serif" style={{ color: '#09324A' }}>{title}</h1>
           {intro && <p className="text-sm leading-relaxed max-w-lg mx-auto" style={{ color: '#8a9599' }}>{intro}</p>}
           <div>
-            <Link to="/check" className="text-xs font-medium" style={{ color: '#1B6F81' }}>← Back to the calculator</Link>
+            <Link to="/your-route" className="text-xs font-medium" style={{ color: '#1B6F81' }}>← Back to the calculator</Link>
           </div>
         </div>
 

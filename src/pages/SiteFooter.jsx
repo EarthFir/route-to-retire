@@ -12,7 +12,7 @@ export default function SiteFooter() {
         tax advice or personal recommendations.
       </p>
       <nav className="flex items-center justify-center gap-4 text-xs font-medium flex-wrap">
-        <Link to="/check" style={{ color: '#1B6F81' }}>Calculator</Link>
+        <Link to="/your-route" style={{ color: '#1B6F81' }}>Calculator</Link>
         <span style={{ color: '#DAD7C8' }}>·</span>
         <Link to="/methodology" style={{ color: '#1B6F81' }}>Methodology</Link>
         <span style={{ color: '#DAD7C8' }}>·</span>

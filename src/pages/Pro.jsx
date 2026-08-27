@@ -108,7 +108,7 @@ export default function Pro() {
             to. Pro is built for people who want to go beyond a single snapshot.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
-            <SecondaryCTA to="/check">Continue with the free check</SecondaryCTA>
+            <SecondaryCTA to="/your-route">Continue with the free check</SecondaryCTA>
           </div>
         </Container>
       </section>
@@ -149,7 +149,7 @@ export default function Pro() {
           <p className="text-base leading-relaxed max-w-lg mx-auto mb-7" style={{ color: "rgba(243,242,234,.75)" }}>
             The free One-Minute Check already covers the essentials — no sign-up needed.
           </p>
-          <PrimaryCTA to="/check">Start my check →</PrimaryCTA>
+          <PrimaryCTA to="/your-route">Start my check →</PrimaryCTA>
         </Container>
       </section>
 

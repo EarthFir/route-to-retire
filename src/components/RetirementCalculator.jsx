@@ -241,8 +241,8 @@ function SliderField({ label, name, value, onChange, min, max, step = 1, formatD
             onKeyDown={(e) => {
               if (e.key === "Enter") handleAlwaysEditableBlur();
             }}
-            className="w-36 text-right text-sm font-semibold bg-white px-2.5 py-0.5 rounded-lg outline-none tabular-nums"
-            style={{ color: 'var(--calc-secondary, #1B6F81)', borderColor: 'var(--calc-secondary, #1B6F81)', borderWidth: '2px' }}
+            className="w-36 text-right text-sm font-semibold px-2.5 py-0.5 rounded-lg outline-none tabular-nums"
+            style={{ color: 'var(--calc-secondary, #1B6F81)', backgroundColor: 'var(--calc-secondary-tint, #E7F1EF)' }}
           />
         ) : isEditing ? (
           <input
@@ -1645,16 +1645,16 @@ const DEFAULT_INHERITANCES = [
   { amount: 0, age: 0 },
 ];
 
-// enablePdfDownload: off by default (the free /check calculator) — PDF export
+// enablePdfDownload: off by default (the free /your-route calculator) — PDF export
 // is a Pro/partner perk, currently on for partner pages (see
 // PartnerCalculatorPage.jsx) and intended for the Pro calculator once that
 // has its own gated experience. partnerSlug: only meaningful alongside
 // enablePdfDownload — identifies which partner's download counter to
-// increment (see api/pdf-downloads.js); omit it (as /check does implicitly,
+// increment (see api/pdf-downloads.js); omit it (as /your-route does implicitly,
 // by never setting enablePdfDownload) and no tracking call is made.
 // partnerBrand: the partner config object (see src/lib/partners/*.js), used
 // to re-brand the downloaded PDF summary (logo, colors, filename) — omit it
-// and the PDF renders with Route to Retire's own branding, as /check does.
+// and the PDF renders with Route to Retire's own branding, as /your-route does.
 // onSummaryChange: optional callback fired with { inputs, statePension, result }
 // whenever the calculation changes (or null while there's no valid result) —
 // lets a parent page (e.g. PartnerCalculatorPage's lead form) offer to include
