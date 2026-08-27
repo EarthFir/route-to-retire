@@ -16,6 +16,8 @@ import InnesReid from "./pages/partners/InnesReid.jsx";
 import InnesReidStats from "./pages/partners/InnesReidStats.jsx";
 import Acumen from "./pages/partners/Acumen.jsx";
 import AcumenStats from "./pages/partners/AcumenStats.jsx";
+import ChurchillWm from "./pages/partners/ChurchillWm.jsx";
+import ChurchillWmStats from "./pages/partners/ChurchillWmStats.jsx";
 import PartnerMethodology from "./pages/partners/PartnerMethodology.jsx";
 import PartnerDisclaimer from "./pages/partners/PartnerDisclaimer.jsx";
 import PartnerPrivacy from "./pages/partners/PartnerPrivacy.jsx";
@@ -65,6 +67,10 @@ function App() {
       return <Acumen />;
     case "/partners/acumen/stats":
       return <AcumenStats />;
+    case "/partners/churchill-wm":
+      return <ChurchillWm />;
+    case "/partners/churchill-wm/stats":
+      return <ChurchillWmStats />;
     default:
       return <Home />;
   }

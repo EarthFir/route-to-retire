@@ -17,6 +17,7 @@ const STATS_KEY_ENV = {
   simpsonfs: "STATS_KEY_SIMPSONFS",
   "innes-reid": "STATS_KEY_INNES_REID",
   acumen: "STATS_KEY_ACUMEN",
+  "churchill-wm": "STATS_KEY_CHURCHILL_WM",
 };
 const EVENTS = ["visit", "cta-click", "enquiry-submitted"];
 

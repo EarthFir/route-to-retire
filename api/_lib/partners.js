@@ -30,6 +30,11 @@ const PARTNERS = {
     endpoint: process.env.ACUMEN_LEAD_ENDPOINT || "",
     fallbackEmail: process.env.ACUMEN_FALLBACK_EMAIL || "",
   },
+  "churchill-wm": {
+    firmName: "Churchill Wealth Management",
+    endpoint: process.env.CHURCHILL_WM_LEAD_ENDPOINT || "",
+    fallbackEmail: process.env.CHURCHILL_WM_FALLBACK_EMAIL || "",
+  },
 };
 
 export function getPartner(slug) {
