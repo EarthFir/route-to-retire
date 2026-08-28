@@ -1062,9 +1062,9 @@ function GrowthChartCard({ inputs, result, statePension, statePensionAge, data, 
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="4 6" stroke="rgba(255,255,255,.10)" vertical={false} />
-          <XAxis dataKey="age" tick={{ fontSize: 11, fill: "#7fa0a0" }} tickLine={false} axisLine={false}
-            label={{ value: "Age", position: "insideBottomRight", offset: -4, fontSize: 11, fill: "#7fa0a0" }} />
-          <YAxis tickFormatter={formatYAxis} tick={{ fontSize: 11, fill: "#7fa0a0" }} tickLine={false} axisLine={false} width={48} />
+          <XAxis dataKey="age" tick={{ fontSize: 11, fill: "var(--calc-chart-axis-text, #7fa0a0)" }} tickLine={false} axisLine={false}
+            label={{ value: "Age", position: "insideBottomRight", offset: -4, fontSize: 11, fill: "var(--calc-chart-axis-text, #7fa0a0)" }} />
+          <YAxis tickFormatter={formatYAxis} tick={{ fontSize: 11, fill: "var(--calc-chart-axis-text, #7fa0a0)" }} tickLine={false} axisLine={false} width={48} />
           <Tooltip content={<CustomTooltip />} />
           <ReferenceLine y={result.targetPot} stroke="#FF9A85" strokeDasharray="5 3" strokeWidth={1.5}
             label={{ value: "Target", position: "right", fontSize: 10, fill: "#FF9A85" }} />

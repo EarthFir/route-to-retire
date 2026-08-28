@@ -7,7 +7,7 @@ import { mixHex } from "../colorMix.js";
 // today when nothing overrides them. This turns a partner's four base colors
 // into the full set of CSS variables (including derived tints/shades) and
 // returns them as a React inline-style object to spread onto a wrapper div.
-export function calculatorThemeVars({ primary, secondary, accent, positive, tabActiveText, resultsTabActiveText, headingFont, secondaryText, resultsPanelColor }) {
+export function calculatorThemeVars({ primary, secondary, accent, positive, tabActiveText, resultsTabActiveText, headingFont, secondaryText, resultsPanelColor, resultsPanelStart, resultsPanelEnd, chartAxisText }) {
   return {
     "--calc-primary": primary,
     "--calc-secondary": secondary,
@@ -59,5 +59,23 @@ export function calculatorThemeVars({ primary, secondary, accent, positive, tabA
           "--calc-results-panel-deep": mixHex(resultsPanelColor, "#000000", 0.85),
         }
       : {}),
+    // Optional: a genuine two-color brand gradient for the results panel
+    // (e.g. Informed Financial Planning's "lighter blue to darker teal"
+    // request), used literally rather than derived by darkening one color.
+    // resultsPanelStart lands at the 0% stop (the top of the panel, where
+    // the accent-colored target-pot figure sits — so this should be
+    // whichever of the two colors is dark enough for that text to stay
+    // legible), resultsPanelEnd at the 100% stop. Takes priority over
+    // resultsPanelColor above when both would apply.
+    ...(resultsPanelStart && resultsPanelEnd
+      ? {
+          "--calc-results-panel-mid": resultsPanelStart,
+          "--calc-results-panel-base": mixHex(resultsPanelStart, resultsPanelEnd, 0.46),
+          "--calc-results-panel-deep": resultsPanelEnd,
+        }
+      : {}),
+    // Optional: overrides the "Projected growth" chart's X/Y axis tick and
+    // label color (falls back to a muted teal-grey, #7fa0a0, when unset).
+    ...(chartAxisText ? { "--calc-chart-axis-text": chartAxisText } : {}),
   };
 }

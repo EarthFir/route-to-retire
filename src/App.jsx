@@ -22,6 +22,8 @@ import Hartsfield from "./pages/partners/Hartsfield.jsx";
 import HartsfieldStats from "./pages/partners/HartsfieldStats.jsx";
 import HowardWright from "./pages/partners/HowardWright.jsx";
 import HowardWrightStats from "./pages/partners/HowardWrightStats.jsx";
+import InformedFinancialPlanning from "./pages/partners/InformedFinancialPlanning.jsx";
+import InformedFinancialPlanningStats from "./pages/partners/InformedFinancialPlanningStats.jsx";
 import PartnerMethodology from "./pages/partners/PartnerMethodology.jsx";
 import PartnerDisclaimer from "./pages/partners/PartnerDisclaimer.jsx";
 import PartnerPrivacy from "./pages/partners/PartnerPrivacy.jsx";
@@ -83,6 +85,10 @@ function App() {
       return <HowardWright />;
     case "/partners/howard-wright/stats":
       return <HowardWrightStats />;
+    case "/partners/informed-financial-planning":
+      return <InformedFinancialPlanning />;
+    case "/partners/informed-financial-planning/stats":
+      return <InformedFinancialPlanningStats />;
     default:
       return <Home />;
   }
