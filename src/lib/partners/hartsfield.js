@@ -37,6 +37,10 @@ export const HARTSFIELD = {
     // The active "Overview" tab sits on this red accent — white reads far
     // better there than the default navy primary text.
     resultsTabActiveText: "#FFFFFF",
+    // Mirrors the above for the "Your Details"/"Options" tab on the light
+    // side — its active background is the dark navy primary, so it uses
+    // white instead of falling back to the red accent.
+    tabActiveText: "#FFFFFF",
   },
 
   adviserCtaLabel: "Discuss with a Financial Planner",
