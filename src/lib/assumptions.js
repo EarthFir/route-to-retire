@@ -16,8 +16,8 @@ export const DEFAULT_PRE_RETIREMENT_RETURN = 7; // %
 /** Default expected annual investment return once in retirement (de-risked). */
 export const DEFAULT_RETIREMENT_RETURN = 3.5; // %
 
-/** Default full UK State Pension, gross per year. */
-export const DEFAULT_STATE_PENSION_INCOME = 11500; // £/yr
+/** Default full UK State Pension, gross per year (2026/27 rate). */
+export const DEFAULT_STATE_PENSION_INCOME = 12547.6; // £/yr
 
 /**
  * PLSA Retirement Living Standards: what a single person might need per year,
@@ -168,7 +168,7 @@ export function getAssumptions({
     {
       label: "State Pension amount",
       value: includeStatePension ? `${fmtGBP(statePensionIncome)}/yr` : "Not included",
-      note: "Assumes the current full UK State Pension. Subject to change.",
+      note: "Assumes the full UK State Pension for 2026/27. Subject to change.",
     },
     {
       label: "Money shown as",

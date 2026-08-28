@@ -445,7 +445,7 @@ function StatePensionFields({ inputs, statePension, setStatePension, statePensio
             min={0}
             step={100}
           />
-          <p className="text-xs" style={{ color: '#8a9599' }}>Assumes current UK State Pension (~£11,500/yr). Subject to change.</p>
+          <p className="text-xs" style={{ color: '#8a9599' }}>Assumes the full UK State Pension for 2026/27 (£12,547.60/yr). Subject to change.</p>
           {inputs.retirementAge < statePensionAge && (
             <div className="rounded-2xl p-3 flex items-start gap-2" style={{ backgroundColor: 'var(--calc-accent-tint, #FFFCE0)', borderColor: 'var(--calc-accent, #FFFB08)', borderWidth: '1px' }}>
               <span className="text-sm">!</span>
