@@ -13,7 +13,7 @@
 
 import { redis, monthKey } from "./_lib/upstash.js";
 
-const KNOWN_PARTNERS = ["harbour-vale", "simpsonfs", "innes-reid", "acumen", "churchill-wm", "hartsfield"];
+const KNOWN_PARTNERS = ["harbour-vale", "simpsonfs", "innes-reid", "acumen", "churchill-wm", "hartsfield", "howard-wright"];
 
 export default async function handler(req, res) {
   const partner = req.method === "GET" ? req.query.partner : req.body?.partner;

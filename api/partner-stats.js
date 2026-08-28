@@ -19,6 +19,7 @@ const STATS_KEY_ENV = {
   acumen: "STATS_KEY_ACUMEN",
   "churchill-wm": "STATS_KEY_CHURCHILL_WM",
   hartsfield: "STATS_KEY_HARTSFIELD",
+  "howard-wright": "STATS_KEY_HOWARD_WRIGHT",
 };
 const EVENTS = ["visit", "cta-click", "enquiry-submitted"];
 

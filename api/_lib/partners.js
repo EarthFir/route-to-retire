@@ -40,6 +40,11 @@ const PARTNERS = {
     endpoint: process.env.HARTSFIELD_LEAD_ENDPOINT || "",
     fallbackEmail: process.env.HARTSFIELD_FALLBACK_EMAIL || "",
   },
+  "howard-wright": {
+    firmName: "Howard Wright",
+    endpoint: process.env.HOWARD_WRIGHT_LEAD_ENDPOINT || "",
+    fallbackEmail: process.env.HOWARD_WRIGHT_FALLBACK_EMAIL || "",
+  },
 };
 
 export function getPartner(slug) {

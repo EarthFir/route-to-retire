@@ -1119,9 +1119,9 @@ function MobileLiveTicker({ inputs, inheritances, result, statePension, statePen
       <div
         className="rounded-2xl px-4 py-3"
         style={{
-          background: 'linear-gradient(160deg,var(--calc-primary-mid, #0c4060) 0%,var(--calc-primary, #09324A) 46%,var(--calc-primary-deep, #061f2e) 100%)',
+          background: 'linear-gradient(160deg,var(--calc-results-panel-mid, var(--calc-primary-mid, #0c4060)) 0%,var(--calc-results-panel-base, var(--calc-primary, #09324A)) 46%,var(--calc-results-panel-deep, var(--calc-primary-deep, #061f2e)) 100%)',
           border: '1px solid rgba(255,255,255,.10)',
-          boxShadow: '0 12px 28px -14px color-mix(in srgb, var(--calc-primary-deep, #061f2e) 60%, transparent)',
+          boxShadow: '0 12px 28px -14px color-mix(in srgb, var(--calc-results-panel-deep, var(--calc-primary-deep, #061f2e)) 60%, transparent)',
         }}
       >
         <div className="flex items-center justify-between gap-2 mb-2">
@@ -1571,9 +1571,9 @@ function ResultsTabbedCard({ inputs, inheritances, result, statePension, statePe
       id="your-projection"
       className="flex flex-col relative rounded-[28px] p-6 lg:h-[865px] overflow-hidden"
       style={{
-        background: 'linear-gradient(160deg,var(--calc-primary-mid, #0c4060) 0%,var(--calc-primary, #09324A) 46%,var(--calc-primary-deep, #061f2e) 100%)',
+        background: 'linear-gradient(160deg,var(--calc-results-panel-mid, var(--calc-primary-mid, #0c4060)) 0%,var(--calc-results-panel-base, var(--calc-primary, #09324A)) 46%,var(--calc-results-panel-deep, var(--calc-primary-deep, #061f2e)) 100%)',
         border: '1px solid rgba(255,255,255,.10)',
-        boxShadow: '0 42px 90px -46px color-mix(in srgb, var(--calc-primary-deep, #061f2e) 90%, transparent), inset 0 1px 0 rgba(255,255,255,.16)',
+        boxShadow: '0 42px 90px -46px color-mix(in srgb, var(--calc-results-panel-deep, var(--calc-primary-deep, #061f2e)) 90%, transparent), inset 0 1px 0 rgba(255,255,255,.16)',
         scrollMarginTop: 292,
       }}
     >

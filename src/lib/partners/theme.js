@@ -7,7 +7,7 @@ import { mixHex } from "../colorMix.js";
 // today when nothing overrides them. This turns a partner's four base colors
 // into the full set of CSS variables (including derived tints/shades) and
 // returns them as a React inline-style object to spread onto a wrapper div.
-export function calculatorThemeVars({ primary, secondary, accent, positive, tabActiveText, resultsTabActiveText, headingFont, secondaryText }) {
+export function calculatorThemeVars({ primary, secondary, accent, positive, tabActiveText, resultsTabActiveText, headingFont, secondaryText, resultsPanelColor }) {
   return {
     "--calc-primary": primary,
     "--calc-secondary": secondary,
@@ -41,5 +41,23 @@ export function calculatorThemeVars({ primary, secondary, accent, positive, tabA
     "--calc-primary-deep": mixHex(primary, "#000000", 0.4),
     "--calc-accent-tint": mixHex(accent, "#FFFFFF", 0.9),
     "--calc-secondary-tint": mixHex(secondary, "#FFFFFF", 0.9),
+    // Optional: gives the dark "Your Projection" panel's own gradient a
+    // different base color from --calc-primary, for partners whose real
+    // brand has no dark navy to reuse as --calc-primary (which also has to
+    // stay dark enough to serve as everyday text color on the light "Your
+    // Route" side). Unlike --calc-primary-mid/-deep above, this starts from
+    // a mid-brightness brand color rather than an already-dark one, so it's
+    // darkened much more heavily at every stop — otherwise --calc-accent
+    // text (e.g. the target-pot figure) ends up nearly the same color as the
+    // panel behind it. Falls back to --calc-primary's own mid/base/deep
+    // chain when unset, so every other partner is unaffected (see
+    // howardWright.js).
+    ...(resultsPanelColor
+      ? {
+          "--calc-results-panel-mid": mixHex(resultsPanelColor, "#000000", 0.55),
+          "--calc-results-panel-base": mixHex(resultsPanelColor, "#000000", 0.7),
+          "--calc-results-panel-deep": mixHex(resultsPanelColor, "#000000", 0.85),
+        }
+      : {}),
   };
 }

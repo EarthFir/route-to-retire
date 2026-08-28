@@ -20,6 +20,8 @@ import ChurchillWm from "./pages/partners/ChurchillWm.jsx";
 import ChurchillWmStats from "./pages/partners/ChurchillWmStats.jsx";
 import Hartsfield from "./pages/partners/Hartsfield.jsx";
 import HartsfieldStats from "./pages/partners/HartsfieldStats.jsx";
+import HowardWright from "./pages/partners/HowardWright.jsx";
+import HowardWrightStats from "./pages/partners/HowardWrightStats.jsx";
 import PartnerMethodology from "./pages/partners/PartnerMethodology.jsx";
 import PartnerDisclaimer from "./pages/partners/PartnerDisclaimer.jsx";
 import PartnerPrivacy from "./pages/partners/PartnerPrivacy.jsx";
@@ -77,6 +79,10 @@ function App() {
       return <Hartsfield />;
     case "/partners/hartsfield/stats":
       return <HartsfieldStats />;
+    case "/partners/howard-wright":
+      return <HowardWright />;
+    case "/partners/howard-wright/stats":
+      return <HowardWrightStats />;
     default:
       return <Home />;
   }
