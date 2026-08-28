@@ -50,6 +50,11 @@ const PARTNERS = {
     endpoint: process.env.INFORMED_FP_LEAD_ENDPOINT || "",
     fallbackEmail: process.env.INFORMED_FP_FALLBACK_EMAIL || "",
   },
+  kellands: {
+    firmName: "Kellands",
+    endpoint: process.env.KELLANDS_LEAD_ENDPOINT || "",
+    fallbackEmail: process.env.KELLANDS_FALLBACK_EMAIL || "",
+  },
 };
 
 export function getPartner(slug) {

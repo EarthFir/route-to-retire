@@ -21,6 +21,7 @@ const STATS_KEY_ENV = {
   hartsfield: "STATS_KEY_HARTSFIELD",
   "howard-wright": "STATS_KEY_HOWARD_WRIGHT",
   "informed-fp": "STATS_KEY_INFORMED_FP",
+  kellands: "STATS_KEY_KELLANDS",
 };
 const EVENTS = ["visit", "cta-click", "enquiry-submitted"];
 

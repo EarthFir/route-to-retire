@@ -8,6 +8,7 @@
 @import "@fontsource-variable/source-serif-4/wght-italic.css";
 @import "@fontsource-variable/montserrat/wght.css";
 @import "@fontsource-variable/open-sans/wght.css";
+@import "@fontsource/merriweather/700.css";
 
 @theme {
   /* Route to Retire brand palette */

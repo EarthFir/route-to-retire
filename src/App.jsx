@@ -24,6 +24,8 @@ import HowardWright from "./pages/partners/HowardWright.jsx";
 import HowardWrightStats from "./pages/partners/HowardWrightStats.jsx";
 import InformedFinancialPlanning from "./pages/partners/InformedFinancialPlanning.jsx";
 import InformedFinancialPlanningStats from "./pages/partners/InformedFinancialPlanningStats.jsx";
+import Kellands from "./pages/partners/Kellands.jsx";
+import KellandsStats from "./pages/partners/KellandsStats.jsx";
 import PartnerMethodology from "./pages/partners/PartnerMethodology.jsx";
 import PartnerDisclaimer from "./pages/partners/PartnerDisclaimer.jsx";
 import PartnerPrivacy from "./pages/partners/PartnerPrivacy.jsx";
@@ -89,6 +91,10 @@ function App() {
       return <InformedFinancialPlanning />;
     case "/partners/informed-fp/stats":
       return <InformedFinancialPlanningStats />;
+    case "/partners/kellands":
+      return <Kellands />;
+    case "/partners/kellands/stats":
+      return <KellandsStats />;
     default:
       return <Home />;
   }
