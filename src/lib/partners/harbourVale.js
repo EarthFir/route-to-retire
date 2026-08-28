@@ -8,7 +8,6 @@ export const HARBOUR_VALE = {
   fictional: true,
   firmName: "Harbour & Vale Financial Planning",
   logoText: "Harbour & Vale",
-  tagline: "Independent financial planning, built around your goals.",
 
   theme: {
     primary: "#1F6F78",

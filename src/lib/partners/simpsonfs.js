@@ -19,7 +19,6 @@ export const SIMPSON_FS = {
   firmName: "Simpson Financial Services",
   logoText: "Simpson Financial Services",
   logoSrc: simpsonFsLogo,
-  tagline: "Personal advice, built around your circumstances.",
 
   theme: {
     primary: "#004289",

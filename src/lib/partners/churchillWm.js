@@ -22,8 +22,6 @@ export const CHURCHILL_WM = {
   // Their logo is a wide wordmark (650x142) with fine serif detail — reads
   // small at the shared partner-header default (h-8 sm:h-9).
   logoClassName: "h-10 sm:h-11 w-auto",
-  tagline: "Financial planning tailored to your individual needs.",
-  taglineLines: ["Financial planning,", "tailored to your individual needs."],
 
   theme: {
     primary: "#214565",

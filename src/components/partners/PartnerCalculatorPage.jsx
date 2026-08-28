@@ -207,16 +207,7 @@ export default function PartnerCalculatorPage({ config }) {
           Retirement Readiness Check
         </div>
         <h1 className="text-3xl sm:text-4xl font-bold tracking-tight" style={{ color: primary, fontFamily: "var(--font-serif)" }}>
-          {config.taglineLines ? (
-            config.taglineLines.map((line, i, arr) => (
-              <div key={i}>
-                {line}
-                {i < arr.length - 1 && <br />}
-              </div>
-            ))
-          ) : (
-            config.tagline
-          )}
+          Try the one-minute retirement check
         </h1>
         <p className="text-sm leading-relaxed max-w-lg mx-auto" style={{ color: "#8a9599" }}>
           Run the numbers on your own retirement plan below. It only takes a minute, and there's no obligation —

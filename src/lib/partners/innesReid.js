@@ -24,8 +24,6 @@ export const INNES_REID = {
   // 50% larger than the shared partner-header default (h-8 sm:h-9) — their
   // logo reads small at the standard size.
   logoClassName: "h-12 sm:h-[54px] w-auto",
-  tagline: "Your retirement, planned around your goals.",
-  taglineLines: ["Your retirement,", "planned around your goals."],
 
   theme: {
     primary: "#0C477D",

@@ -22,8 +22,6 @@ export const ACUMEN = {
   firmName: "Acumen Financial Planning",
   logoText: "Acumen Financial Planning",
   logoSrc: acumenLogo,
-  tagline: "Independent financial planning, tailored to your retirement.",
-  taglineLines: ["Independent financial planning,", "tailored to your retirement."],
 
   theme: {
     primary: "#2B3134",

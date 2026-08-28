@@ -34,8 +34,6 @@ export const INFORMED_FINANCIAL_PLANNING = {
   logoText: "Informed Financial Planning",
   logoSrc: informedFinancialPlanningLogo,
   logoClassName: "h-14 sm:h-16 w-auto",
-  tagline: "Independent, chartered financial planning for your future.",
-  taglineLines: ["Independent, chartered financial planning,", "for your future."],
 
   theme: {
     primary: "#32373C",

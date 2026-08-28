@@ -22,8 +22,6 @@ export const HARTSFIELD = {
   // 75% larger than our default header size — their logo reads small
   // otherwise.
   logoClassName: "h-16 sm:h-[70px] w-auto",
-  tagline: "Financial planning for a confident retirement.",
-  taglineLines: ["Financial planning,", "for a confident retirement."],
 
   theme: {
     primary: "#073059",

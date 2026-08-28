@@ -30,8 +30,6 @@ export const HOWARD_WRIGHT = {
   // 50% larger than our default header size — their logo reads small
   // otherwise.
   logoClassName: "h-[72px] sm:h-[84px] w-auto",
-  tagline: "Financial planning built around your future.",
-  taglineLines: ["Financial planning,", "built around your future."],
 
   theme: {
     primary: "#052C3E",
