@@ -27,7 +27,7 @@
 import informedFinancialPlanningLogo from "../../assets/partners/informed-financial-planning-logo.svg";
 
 export const INFORMED_FINANCIAL_PLANNING = {
-  slug: "informed-financial-planning",
+  slug: "informed-fp",
   fictional: false,
   whiteLabel: true,
   firmName: "Informed Financial Planning",
@@ -79,7 +79,7 @@ export const INFORMED_FINANCIAL_PLANNING = {
 
   // No real lead endpoint yet — this is a prototype, not a commissioned
   // build. Falls back to mock delivery until Informed Financial Planning
-  // supplies one (set INFORMED_FINANCIAL_PLANNING_LEAD_ENDPOINT server-side —
+  // supplies one (set INFORMED_FP_LEAD_ENDPOINT server-side —
   // see api/_lib/partners.js).
 
   // Static, illustrative placeholders for the "what an adviser would see"

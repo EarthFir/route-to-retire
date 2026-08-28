@@ -20,7 +20,7 @@ const STATS_KEY_ENV = {
   "churchill-wm": "STATS_KEY_CHURCHILL_WM",
   hartsfield: "STATS_KEY_HARTSFIELD",
   "howard-wright": "STATS_KEY_HOWARD_WRIGHT",
-  "informed-financial-planning": "STATS_KEY_INFORMED_FINANCIAL_PLANNING",
+  "informed-fp": "STATS_KEY_INFORMED_FP",
 };
 const EVENTS = ["visit", "cta-click", "enquiry-submitted"];
 

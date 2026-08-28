@@ -45,10 +45,10 @@ const PARTNERS = {
     endpoint: process.env.HOWARD_WRIGHT_LEAD_ENDPOINT || "",
     fallbackEmail: process.env.HOWARD_WRIGHT_FALLBACK_EMAIL || "",
   },
-  "informed-financial-planning": {
+  "informed-fp": {
     firmName: "Informed Financial Planning",
-    endpoint: process.env.INFORMED_FINANCIAL_PLANNING_LEAD_ENDPOINT || "",
-    fallbackEmail: process.env.INFORMED_FINANCIAL_PLANNING_FALLBACK_EMAIL || "",
+    endpoint: process.env.INFORMED_FP_LEAD_ENDPOINT || "",
+    fallbackEmail: process.env.INFORMED_FP_FALLBACK_EMAIL || "",
   },
 };
 

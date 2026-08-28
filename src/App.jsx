@@ -85,9 +85,9 @@ function App() {
       return <HowardWright />;
     case "/partners/howard-wright/stats":
       return <HowardWrightStats />;
-    case "/partners/informed-financial-planning":
+    case "/partners/informed-fp":
       return <InformedFinancialPlanning />;
-    case "/partners/informed-financial-planning/stats":
+    case "/partners/informed-fp/stats":
       return <InformedFinancialPlanningStats />;
     default:
       return <Home />;
