@@ -22,6 +22,8 @@ const STATS_KEY_ENV = {
   "howard-wright": "STATS_KEY_HOWARD_WRIGHT",
   "informed-fp": "STATS_KEY_INFORMED_FP",
   kellands: "STATS_KEY_KELLANDS",
+  pareto: "STATS_KEY_PARETO",
+  "wealth-of-advice": "STATS_KEY_WEALTH_OF_ADVICE",
 };
 const EVENTS = ["visit", "cta-click", "enquiry-submitted"];
 

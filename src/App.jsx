@@ -26,6 +26,10 @@ import InformedFinancialPlanning from "./pages/partners/InformedFinancialPlannin
 import InformedFinancialPlanningStats from "./pages/partners/InformedFinancialPlanningStats.jsx";
 import Kellands from "./pages/partners/Kellands.jsx";
 import KellandsStats from "./pages/partners/KellandsStats.jsx";
+import Pareto from "./pages/partners/Pareto.jsx";
+import ParetoStats from "./pages/partners/ParetoStats.jsx";
+import WealthOfAdvice from "./pages/partners/WealthOfAdvice.jsx";
+import WealthOfAdviceStats from "./pages/partners/WealthOfAdviceStats.jsx";
 import PartnerMethodology from "./pages/partners/PartnerMethodology.jsx";
 import PartnerDisclaimer from "./pages/partners/PartnerDisclaimer.jsx";
 import PartnerPrivacy from "./pages/partners/PartnerPrivacy.jsx";
@@ -95,6 +99,14 @@ function App() {
       return <Kellands />;
     case "/partners/kellands/stats":
       return <KellandsStats />;
+    case "/partners/pareto":
+      return <Pareto />;
+    case "/partners/pareto/stats":
+      return <ParetoStats />;
+    case "/partners/wealth-of-advice":
+      return <WealthOfAdvice />;
+    case "/partners/wealth-of-advice/stats":
+      return <WealthOfAdviceStats />;
     default:
       return <Home />;
   }

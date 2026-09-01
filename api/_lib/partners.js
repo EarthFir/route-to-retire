@@ -55,6 +55,16 @@ const PARTNERS = {
     endpoint: process.env.KELLANDS_LEAD_ENDPOINT || "",
     fallbackEmail: process.env.KELLANDS_FALLBACK_EMAIL || "",
   },
+  pareto: {
+    firmName: "Pareto",
+    endpoint: process.env.PARETO_LEAD_ENDPOINT || "",
+    fallbackEmail: process.env.PARETO_FALLBACK_EMAIL || "",
+  },
+  "wealth-of-advice": {
+    firmName: "Wealth of Advice",
+    endpoint: process.env.WEALTH_OF_ADVICE_LEAD_ENDPOINT || "",
+    fallbackEmail: process.env.WEALTH_OF_ADVICE_FALLBACK_EMAIL || "",
+  },
 };
 
 export function getPartner(slug) {
