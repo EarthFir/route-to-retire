@@ -81,6 +81,15 @@ export default function Privacy() {
         </p>
       </Section>
 
+      <Section title="Site analytics">
+        <p>
+          We use Vercel Web Analytics to see how many people visit the site and which pages
+          they land on. It's cookieless and doesn't collect any personal data — it can't
+          identify you or track you across other websites. It only gives us aggregate counts,
+          like how many visits a page received.
+        </p>
+      </Section>
+
       <Section title="How long we keep it, and your rights">
         <p>
           We keep form submissions only as long as needed to respond to you or, for the Pro
