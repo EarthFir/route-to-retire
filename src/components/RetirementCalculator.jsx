@@ -1203,7 +1203,7 @@ function TabBar({ tabs, active, onChange, dark }) {
             onClick={() => onChange(t.key)}
             className="text-xs sm:text-[13px] font-bold px-2 py-2.5 rounded-xl transition-all duration-150 whitespace-nowrap cursor-pointer"
             style={isActive
-              ? { backgroundColor: dark ? 'var(--calc-accent, #FFFB08)' : 'var(--calc-primary, #09324A)', color: dark ? 'var(--calc-results-tab-active-text, var(--calc-primary, #09324A))' : 'var(--calc-tab-active-text, var(--calc-accent, #FFFB08))', boxShadow: '0 2px 8px rgba(0,0,0,.15)' }
+              ? { backgroundColor: dark ? 'var(--calc-accent, #FFFB08)' : 'var(--calc-tab-active-bg, var(--calc-primary, #09324A))', color: dark ? 'var(--calc-results-tab-active-text, var(--calc-primary, #09324A))' : 'var(--calc-tab-active-text, var(--calc-accent, #FFFB08))', boxShadow: '0 2px 8px rgba(0,0,0,.15)' }
               : { backgroundColor: 'transparent', color: dark ? 'rgba(243,242,234,.85)' : '#5B6770' }}
           >
             {t.label}

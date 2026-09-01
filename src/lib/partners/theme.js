@@ -7,12 +7,17 @@ import { mixHex } from "../colorMix.js";
 // today when nothing overrides them. This turns a partner's four base colors
 // into the full set of CSS variables (including derived tints/shades) and
 // returns them as a React inline-style object to spread onto a wrapper div.
-export function calculatorThemeVars({ primary, secondary, accent, positive, tabActiveText, resultsTabActiveText, headingFont, secondaryText, resultsPanelColor, resultsPanelStart, resultsPanelEnd, chartAxisText }) {
+export function calculatorThemeVars({ primary, secondary, accent, positive, tabActiveText, tabActiveBg, resultsTabActiveText, headingFont, secondaryText, resultsPanelColor, resultsPanelStart, resultsPanelEnd, chartAxisText }) {
   return {
     "--calc-primary": primary,
     "--calc-secondary": secondary,
     "--calc-accent": accent,
     "--calc-positive": positive,
+    // Optional: overrides the active-tab background on light cards (the
+    // "Your Route" input tabs), for partners who want their accent there
+    // instead of the default dark primary (falls back to --calc-primary
+    // when unset — see wealthOfAdvice.js).
+    ...(tabActiveBg ? { "--calc-tab-active-bg": tabActiveBg } : {}),
     // Optional: overrides the active-tab text color on light cards, for
     // partners whose accent is too close in hue/lightness to their primary
     // to read clearly there (falls back to --calc-accent when unset).
