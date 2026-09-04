@@ -209,17 +209,10 @@ export default function Partners() {
               <p className="text-xs" style={{ color: "rgba(243,242,234,.65)" }}>Same features, same founding rate, billed once a year.</p>
             </div>
           </div>
-        </Container>
-      </section>
-
-      {/* ─── ROI block ────────────────────────────────────────────────── */}
-      <section className="py-16 sm:py-20 text-center" style={{ backgroundColor: BAND }}>
-        <Container>
-          <div className="max-w-2xl mx-auto">
-            <SectionEyebrow>The maths</SectionEyebrow>
-            <h2 className="font-serif font-bold text-3xl sm:text-4xl mb-6" style={{ color: NAVY, letterSpacing: "-.02em" }}>
+          <div className="max-w-2xl mx-auto text-center mt-10">
+            <p className="font-serif font-bold text-lg sm:text-xl mb-3" style={{ color: NAVY, letterSpacing: "-.01em" }}>
               Acquire one client and the tool pays for itself.
-            </h2>
+            </p>
             <p className="text-[15px] leading-relaxed mb-3" style={{ color: BODY }}>
               The FCA's 2025 market survey puts the median advised client at around <strong>£2,000</strong> a year, on{" "}
               <strong>£250,000</strong> of assets — one new client more than covers what this costs for the year.
