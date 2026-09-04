@@ -209,9 +209,6 @@ export default function Partners() {
               <p className="text-xs" style={{ color: "rgba(243,242,234,.65)" }}>Same features, same founding rate, billed once a year.</p>
             </div>
           </div>
-          <p className="text-center font-serif font-bold text-lg sm:text-xl mt-8 max-w-2xl mx-auto" style={{ color: NAVY, letterSpacing: "-.01em" }}>
-            Land one new client a year and the tool has already covered its cost.
-          </p>
         </Container>
       </section>
 
