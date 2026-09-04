@@ -229,7 +229,7 @@ export default function Partners() {
       </section>
 
       {/* ─── FAQ ───────────────────────────────────────────────────────── */}
-      <section className="py-16 sm:py-20">
+      <section className="py-16 sm:py-20" style={{ backgroundColor: "#E6E7DD" }}>
         <Container>
           <div className="max-w-2xl mx-auto">
             <div className="text-center mb-10">
