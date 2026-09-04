@@ -103,26 +103,19 @@ export default function Partners() {
         </Container>
       </section>
 
-      {/* ─── ROI block ────────────────────────────────────────────────── */}
-      <section className="py-16 sm:py-20" style={{ backgroundColor: BAND }}>
+      {/* ─── Live example ─────────────────────────────────────────────── */}
+      <section className="py-16 sm:py-20 text-center" style={{ backgroundColor: BAND }}>
         <Container>
-          <div className="max-w-2xl mx-auto text-center">
-            <SectionEyebrow>The maths</SectionEyebrow>
-            <h2 className="font-serif font-bold text-3xl sm:text-4xl mb-6" style={{ color: NAVY, letterSpacing: "-.02em" }}>
-              Acquire one client and the tool pays for itself.
-            </h2>
-            <p className="text-[15px] leading-relaxed mb-3" style={{ color: BODY }}>
-              The FCA's 2025 market survey puts the median advised client at around <strong>£2,000</strong> a year, on{" "}
-              <strong>£250,000</strong> of assets — one new client more than covers what this costs for the year.
-            </p>
-            <p className="text-xs mb-0" style={{ color: MUTED }}>
-              Source:{" "}
-              <a href="https://www.fca.org.uk/data/understanding-financial-advice-market" target="_blank" rel="noopener noreferrer" style={{ color: TEAL }}>
-                FCA, Understanding the advice market: financial advice firms survey 2025
-              </a>
-              . We make no claim about how many enquiries your firm will get — that depends on your site traffic and mailing list.
-            </p>
-          </div>
+          <SectionEyebrow>See it in action</SectionEyebrow>
+          <h2 className="font-serif font-bold text-3xl sm:text-4xl mb-4" style={{ color: NAVY, letterSpacing: "-.02em" }}>
+            See a live example
+          </h2>
+          <p className="text-[15px] leading-relaxed max-w-xl mx-auto mb-8" style={{ color: BODY }}>
+            Harbour &amp; Vale Financial Planning is a fictional firm we built to show exactly what a branded page for
+            your firm could look like — try the calculator, the enquiry form, and the format an adviser dashboard
+            would take.
+          </p>
+          <PrimaryCTA to="/partners/harbour-vale">View the Harbour &amp; Vale demo →</PrimaryCTA>
         </Container>
       </section>
 
@@ -222,19 +215,26 @@ export default function Partners() {
         </Container>
       </section>
 
-      {/* ─── Live example ─────────────────────────────────────────────── */}
+      {/* ─── ROI block ────────────────────────────────────────────────── */}
       <section className="py-16 sm:py-20 text-center" style={{ backgroundColor: BAND }}>
         <Container>
-          <SectionEyebrow>See it in action</SectionEyebrow>
-          <h2 className="font-serif font-bold text-3xl sm:text-4xl mb-4" style={{ color: NAVY, letterSpacing: "-.02em" }}>
-            See a live example
-          </h2>
-          <p className="text-[15px] leading-relaxed max-w-xl mx-auto mb-8" style={{ color: BODY }}>
-            Harbour &amp; Vale Financial Planning is a fictional firm we built to show exactly what a branded page for
-            your firm could look like — try the calculator, the enquiry form, and the format an adviser dashboard
-            would take.
-          </p>
-          <PrimaryCTA to="/partners/harbour-vale">View the Harbour &amp; Vale demo →</PrimaryCTA>
+          <div className="max-w-2xl mx-auto">
+            <SectionEyebrow>The maths</SectionEyebrow>
+            <h2 className="font-serif font-bold text-3xl sm:text-4xl mb-6" style={{ color: NAVY, letterSpacing: "-.02em" }}>
+              Acquire one client and the tool pays for itself.
+            </h2>
+            <p className="text-[15px] leading-relaxed mb-3" style={{ color: BODY }}>
+              The FCA's 2025 market survey puts the median advised client at around <strong>£2,000</strong> a year, on{" "}
+              <strong>£250,000</strong> of assets — one new client more than covers what this costs for the year.
+            </p>
+            <p className="text-xs mb-0" style={{ color: MUTED }}>
+              Source:{" "}
+              <a href="https://www.fca.org.uk/data/understanding-financial-advice-market" target="_blank" rel="noopener noreferrer" style={{ color: TEAL }}>
+                FCA, Understanding the advice market: financial advice firms survey 2025
+              </a>
+              . We make no claim about how many enquiries your firm will get — that depends on your site traffic and mailing list.
+            </p>
+          </div>
         </Container>
       </section>
 
