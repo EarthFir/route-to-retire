@@ -34,7 +34,7 @@ const VALUE_LEGS = [
 const COMPLIANCE_POINTS = [
   "The tool models what the user enters and nothing more. It does not give financial advice, tax advice or personal recommendations, and every projection carries that in writing.",
   "Assumptions and methodology are published and linked from every calculation, so your compliance officer can read exactly how the numbers are produced.",
-  "Enquiries go straight to you. We never store your clients' contact details. We are selling you a lead generating tool, not building a duplicate of your client list.",
+  "Enquiries go straight to you. We never store your clients' contact details.",
   "Our hosted partner pages are not indexed by Google and so never compete with your own site in search results.",
 ];
 
